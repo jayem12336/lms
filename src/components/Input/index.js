@@ -6,6 +6,8 @@ import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import OutlinedInput from '@mui/material/OutlinedInput';
+
 
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -42,8 +44,37 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
       boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
       borderColor: theme.palette.primary.main,
     },
+    "&:-webkit-autofill": {
+      WebkitBoxShadow: "0 0 0 1000px black inset",
+    },
+    border:'1px solid red'
   },
 }));
+
+const style = {
+  '.MuiOutlinedInput-input': {
+    // border:'1px solid red',
+      "&:-webkit-autofill": {
+        WebkitBoxShadow: "0 0 0 0 black inset",
+      },
+      
+    },
+    'input:-internal-autofill-selected': {
+      // border: '1px solid green',
+      backgroundImage: 'none !important',
+      backgroundColor:' black !important'
+    }
+    // '.MuiInputAdornment-positionEnd': {
+    //   border: '1px solid red',
+    //   height: 20,
+    //   width: 20,
+    //   "&:-webkit-autofill": {
+    //     WebkitBoxShadow: "0 0 0 1000px black inset",
+    //   }
+    // },
+    
+  
+}
 
 export default function Input(props) {
   const {
@@ -53,21 +84,36 @@ export default function Input(props) {
     name,
     type,
     pattern,
-    errorMessage
+    errorMessage,
+    endAdornment,
+    id,
   } = props
   return (
     <div style={{display:'flex',flexDirection:'column', width:'100%'}}>
       <InputLabel shrink htmlFor="bootstrap-input" aria-describedby="component-error-text">
           {label}
       </InputLabel>
-      <BootstrapInput 
-        defaultValue="react-bootstrap" 
-        id="bootstrap-input" 
+      {/* <BootstrapInput 
+        defaultValue="rendevouz" 
+        // id="bootstrap-input" 
         value={value}
         onChange={(e) => onChange(e)}
         name={name}
         type={type}
         pattern={pattern}
+        id={id}
+        endAdornment={endAdornment ? endAdornment : ''}
+      /> */}
+      <OutlinedInput
+        style={{borderRadius:24, width: '100%'}}
+        sx={style}
+        id={id}
+        name={name}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e)}
+        pattern={pattern}
+        endAdornment={endAdornment ? endAdornment : ''}
       />
       <FormHelperText error={true} id="component-error-text">{errorMessage}</FormHelperText>
     </div>

@@ -143,7 +143,7 @@ export default function NewForgot() {
                                     onClick={forgotBtn}
                                     sx={style.btnStyle}
                                 >
-                                    Recover
+                                    Send Email
                                 </Button>
                             </Grid>
                         </Grid>

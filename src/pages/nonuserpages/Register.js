@@ -7,7 +7,9 @@ import {
     Grid,
     Stack,
     Switch,
-    FormControlLabel
+    FormControlLabel,
+    InputAdornment,
+    IconButton
 } from '@mui/material';
 import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 
@@ -24,7 +26,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonIcon from '@mui/icons-material/Person';
 
-import { createUser, createDoc, createUserGoogle } from '../../utils/firebaseUtil'
+import { createUser, createDoc, createUserGoogle, getUserLogin } from '../../utils/firebaseUtil'
 
 import { setDoc, doc, addDoc, collection } from '@firebase/firestore';
 
@@ -285,7 +287,7 @@ export default function Register() {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
                 // Check if user is new
-                const { isNewUser } = getAdditionalUserInfo(result)
+                const {isNewUser}  = getAdditionalUserInfo(result)
                 const userId = result.user.uid
                 const user = result.user;
                 // await handleNew(user);
@@ -301,7 +303,7 @@ export default function Register() {
                     };
                     createUserGoogle(user.uid, payload).then(() => {
                         // dispatch(loginInitiate(values.email, values.password, history));
-                        if (payload.isTeacher) {
+                        if (values.isTeacher) {
                             history.push('/classroom')
                         } else {
                             history.push('/studentclassroom')
@@ -309,9 +311,18 @@ export default function Register() {
 
                         console.log('success')
                     })
-                    history.push('/classroom')
+                    // history.push('/classroom')
                 } else {
-                    history.push('/classroom')
+                    getUserLogin(result.user.email).then(userData => {
+                        userData.map(item => {
+                            if(item.isTeacher){
+                                history.push('/classroom')
+                            }else {
+                                history.push('/studentclassroom')
+                            }
+                        })
+                    })
+                    // history.push('/classroom')
                 }
 
                 // handleNew(user);
@@ -436,10 +447,23 @@ export default function Register() {
                                     <Grid item xs={12} spacing={3}>
                                         <Input
                                             label='Password'
-                                            type='password'
+                                            type={values.showPassword ? 'text' : 'password'}
                                             onChange={e => handleChange(e)}
                                             value={values.password}
                                             name='password'
+                                            id="outlined-adornment-password"
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    edge="end"
+                                                >
+                                                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                                </InputAdornment>
+                                            }
                                             errorMessage={error.password}
                                         />
                                     </Grid>

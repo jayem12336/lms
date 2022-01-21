@@ -59,6 +59,7 @@ import StudentClassList from '../pages/userpages/mainclassroom/student/classList
 import StudentClassListDetail from '../pages/userpages/mainclassroom/student/classList/ClassDetail';
 import StudentLaboratoryDetail from '../pages/userpages/mainclassroom/student/classLaboratory/LabDetails'
 import StudentQuizDetail from '../pages/userpages/mainclassroom/student/classQuiz/QuizDetail'
+import StudentClassAnnouncement from '../pages/userpages/mainclassroom/student/classannouncement/ClassAnnouncement';
 
 
 
@@ -147,6 +148,7 @@ export default function RouterComponent() {
                     <Route component={StudentClassListDetail} path="/studentclassroomdetail/:id" exact />
                     <Route component={StudentLaboratoryDetail} path="/studentlaboratorydetail/:id/:labId" exact />
                     <Route component={StudentQuizDetail} path="/studentquizdetail/:id/:quizId" exact />
+                    <Route component={StudentClassAnnouncement} path="/studentclassannouncement/:id" exact />
                     
 
                     <Route component={NotFound} path='/'/>

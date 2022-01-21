@@ -248,11 +248,23 @@ export default function Login() {
                             <Grid item xs={12} spacing={3}>
                                 <Typography sx={style.textStyle}>Password</Typography>
                                 <Input
-                                    type='password'
+                                    type={values.showPassword ? 'text' : 'password'}
                                     onChange={handleChange('password')}
                                     value={values.password}
                                     name='password'
-                                // errorMessage = {error.lastName}
+                                    id="outlined-adornment-password"
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                          <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            edge="end"
+                                          >
+                                            {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                          </IconButton>
+                                        </InputAdornment>
+                                      }
                                 />
                             </Grid>
                             <Grid container justifyContent="space-between" sx={{ paddingLeft: 6 }}>

@@ -255,7 +255,7 @@ export default function StudentDrawer(props) {
                                 <ListItem
                                     button
                                     component={Link}
-                                    to={`/classannouncement/${props.classCode}`}
+                                    to={`/studentclassannouncement/${props.classCode}`}
                                     sx={{
                                         marginTop: open === true ? 4 : -5, height: 46
                                     }}

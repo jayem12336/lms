@@ -309,3 +309,12 @@ if (user) {
   return user
        
 }
+
+export const getUserLogin = async (email) => {
+    const data = collection(db, 'users')
+    const q = query(data,where("email", "==", email))
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => doc.data())
+   
+         
+  }
