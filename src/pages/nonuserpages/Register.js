@@ -296,7 +296,7 @@ export default function Register() {
                     const payload = {
                         displayName: user.displayName,
                         email: user.email,
-                        uid: user.uid,
+                        ownerId: user.uid,
                         photoURL: user.photoURL,
                         phone: values.phone,
                         isTeacher: values.isTeacher

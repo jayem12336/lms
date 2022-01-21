@@ -112,6 +112,7 @@ export default function ClassAnnouncementList() {
               type='text'
               value={item.displayName}
               name='Name'
+              onChange={null}
             // errorMessage={error.firstName}
             />
           </Grid>
@@ -121,6 +122,7 @@ export default function ClassAnnouncementList() {
               type='text'
               value={item.email}
               name='Email'
+              onChange={null}
             // errorMessage={error.firstName}
             />
           </Grid>
@@ -130,6 +132,7 @@ export default function ClassAnnouncementList() {
               type='text'
               value={item.phone}
               name='Email'
+              onChange={null}
             // errorMessage={error.firstName}
             />
           </Grid>
@@ -138,6 +141,7 @@ export default function ClassAnnouncementList() {
             <Input
               type='password'
               name='New Password'
+              onChange={null}
             // errorMessage={error.firstName}
             />
           </Grid>
@@ -146,6 +150,7 @@ export default function ClassAnnouncementList() {
             <Input
               type='password'
               name='Confirm New Password'
+              onChange={null}
             // errorMessage={error.firstName}
             />
           </Grid>

@@ -111,7 +111,7 @@ export default function Input(props) {
         name={name}
         type={type}
         value={value}
-        onChange={(e) => onChange(e)}
+        onChange={onChange}
         pattern={pattern}
         endAdornment={endAdornment ? endAdornment : ''}
       />

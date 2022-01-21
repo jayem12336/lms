@@ -34,8 +34,9 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 import { loginInitiate } from '../../redux/actions/userAction';
+import { getUserLogin } from '../../utils/firebaseUtil'
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 
 import { setDoc, doc } from '@firebase/firestore';
 
@@ -163,6 +164,7 @@ export default function Login() {
         password: '',
         showPassword: false,
     });
+    const [error, setError] = useState('')
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
@@ -204,9 +206,28 @@ export default function Login() {
             .then((result) => {
                 // This gives you a Google Access Token. You can use it to access the Google API.
                 // The signed-in user info.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                // Check if user is new
+                const {isNewUser}  = getAdditionalUserInfo(result)
+                const userId = result.user.uid
                 const user = result.user;
                 // handleNew(user);
-                history.push('/classroom')
+                if (isNewUser) {
+                    setError(`account doesn't exist`)
+                }else {
+                    getUserLogin(result.user.email).then(userData => {
+                        userData.map(item => {
+                            if(item.isTeacher){
+                                history.push('/classroom')
+                            }else {
+                                history.push('/studentclassroom')
+                            }
+                        })
+                    })
+                }
+                
+                // history.push('/classroom')
                 // ...
             }).catch((error) => {
                 // Handle Errors here.
@@ -228,13 +249,16 @@ export default function Login() {
             <NavBar />
             <Box sx={style.section1}>
                 <Box component={Grid} container justifyContent="center">
-                    <Typography sx={{ fontSize: 50 }}>Welcome Back!</Typography>
+                    <Typography sx={{ fontSize: 50, }}>Welcome Back!</Typography>
                 </Box>
                 <Box sx={style.loginContainer}>
                     <Box sx={style.margin}>
                         <Grid container style={{
                             padding: "100px 80px"
                         }} justifyContent='center' spacing={4}>
+                            <Grid item>
+                                <Typography sx={{color:'red'}}>{error}</Typography>
+                            </Grid>
                             <Grid item xs={12} spacing={3}>
                                 <Typography sx={style.textStyle}>Email</Typography>
                                 <Input

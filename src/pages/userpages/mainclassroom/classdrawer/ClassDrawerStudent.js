@@ -336,7 +336,7 @@ export default function StudentDrawer(props) {
                                 <ListItem
                                     button
                                     component={Link}
-                                    to={`/classjoinmeet/${props.classCode}`}
+                                    to={`/studentclassjoinmeet/${props.classCode}`}
                                     sx={style.listItemStyle}
 
                                 >
@@ -352,7 +352,7 @@ export default function StudentDrawer(props) {
                                 <ListItem
                                     button
                                     component={Link}
-                                    to={`/studentlist/${props.classCode}`}
+                                    to={`/classstudentlist/${props.classCode}`}
                                     sx={style.listItemStyle}
                                 >
                                     <ListItemIcon> <PeopleAltIcon color="primary" sx={style.iconStyle} /></ListItemIcon>
