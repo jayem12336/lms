@@ -200,7 +200,7 @@ export default function TeacherDrawer(props) {
             <CssBaseline />
             <AppBar position="fixed" open={matchMD ? false : open}>
                 <Toolbar>
-                    {matchMD ? <MobileViewTeachersDrawer props={props}/> :
+                    {matchMD ? <MobileViewTeachersDrawer props={props} /> :
                         <>
                             <IconButton
                                 color="inherit"
@@ -398,7 +398,11 @@ export default function TeacherDrawer(props) {
                     </Drawer>
                 </>
             }
-            <Box component="main" sx={{ flexGrow: 1, p: 5 }}>
+            <Box component="main" sx={{
+                flexGrow: 1, p: {
+                    xs: 1, md: 4
+                }
+            }}>
                 {props.children}
             </Box>
         </Box>

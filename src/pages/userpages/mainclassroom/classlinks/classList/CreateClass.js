@@ -31,8 +31,7 @@ const style = {
     },
 }
 
-export default function CreateClass({ isClassOpen, toggleClass }) {
-
+export default function CreateClass({ isClassOpen, toggleClass,displayName }) {
     const id = (uuidv4().slice(-8));
 
 
@@ -57,7 +56,7 @@ export default function CreateClass({ isClassOpen, toggleClass }) {
                 room: Room,
                 subject: Subject,
                 ownerEmail: user.currentUser.email,
-                ownerName: user.currentUser.displayName,
+                ownerName: displayName,
                 ownerId: user.currentUser.uid,
                 classCode: id,
                 students: []

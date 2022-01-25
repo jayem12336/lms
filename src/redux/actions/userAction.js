@@ -61,11 +61,19 @@ export const loginInitiate = (email, password, history) => (dispatch) => {
           window.sessionStorage.setItem('id',user.uid)
           getDocsByCollection('users').then(data => {
             data.filter(data => data.ownerId === user.uid).map(data => {
-                if(data.isTeacher){
-                history.push('/classroom')
-                }else {
-                history.push('/studentclassroom')
-                }
+                window.sessionStorage.setItem('user',data.isTeacher)
+                setTimeout(() => {
+                    if (data.isTeacher) {
+                        history.push('/classroom')
+                    } else {
+                        history.push('/studentclassroom')
+                    }
+                  }, 2000)
+                // if(data.isTeacher){
+                // history.push('/classroom')
+                // }else {
+                // history.push('/studentclassroom')
+                // }
               })
           })
         //   history.push('/classroom');
@@ -100,13 +108,16 @@ export const getUserId = () => async (dispatch) => {
 
 const logoutSuccess = (user) => ({
     type: actionTypes.LOGOUT_SUCCESS,
+    // payload: user
 });
 
 export const logoutInitiate = (user) => async (dispatch) => {
     try {
         const auth = getAuth();
         auth.signOut().then(() => {
+            sessionStorage.clear();
             dispatch(logoutSuccess(user));
+            
         }).catch((error) => {
             // An error happened.
         });

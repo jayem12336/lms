@@ -46,7 +46,7 @@ const style = {
     },
     textStyle: {
         fontSize: 20,
-        color: '#fff',
+        color: '#000000',
         fontWeight: 500
     },
     linkStyle: {
@@ -83,8 +83,8 @@ export default function DrawerComponent() {
                 open={openDrawer}
 
             >
-                <Box sx={{ backgroundColor: '#4BAEA6', height: "100%" }}>
-                    <Box component={Grid} sx={{ backgroundColor: '#38a198', height: 100 }}>
+                <Box sx={{ backgroundColor: '#fff', height: "100%" }}>
+                    <Box component={Grid} sx={{ backgroundColor: '#fff', height: 100, borderBottom: "1.5px solid #4BAEA6" }}>
                         <img
                             src={'assets/img/logo.png'}
                             alt="Rendezvous Logo"
@@ -96,7 +96,7 @@ export default function DrawerComponent() {
                             button
                         >
                             <ListItemIcon>
-                                <HomeIcon sx={style.icons} />
+                                <HomeIcon sx={style.icons} color="primary" />
                                 <ListItemText>
                                     <Typography sx={style.textStyle}>
                                         Home
@@ -108,7 +108,7 @@ export default function DrawerComponent() {
                             button
                         >
                             <ListItemIcon>
-                                <FlagIcon sx={style.icons} />
+                                <FlagIcon sx={style.icons} color="primary" />
                                 <ListItemText>
                                     <Typography sx={style.textStyle}>
                                         Guide
@@ -120,7 +120,7 @@ export default function DrawerComponent() {
                             button
                         >
                             <ListItemIcon>
-                                <InfoIcon sx={style.icons} />
+                                <InfoIcon sx={style.icons} color="primary" />
                                 <ListItemText>
                                     <Typography sx={style.textStyle}>
                                         About
@@ -132,7 +132,7 @@ export default function DrawerComponent() {
                             button
                         >
                             <ListItemIcon>
-                                <ContactSupportIcon sx={style.icons} />
+                                <ContactSupportIcon sx={style.icons} color="primary" />
                                 <ListItemText>
                                     <Typography sx={style.textStyle}>
                                         Contact

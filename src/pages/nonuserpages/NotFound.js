@@ -51,7 +51,7 @@ export default function NotFound() {
                 <Typography sx={style.textTitle}> Oops ! </Typography>
                 <Typography sx={style.textSecond}> 404 - PAGE NOT FOUND </Typography>
                 <Typography sx={style.textThird}> This page you are looking for might have been removed had its name changed or is temporarily unavailable </Typography>
-                <Button variant="contained" sx={style.btnback} onClick={() => history.push('/')}> Go to Homepage </Button>
+                <Button variant="contained" sx={style.btnback} onClick={() => history.goBack()}> Go Back </Button>
             </Box>
         </Box>
     )

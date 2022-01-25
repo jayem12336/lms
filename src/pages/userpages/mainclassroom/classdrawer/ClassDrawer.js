@@ -168,9 +168,12 @@ export default function MiniDrawer(props) {
         }
         if (Object.keys(user.currentUser).length !== 0) {
             getUser().then(data => {
-                data.map(item => {
-                    setIsTeacher(item.isTeacher)
-                })
+                if(data){
+                    data.map(item => {
+                        setIsTeacher(item.isTeacher)
+                    })
+                }
+                
             })
         }
     }, [classUser, user])
@@ -179,8 +182,10 @@ export default function MiniDrawer(props) {
 
     const handleLogOut = () => {
         if (user) {
+            sessionStorage.clear();
             dispatch(logoutInitiate());
             history.push('/');
+            
         }
     }
 
@@ -319,7 +324,7 @@ export default function MiniDrawer(props) {
                             <ListItemIcon> <PeopleIcon color="primary" /></ListItemIcon>
                             <ListItemText>People</ListItemText>
                         </ListItem> */}
-                            <Box sx={style.listHover}>
+                            {/* <Box sx={style.listHover}>
                                 <ListItem
                                     button
                                     component={Link}
@@ -334,7 +339,7 @@ export default function MiniDrawer(props) {
                                     </ListItemText>
                                 </ListItem>
 
-                            </Box>
+                            </Box> */}
                             <Box sx={style.listHover}>
                                 <ListItem
                                     button

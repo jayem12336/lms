@@ -23,7 +23,7 @@ import {
 
 import { v4 as uuidv4 } from 'uuid';
 
-import {getDocsByCollection, getLabStudent, createClassDoc, saveLabStudent, getStudentByAssigned} from '../../../../../utils/firebaseUtil'
+import {getDocsByCollection, getLabStudent, saveLabRecord, saveLabStudent, getStudentByAssigned} from '../../../../../utils/firebaseUtil'
 import { Timestamp } from 'firebase/firestore';
 
 import { useParams } from 'react-router';
@@ -113,6 +113,8 @@ export default function Laboratory() {
   const [open, setOpen] = useState(false)
   const [instruction, setInstruction] = useState('')
   const [labId, setLabId] = useState('')
+  const [title, setTitle] = useState('')
+  const [score, setScore] = useState('')
 
 
   const { user } = useSelector((state) => state);
@@ -181,6 +183,8 @@ export default function Laboratory() {
         setLabId(params.labId)
         setStudentName(item.students)
         setInstruction(item.instruction)
+        setTitle(item.title)
+        setScore(item.score ? item.score : '')
       }else {
         setIsNew(true)
       }
@@ -195,12 +199,15 @@ export default function Laboratory() {
       js: js,
       studentId: user.currentUser.uid,
       classCode: params.id,
+      submitDate: Timestamp.now(),
       created: Timestamp.now(),
       title: labTitle,
       instruction: instruction,
-      labId: labId
+      labId: labId,
+      score: score
     }
     saveLabStudent(studentData)
+    saveLabRecord(studentData,{[labId]:studentData})
       const timeout = setTimeout(() => {
         history.push(`/studentclassroomdetail/${params.id}`)
       }, 2000)
@@ -232,7 +239,7 @@ export default function Laboratory() {
   console.log(studentsList)
   console.log(labId)
   return (
-    <Studentdrawer classCode={params.id}>     
+    <Studentdrawer classCode={params.id} headTitle={title}>     
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         autoHideDuration={3000}

@@ -19,14 +19,11 @@ import {
     Stack,
     Chip
 } from '@mui/material';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import YouTubeIcon from '@mui/icons-material/YouTube';
 
 
 import { v4 as uuidv4 } from 'uuid';
 
-import {createDoc, getDocsByCollection, updateDocsByCollection, createClassDoc, saveLabStudent, getStudentByAssigned} from '../../../../../utils/firebaseUtil'
+import {getDocsByCollection, getLabStudent, saveLabRecord, saveLabStudent, getStudentByAssigned} from '../../../../../utils/firebaseUtil'
 import { Timestamp } from 'firebase/firestore';
 
 import { useParams } from 'react-router';
@@ -35,15 +32,6 @@ import { useHistory } from 'react-router';
 
 
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-
-
-import Fade from '@mui/material/Fade';
-import Divider from '@mui/material/Divider';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
-
 import Editor from './Editor'
 
 
@@ -125,7 +113,8 @@ export default function Laboratory() {
   const [open, setOpen] = useState(false)
   const [instruction, setInstruction] = useState('')
   const [labId, setLabId] = useState('')
-  const [title,setTitle] = useState('')
+  const [title, setTitle] = useState('')
+  const [score, setScore] = useState('')
 
 
   const { user } = useSelector((state) => state);
@@ -167,19 +156,6 @@ export default function Laboratory() {
         })
         setStudentsList(students)
     })
-    // getDocsByCollection('users').then(data => {
-    //   const students = data.map(item => {
-    //     let studentArr = []
-    //     studentArr = {label:item.displayName, value:item.ownerId}
-    //     return studentArr
-    //   })
-    //   setStudentsList(students)
-    // })
-    getDocsByCollection('quiz').then(data => {
-      data.filter(item => item.classCode === params.id).map(item => {
-        setStudentName(item.students)
-      }) 
-    })
   }
 
   const handleChange = (event) => {
@@ -195,21 +171,20 @@ export default function Laboratory() {
   };
 
   const getLaboratory = () => {
-    getDocsByCollection('laboratory').then(item => {
-      const data = item.filter(item => item.classCode === params.id)
-      console.log(data)
-      if(data.length !== 0){
-        data.map(item => {
-          setHtml(item.html)
-          setCss(item.css)
-          setJs(item.js)
-          setSrcDoc(item.body)
-          setLabTitle(item.title)
-          setLabId(params.labId)
-          setStudentName(item.students)
-          setInstruction(item.instruction)
-          setTitle(item.title)
-        })
+    getLabStudent(params.id, params.studentId, params.labId).then(item => {
+      // const data = item
+      if(item.length !== 0){
+        // console.log(data)
+        setHtml(item.html)
+        setCss(item.css)
+        setJs(item.js)
+        setSrcDoc(item.body)
+        setLabTitle(item.title)
+        setLabId(params.labId)
+        setStudentName(item.students)
+        setInstruction(item.instruction)
+        setTitle(item.title)
+        setScore(item.score ? item.score : '')
       }else {
         setIsNew(true)
       }
@@ -218,72 +193,26 @@ export default function Laboratory() {
   }
 
   const saveLab = () => {
-    const data = {
+    const studentData = {
       html: html,
       css : css,
       js: js,
-      ownerId: user.currentUser.uid,
+      studentId: user.currentUser.uid,
       classCode: params.id,
+      submitDate: Timestamp.now(),
       created: Timestamp.now(),
       title: labTitle,
-      students: studentName,
       instruction: instruction,
-      labId: labId
+      labId: labId,
+      score: score
     }
-    // if(isNew){
-      // createClassDoc('laboratory',id, data).then(() => {
-      //   setOpen({ open: true});
-      //   studentName.map(student => {
-      //     const studentData = {
-      //       html: html,
-      //       css : css,
-      //       js: js,
-      //       ownerId: user.currentUser.uid,
-      //       classCode: params.id,
-      //       created: Timestamp.now(),
-      //       title: labTitle,
-      //       studentId: student,
-      //       instruction: instruction,
-      //       labId: params.labId
-      //     }
-      //     saveLabStudent(studentData)
-      //   })
-      //   console.log('success')
-      //   const timeout = setTimeout(() => {
-      //     history.push(`/classroomdetail/${params.id}`)
-      //   }, 2000)
-    
-      //   return () => clearTimeout(timeout)
-      // })
-    // }
-    // else {
-      updateDocsByCollection('laboratory', data).then(() => {
-        console.log('success update')
-        setOpen({ open: true});
-        studentName.map(student => {
-          const studentData = {
-            html: html,
-            css : css,
-            js: js,
-            ownerId: user.currentUser.uid,
-            classCode: params.id,
-            created: Timestamp.now(),
-            title: labTitle,
-            studentId: student,
-            instruction: instruction,
-            labId: labId
-          }
-          saveLabStudent(studentData)
-          const timeout = setTimeout(() => {
-            history.push(`/classroomdetail/${params.id}`)
-          }, 2000)
-      
-          return () => clearTimeout(timeout)
-        })
-       
-      })
-    // }
-    
+    saveLabStudent(studentData)
+    saveLabRecord(studentData,{[labId]:studentData})
+      const timeout = setTimeout(() => {
+        history.push(`/studentclassroomdetail/${params.id}`)
+      }, 2000)
+  
+    return () => clearTimeout(timeout)
   }
 
   const handleTitle = (e) => {
@@ -310,7 +239,7 @@ export default function Laboratory() {
   console.log(studentsList)
   console.log(labId)
   return (
-    <Teacherdrawer classCode={params.id} headTitle={title ? title : 'Create Laboratory'}>     
+    <Teacherdrawer classCode={params.id} headTitle={title}>     
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         autoHideDuration={3000}
@@ -327,13 +256,19 @@ export default function Laboratory() {
         <>
           <Grid xs={12} justifyContent='space-between' container>
             <Grid xs={12} justifyContent='flex-start' container>
-              <TextField 
+              <Typography 
+                variant="h6" 
+                onClick={() => null}
+              >
+                {labTitle}
+              </Typography>
+              {/* <TextField 
                 label={labTitle === '' ? 'Title' : labTitle} 
                 variant="outlined" 
                 sx={{marginBottom: 2}}
                 value={labTitle}
                 onChange={handleTitle}
-              />
+              /> */}
               {/* <Button 
                 variant="contained" 
                 color="primary" 
@@ -343,58 +278,14 @@ export default function Laboratory() {
                 {isNew ? 'Save' : 'Update'}
               </Button> */}
             </Grid>
-            
-            <FormControl sx={{ width: 500 , marginBottom: 2}}>
-              <InputLabel id="select-student-label">Assign Student</InputLabel>
-              <Select
-                labelId="select-student-label"
-                multiple
-                value={studentName}
-                onChange={handleChange}
-                input={<OutlinedInput id="select-multiple-chip" label="Assign Student" />}
-                // renderValue={(selected, item) => (
-                //   console.log(selected),
-                //   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                //     {selected.map((value) => (
-                //       <Chip key={value} label={value}  />
-                //     ))}
-                //   </Box>
-                // )}
-                // MenuProps={MenuProps}
-              >
-                {studentsList.map((name, index) => (
-                  <MenuItem
-                    key={name.value}
-                    value={name.value}
-                    name={name.value}
-                    // style={getStyles(name, personName, theme)}
-                  >
-                    {name.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Grid xs={12} justifyContent='flex-start' container sx={{marginBottom: 2}}>
-            <Stack direction="row" spacing={1} xs={{width: 500}}>
-              {studentName && studentName.map(item => (
-                studentsList.filter(data => data.value === item).map(name => (
-                  <Chip label={name.label} />
-                ))
-                
-              ))}
-              
-            </Stack>
-            </Grid>
             <Grid xs={12} justifyContent='flex-start' container>
               <Grid container>
-                <TextField
-                  variant="filled"
-                  multiline
-                  value={instruction}
-                  onChange={(e) => handleInstruction(e)}
-                  fullWidth
-                  minRows={5}
-                />
+                <Typography 
+                  variant="p" 
+                  onClick={() => null}
+                >
+                  {instruction}
+                </Typography>
                 <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
                   <Grid item>
                     {/* <IconButton sx={style.iconStyle}>
@@ -410,10 +301,10 @@ export default function Laboratory() {
                       <YouTubeIcon />
                     </IconButton> */}
                   </Grid>
-                  <Grid item sx={{ marginTop: 0.5 }}>
+                  {/* <Grid item sx={{ marginTop: 0.5, marginBottom: 1}}>
                     <Button 
                       style={style.btnStyle} 
-                      onClick={() => history.push(`/classroomdetail/${params.id}`)}
+                      onClick={() => history.goBack()}
                     > 
                       cancel
                     </Button>
@@ -423,14 +314,14 @@ export default function Laboratory() {
                       style={style.btnStyle}
                       onClick={saveLab}
                     > 
-                      Update
+                      Save
                     </Button>
-                  </Grid>
+                  </Grid> */}
                 </Box>
               </Grid>
             </Grid>
           </Grid>
-          {/* <Box sx={style.pane, style.topPane}>
+          <Box sx={style.pane, style.topPane}>
             <Editor
               language="xml"
               displayName="HTML"
@@ -459,7 +350,7 @@ export default function Laboratory() {
               width="100%"
               height="100%"
             />
-          </Box> */}
+          </Box>
         </> 
       </Box>
     </Teacherdrawer>

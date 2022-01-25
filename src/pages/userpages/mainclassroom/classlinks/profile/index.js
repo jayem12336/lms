@@ -15,11 +15,19 @@ import { Timestamp } from 'firebase/firestore';
 
 import { getAnnouncement, getDocsByCollection, getUser, createDoc } from '../../../../../utils/firebaseUtil';
 import { useParams } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logoutInitiate } from '../../../../../redux/actions/userAction';
+
 
 import Input from '../../../../../components/Input'
 
 import AddIcon from '@mui/icons-material/Add';
+
+import { getAuth, updatePassword } from "firebase/auth";
+import { useHistory } from 'react-router';
+
+
+
 
 const style = {
   gridcontainer: {
@@ -85,7 +93,16 @@ export default function ClassAnnouncementList() {
   const [userDetail, setUserDetail] = useState([])
 
   const params = useParams()
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const { user } = useSelector((state) => state);
+  const [values, setValues] = useState({
+    newPassword : '',
+    confirmPassword: ''
+  })
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   useEffect(() => {
 
@@ -96,6 +113,44 @@ export default function ClassAnnouncementList() {
     }
   }, [user]);
 
+  const onChange = (e) => {
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value
+    })
+  }
+
+const onSave = () => {
+  setSuccess('')
+  setError('')
+  if(values.newPassword !== values.confirmPassword){
+    setSuccess('')
+    setError('Password not matched, please type again')
+  }else {
+    setError('')
+    const auth = getAuth();
+
+    const user = auth.currentUser;
+    // const newPassword = getASecureRandomPassword();
+    updatePassword(user, values.newPassword).then(() => {
+      setSuccess('Password has been changed')
+      handleLogOut()
+    }).catch((error) => {
+      // An error ocurred
+      // ...
+    });
+  }
+}
+
+const handleLogOut = () => {
+  if (user) {
+      dispatch(logoutInitiate());
+      history.push('/');
+  }
+}
+
+console.log(user)
+console.log(values)
   const userDetailBody = () => {
     return userDetail && userDetail.map(item =>
       <Grid container sx={style.gridcontainer} justifyContent='center'>
@@ -112,6 +167,7 @@ export default function ClassAnnouncementList() {
               type='text'
               value={item.displayName}
               name='Name'
+              disabled
               onChange={null}
             // errorMessage={error.firstName}
             />
@@ -122,6 +178,7 @@ export default function ClassAnnouncementList() {
               type='text'
               value={item.email}
               name='Email'
+              disabled
               onChange={null}
             // errorMessage={error.firstName}
             />
@@ -131,7 +188,8 @@ export default function ClassAnnouncementList() {
             <Input
               type='text'
               value={item.phone}
-              name='Email'
+              name='phone'
+              disabled
               onChange={null}
             // errorMessage={error.firstName}
             />
@@ -140,8 +198,9 @@ export default function ClassAnnouncementList() {
             <Typography sx={style.textStyle}>New Password</Typography>
             <Input
               type='password'
-              name='New Password'
-              onChange={null}
+              name='newPassword'
+              value={values.newPassword}
+              onChange={onChange}
             // errorMessage={error.firstName}
             />
           </Grid>
@@ -149,13 +208,24 @@ export default function ClassAnnouncementList() {
             <Typography sx={style.textStyle}>Confirm New Password</Typography>
             <Input
               type='password'
-              name='Confirm New Password'
-              onChange={null}
+              value={values.confirmPassword}
+              name='confirmPassword'
+              onChange={onChange}
             // errorMessage={error.firstName}
             />
           </Grid>
           <Grid container justifyContent='center'>
-              <Button variant="contained" sx={style.saveBtn}> Save </Button>
+          <Typography sx={{color:'red'}}>{error}</Typography>
+          <Typography sx={{color:'green'}}>{success}</Typography>
+          </Grid>
+          <Grid container justifyContent='center'>
+              <Button 
+                variant="contained" 
+                sx={style.saveBtn}
+                onClick={onSave}
+              > 
+                Save 
+              </Button>
           </Grid>
         </Grid>
       </Grid>

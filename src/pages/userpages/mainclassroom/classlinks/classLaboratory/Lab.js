@@ -306,7 +306,7 @@ export default function Laboratory() {
   console.log(studentName)
   console.log(studentsList)
   return (
-    <Teacherdrawer classCode={params.id}>
+    <Teacherdrawer classCode={params.id} headTitle={'Create Laboratory'}>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         autoHideDuration={3000}

@@ -66,9 +66,9 @@ const style = {
         textDecoration: 'none',
         color: "#fff",
         fontWeight: 500,
-        textTransform: 'none',
         '&:hover': {
-            color: (theme) => theme.colors.navButtonHover,
+            background: '#4877c2',
+            color: (theme) => theme.colors.navButton,
         },
         display: 'inline-flex',
         alignItems: 'center',
@@ -90,7 +90,7 @@ const style = {
             md: 2
         },
         height: 35,
-        width: 1500,
+        width: 1300,
         justifyContent: {
             xs: 'space-between',
             sm: 'space-between'

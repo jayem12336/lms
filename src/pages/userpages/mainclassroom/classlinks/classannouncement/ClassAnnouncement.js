@@ -16,7 +16,7 @@ import { Timestamp } from 'firebase/firestore';
 import { getAnnouncement, getDocsByCollection, getUser, createDoc } from '../../../../../utils/firebaseUtil';
 import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
-
+import Banner from '../../../../../assets/img/jpg/banner.jpg'
 
 
 import AddToDriveIcon from '@mui/icons-material/AddToDrive';
@@ -32,9 +32,24 @@ const style = {
     padding: 2,
     maxWidth: 1100
   },
+  announcementBannerContainer: {
+    boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
+    marginTop: 5,
+    height: {
+      xs: 120, md: 300
+    },
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundImage: `url(${Banner})`,
+    alignItems: "center",
+    maxWidth: 1100
+  },
+  imageContainer: {
+
+  },
   announcementcontainer: {
     display: "flex",
-    marginTop: 5,
+    marginTop: { xs: 0, md: 2 },
     maxWidth: 1100
   },
   main: {
@@ -86,6 +101,7 @@ export default function ClassAnnouncement() {
         const data = item.filter(item => item.classCode === params.id)
         data.map(item => {
           setClassName(item.className)
+          setOwnerName(item.displayName)
         })
       })
   }
@@ -108,7 +124,7 @@ export default function ClassAnnouncement() {
       classCode: params.id,
       created: Timestamp.now(),
       ownerId: user.currentUser.uid,
-      ownerName: user.currentUser.displayName
+      ownerName: ownerName
     }
     createDoc('announcement', data).then(() => {
       setAnnoucncementContent('')
@@ -125,7 +141,7 @@ export default function ClassAnnouncement() {
     return announcementData && announcementData.map(item =>
       <Grid container sx={style.gridcontainer} justifyContent='space-between'>
         <Grid xs={12} item sx={{ display: 'flex' }}>
-          <Avatar/>
+          <Avatar />
           <Grid container sx={{ paddingLeft: 1 }}>
             <Grid container>
               <Typography>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
@@ -155,6 +171,8 @@ export default function ClassAnnouncement() {
   return (
     <Teacherdrawer headTitle={className} classCode={params.id}>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
+        <Box component={Grid} container justifyContent="center" sx={style.announcementBannerContainer}>
+        </Box>
         <Grid container sx={style.gridcontainer}>
           {showInput ? (
             <Grid container>

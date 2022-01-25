@@ -145,7 +145,7 @@ export default function ClassAnnouncementList() {
   }
 
   return (
-    <Teacherdrawer headTitle='All Announcemnt'>
+    <Teacherdrawer headTitle={className} classCode={params.id}>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
         {/* <Grid container sx={style.gridcontainer}>
           {showInput ? (

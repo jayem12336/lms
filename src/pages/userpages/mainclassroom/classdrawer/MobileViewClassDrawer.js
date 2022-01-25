@@ -113,8 +113,13 @@ export default function MobileViewClassDrawer() {
 
     const handleLogOut = () => {
         if (user) {
-            dispatch(logoutInitiate());
-            history.push('/');
+            sessionStorage.clear();
+            
+            setTimeout(() => {
+                dispatch(logoutInitiate());
+                history.push('/');
+              }, 20000)
+            
         }
     }
 
@@ -169,7 +174,7 @@ export default function MobileViewClassDrawer() {
                                 </ListItemText>
                             </ListItemIcon>
                         </ListItem>
-                        <ListItem
+                        {/* <ListItem
                             button
                             component={ReactLink}
                             to={`/files`}
@@ -182,7 +187,7 @@ export default function MobileViewClassDrawer() {
                                     </Typography>
                                 </ListItemText>
                             </ListItemIcon>
-                        </ListItem>
+                        </ListItem> */}
                         <ListItem
                             button
                             component={ReactLink}

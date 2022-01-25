@@ -24,7 +24,7 @@ import DatePicker from '@mui/lab/DatePicker';
 import Studentdrawer from '../../classdrawer/ClassDrawerStudent';
 import { Timestamp } from 'firebase/firestore';
 
-import {getStudentByAssigned, getDocsByCollection, saveQuizStudent, createClassDoc} from '../../../../../utils/firebaseUtil';
+import {getStudentByAssigned, getDocsByCollection, saveQuizStudent, saveQuizRecord,getQuizStudent} from '../../../../../utils/firebaseUtil';
 import { useParams} from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { useHistory } from 'react-router';
@@ -37,14 +37,17 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 
 import Quiz from 'react-quiz-component';
 
-
+  
 const style = {
     gridcontainer: {
         display: "flex",
         boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
         marginTop: 5,
         padding: 2,
-        maxWidth: 1000
+        maxWidth: 1000,
+        '.react-quiz-container': {
+          width: '100%'
+        }
     },
     main: {
         display: "flex",
@@ -57,8 +60,12 @@ const style = {
     },
     btnStyle: {
         width: 'auto',
-        marginLeft: 5
+        marginLeft: 5,
     },
+    btnStyleFooter: {
+      width: '100%',
+      marginTop: 12
+  },
     addBtncontainer: {
       display: "flex",
       marginTop: 5,
@@ -66,11 +73,15 @@ const style = {
   },
 }
 
+
+
 export default function QuizDetail() {
   const setQuizResult = (obj) => {
     console.log(obj);
     //
   }
+  
+  // console.log(test.numberOfCorrectAnswers)
 
   const [quizData, setQuizData] = useState([])
   const [userId, setUserId] = useState('');
@@ -82,8 +93,10 @@ export default function QuizDetail() {
   const [dueDate, setDueDate] = useState('')
   const [subject, setSubject] = useState('')
   const [quizTitle, setQuizTitle] = useState('')
-  const [quizQuiestions, setQuizQuestions] = useState([])
+  const [quizQuiestions, setQuizQuestions] = useState(null)
   const [instruction, setInstruction] = useState('')
+  const [result, setResult] = useState([])
+  const [isDone, setIsDone] = useState(false)
 
 
   const params = useParams()
@@ -100,6 +113,64 @@ export default function QuizDetail() {
   // useEffect(() => {
   //   getStudentList()
   // }, []);
+
+  const renderCustomResultPage = (obj) => {  
+    const data = result.length !== 0 ? result : obj
+    // console.log(data.userInput[0])
+    // console.log(obj)
+    saveQuiz(data)
+    return (
+      <>
+        <Typography variant='h6'>
+          You have completed the quiz. You got {data.numberOfCorrectAnswers} out of {data.numberOfQuestions} questions.
+        </Typography>
+        <Typography variant='h6'>
+          You scored {data.correctPoints} out of {data.totalPoints}.
+        </Typography>
+        
+          {data.questions.map((item, index) => 
+            <Grid container sx={style.gridcontainer} justifyContent='space-between'>
+              <Grid container xs={12}>
+                <Typography variant='p'>
+                  {item.question}
+                </Typography>
+              </Grid>
+              {item.answers.map((answer,i) => 
+                <Grid container xs={12} style={{marginTop:8}}>
+                  <Button 
+                    variant={answer == data.userInput[index] ? 'contained' : 'outlined'} 
+                    color={data.userInput[index] == item.correctAnswer ? 'success' : 'error'}
+                    disbaled
+                  >
+                    {answer}
+                  </Button>
+                </Grid>   
+              )}
+              <Grid container xs={12} style={{marginTop:8}}>
+                <Typography variant='p'>
+                  Correct answer : {item.correctAnswer}
+                </Typography>
+              </Grid>
+              <Grid container xs={12} style={{marginTop:8}}>
+                <Typography variant='p'>
+                  Points : {item.point}
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
+        <Grid item sx={{ marginTop: 0.5 }}>
+          <Button 
+            variant="contained" 
+            // disabled={announcementContent ? false : true} 
+            style={style.btnStyleFooter}
+            onClick={() => history.push(`/studentclassroomdetail/${params.id}`)}
+          > 
+            Go To Class Dashboard
+          </Button>
+        </Grid>
+      </>
+    )
+  }
 
   const getStudentList = () => {
     // getDocsByCollection('users').then(data => {
@@ -126,14 +197,28 @@ export default function QuizDetail() {
       })
       
     })
-    getDocsByCollection('quiz').then(data => {
-      data.filter(item => item.quizId === params.quizId).map(item => {
-        setQuizQuestions({questions:item.questions})
-        setQuizTitle(item.title)
-        setDueDate(item.dueDate)
-        setInstruction(item.instruction)
-      })
-      
+    // getDocsByCollection('quiz').then(data => {
+    //   data.filter(item => item.quizId === params.quizId).map(item => {
+    //     setQuizQuestions({questions:item.questions})
+    //     setQuizTitle(item.title)
+    //     setDueDate(item.dueDate)
+    //     setInstruction(item.instruction)
+    //   })
+    // })
+    const studentData = {
+      classCode: params.id,
+      studentId: user.currentUser.uid,
+      quizId: params.quizId
+    }
+    getQuizStudent(studentData).then(item => {
+      setQuizQuestions({questions:item.questions})
+      // setQuizQuestions(item.questions)
+      setQuizTitle(item.title)
+      setDueDate(new Date(item.dueDate.seconds * 1000).toLocaleDateString())
+      setInstruction(item.instruction)
+      setIsDone(item.isDone)
+      setResult(item.result ? item.result : [])
+      setStudentName(item.students)
     })
   }
 
@@ -165,41 +250,28 @@ export default function QuizDetail() {
   //   setQuizQuestions(questionList);
   // }
 
-  const saveQuiz = () => {
-    const data = {
-      ownerId: user.currentUser.uid,
-      classCode: params.id,
-      students: studentName,
-      questions: quizQuiestions,
-      duration: duration,
-      created: Timestamp.now(),
-      dueDate: Timestamp.fromDate(new Date(dueDate)),
-      subject: subject,
-      quizId: params.quizId
-    }
-    createClassDoc('quiz',params.quizId, data).then(() => {
-      studentName.map(student => {
-        const studentData = {
-          ownerId: user.currentUser.uid,
-          classCode: params.id,
-          students: studentName,
-          title: quizTitle,
-          questions: quizQuiestions,
-          duration: duration,
-          created: Timestamp.now(),
-          dueDate: Timestamp.fromDate(new Date(dueDate)),
-          subject: subject,
-          quizId: params.quizId,
-          studentId: student,
-        }
-        saveQuizStudent(studentData)
-      })
-      const timeout = setTimeout(() => {
-        history.push(`/classroomdetail/${params.id}`)
-      }, 2000)
-      return () => clearTimeout(timeout)
-     
-    })
+  const saveQuiz = (result) => {
+      const studentData = {
+        ownerId: user.currentUser.uid,
+        classCode: params.id,
+        students: studentName,
+        title: quizTitle,
+        questions: [...quizQuiestions.questions],
+        duration: duration,
+        created: Timestamp.now(),
+        dueDate: Timestamp.fromDate(new Date(dueDate)),
+        subject: subject,
+        quizId: params.quizId,
+        studentId: user.currentUser.uid,
+        result: result
+      }
+      saveQuizStudent(studentData)
+      saveQuizRecord(studentData)
+    // const timeout = setTimeout(() => {
+    //   // history.push(`/classroomdetail/${params.id}`)
+    //   console.log(studentData)
+    // }, 2000)
+    // return () => clearTimeout(timeout)
   }
 
   const handleChange = (event) => {
@@ -311,7 +383,7 @@ export default function QuizDetail() {
   console.log(quizQuiestions)
 
   return (
-    <Studentdrawer headTitle='Create Quiz' classCode={params.id}>
+    <Studentdrawer headTitle={quizTitle} classCode={params.id}>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
         <Grid container sx={style.gridcontainer} justifyContent='space-between'>
           
@@ -358,7 +430,7 @@ export default function QuizDetail() {
                 <TextField
                 variant="filled"
                 disabled
-                value={new Date(dueDate.seconds * 1000).toLocaleDateString()}
+                value={dueDate}
                 // value={announcementContent}
                 // onChange={handleAnnoucement}
                 
@@ -375,7 +447,7 @@ export default function QuizDetail() {
                 minRows={5}
               />
               <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
-                <Grid item>
+                {/* <Grid item>
                   <IconButton sx={style.iconStyle}>
                     <AddToDriveIcon />
                   </IconButton>
@@ -388,7 +460,7 @@ export default function QuizDetail() {
                   <IconButton sx={style.iconStyle}>
                     <YouTubeIcon />
                   </IconButton>
-                </Grid>
+                </Grid> */}
                 {/* <Grid item sx={{ marginTop: 0.5 }}>
                   <Button 
                     style={style.btnStyle} 
@@ -410,13 +482,18 @@ export default function QuizDetail() {
         </Grid>
         {/* {quizData && quizBody() } */}
 
-        <Grid container sx={style.addBtncontainer} justifyContent='space-between'>
-          <Box sx={{display:'flex', alignItems:'center'}}>
-            {quizQuiestions.length !== 0 && 
-              <Quiz quiz={quizQuiestions} showDefaultResult={true} onComplete={setQuizResult}/>
-            }
-            
-          </Box>
+        <Grid container sx={style.gridcontainer} justifyContent='space-between'>
+          {result.length !== 0 ?
+            renderCustomResultPage()
+            :
+            quizQuiestions &&
+            <Quiz 
+              quiz={quizQuiestions} 
+              showDefaultResult={false} 
+              // onComplete={setQuizResult}
+              customResultPage={renderCustomResultPage}
+            />
+          }
         </Grid>
         
 

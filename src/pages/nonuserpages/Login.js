@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 
 import {
     Box,
@@ -15,7 +15,7 @@ import {
     Radio,
 } from '@mui/material';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Link, useHistory } from 'react-router-dom';
 
@@ -33,7 +33,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
-import { loginInitiate } from '../../redux/actions/userAction';
+import { loginInitiate, logoutInitiate } from '../../redux/actions/userAction';
 import { getUserLogin } from '../../utils/firebaseUtil'
 
 import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
@@ -156,6 +156,7 @@ const style = {
 export default function Login() {
 
     const dispatch = useDispatch();
+    const { user } = useSelector((state) => state);
 
     const history = useHistory();
 
@@ -319,17 +320,15 @@ export default function Login() {
                                 >
                                     Sign in
                                 </Button>
-                                <Typography noWrap component="div" sx={{ marginTop: 2 }}>
-                                    ------ or continue with ------
-                                </Typography>
-                                <Button
+
+                                {/* <Button
                                     variant="outlined"
                                     startIcon={<GoogleIcon />}
                                     sx={{ ...style.marginStyle, ...style.btnColor, ...style.btnGoogle }}
                                     onClick={btnSignInWithGoogle}
                                 >
                                     Sign In With Google+
-                                </Button>
+                                </Button> */}
                             </Grid>
                         </Grid>
                     </Box>

@@ -9,8 +9,10 @@ import {
     Switch,
     FormControlLabel,
     InputAdornment,
-    IconButton
+    IconButton,
 } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 
 import { useHistory } from 'react-router-dom';
@@ -38,6 +40,8 @@ import Input from '../../components/Input'
 
 import NavBar from '../../components/navbarcomponent/NavBar'
 import NewFooter from '../../components/linkcomponent/NewFooter';
+import { loginInitiate } from '../../redux/actions/userAction';
+
 
 
 const style = {
@@ -157,6 +161,7 @@ export default function Register() {
         phone: '',
         password: ''
     })
+    const [loading, setLoading] = useState(false)
 
     const history = useHistory();
 
@@ -257,6 +262,7 @@ export default function Register() {
         //     // dispatch(registerInitiate(values.email, values.password, values.displayName, history));
         // }
         if (validateForm()) {
+            setLoading(true)
             const data = {
                 displayName: values.firstName + ' ' + values.lastName,
                 email: values.email,
@@ -264,12 +270,15 @@ export default function Register() {
                 phone: values.phone
             }
             createUser(values.email, values.password, data).then(() => {
-                // dispatch(loginInitiate(values.email, values.password, history));
-                if (data.isTeacher) {
-                    history.push('/classroom')
-                } else {
-                    history.push('/studentclassroom')
-                }
+                dispatch(loginInitiate(values.email, values.password, history));
+                setTimeout(() => {
+                    if (data.isTeacher) {
+                        history.push('/classroom')
+                    } else {
+                        history.push('/studentclassroom')
+                    }
+                  }, 2000)
+                
 
                 console.log('success')
             })
@@ -287,7 +296,7 @@ export default function Register() {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
                 // Check if user is new
-                const {isNewUser}  = getAdditionalUserInfo(result)
+                const { isNewUser } = getAdditionalUserInfo(result)
                 const userId = result.user.uid
                 const user = result.user;
                 // await handleNew(user);
@@ -315,9 +324,9 @@ export default function Register() {
                 } else {
                     getUserLogin(result.user.email).then(userData => {
                         userData.map(item => {
-                            if(item.isTeacher){
+                            if (item.isTeacher) {
                                 history.push('/classroom')
-                            }else {
+                            } else {
                                 history.push('/studentclassroom')
                             }
                         })
@@ -454,14 +463,14 @@ export default function Register() {
                                             id="outlined-adornment-password"
                                             endAdornment={
                                                 <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label="toggle password visibility"
-                                                    onClick={handleClickShowPassword}
-                                                    onMouseDown={handleMouseDownPassword}
-                                                    edge="end"
-                                                >
-                                                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                                                </IconButton>
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={handleClickShowPassword}
+                                                        onMouseDown={handleMouseDownPassword}
+                                                        edge="end"
+                                                    >
+                                                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
                                                 </InputAdornment>
                                             }
                                             errorMessage={error.password}
@@ -470,11 +479,23 @@ export default function Register() {
                                     <Grid item xs={12} spacing={3}>
                                         <Input
                                             label='Confirm Password'
-                                            type='password'
+                                            type={values.showPassword ? 'text' : 'password'}
                                             onChange={e => handleChange(e)}
                                             value={values.confirmPassword}
                                             name='confirmPassword'
                                             errorMessage={error.confirmPassword}
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={handleClickShowPassword}
+                                                        onMouseDown={handleMouseDownPassword}
+                                                        edge="end"
+                                                    >
+                                                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
                                         />
                                     </Grid>
                                     <Grid
@@ -494,23 +515,34 @@ export default function Register() {
                                                 />
                                             }
                                             label={values.isTeacher ? "Teacher" : "Student"} />
-                                        <Button
+                                        {/* <Button
                                             variant="contained"
                                             onClick={signup}
+                                            sx={{ width: 150, borderRadius: 10 }}
                                         >
                                             Sign up
-                                        </Button>
-                                        <Typography noWrap component="div" sx={style.titleClass}>
+                                        </Button> */}
+                                        <LoadingButton 
+                                            loading={loading} 
+                                            loadingIndicator="Loading..." 
+                                            variant="contained"
+                                            color='primary'
+                                            onClick={signup}
+                                            sx={{ width: 150, borderRadius: 10 }}
+                                        >
+                                            Sign up
+                                        </LoadingButton>
+                                        {/* <Typography noWrap component="div" sx={style.titleClass}>
                                             -- or --
-                                        </Typography>
-                                        <Button
+                                        </Typography> */}
+                                        {/* <Button
                                             variant="outlined"
                                             startIcon={<GoogleIcon />}
                                             sx={{ ...style.marginStyle, ...style.btnColor }}
                                             onClick={btnSignInWithGoogle}
                                         >
                                             Sign In With Google+
-                                        </Button>
+                                        </Button> */}
                                     </Grid>
                                 </Grid>
                             </Box>

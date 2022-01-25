@@ -1,7 +1,7 @@
 import React, { useState , useEffect} from 'react';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
-import {getUser, acceptStudent, removeStudent} from '../../../../../utils/firebaseUtil'
+import {getUser, acceptStudent, removeStudent, getQuizStudent,updateLabScore} from '../../../../../utils/firebaseUtil'
 
 import { useHistory } from 'react-router';
 import { useSelector} from 'react-redux';
@@ -19,10 +19,15 @@ import {
     Table,
     TableHead,
     TableRow,
-    TableBody
+    TableBody,
+    Collapse,InputAdornment,
+    TextField
 } from '@mui/material';
 
+import Input from '../../../../../components/Input'
+
 import { styled } from '@mui/material/styles';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 
 
@@ -106,6 +111,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
+    width: '100%'
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -134,6 +140,11 @@ export default function StudentList() {
 
 
   const [classroom, setClassroom] = useState([]);
+  const [students, setStudents] = useState([])
+  const [title, setTitle] = useState('')
+  const [quizList, setQuizList] = useState([])
+  const [labList, setLabList] = useState([])
+  const [edit, setEdit] = useState(false)
 
 
   //Load classrooms
@@ -146,10 +157,41 @@ export default function StudentList() {
                 setIsTeacher(item.isTeacher)
             })
         })
+        getStudentQuizData()
+        getStudentLabData()
       }
     
     
   }, [user]);
+
+  const getStudentQuizData = () => {
+    const studentQuizCollection = collection(db, "studentRecord")
+    onSnapshot(studentQuizCollection, (snapshot) => {
+      setQuizList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+    })
+  }
+
+  const getStudentLabData = () => {
+    const studentLabCollection = collection(db, "studentRecord")
+    onSnapshot(studentLabCollection, (snapshot) => {
+      console.log(snapshot)
+      console.log(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+      setLabList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+    })
+  }
+
+  const onChangeLabScore = (e, i, index) => {
+    const lab = [...labList];
+    lab[index].laboratory[i].score = e.target.value;
+    // setAddQuestion(questionList)
+    setLabList(lab)
+    const timeout = setTimeout(() => {
+      updateLabScore(lab[index].laboratory[i],i)
+    }, 250)
+
+    // return () => clearTimeout(timeout)
+    
+  }
 
   const getClassData =  () => {
     const classCollection = collection(db, "createclass")
@@ -160,7 +202,10 @@ export default function StudentList() {
         );
         snapshot.docs.map(doc => {
           setClassCode(doc.data().classCode)
+          setTitle(doc.data().className)
+          setStudents(doc.data().students.filter(item => item.isJoin === true))
         })
+        
         // setLoading(false);
     }
     )
@@ -174,6 +219,9 @@ export default function StudentList() {
   const handleRemove = (classCode, userId, studentData) => {
     removeStudent('createclass', classCode, userId , studentData)
   }
+  console.log(students)
+  console.log(quizList)
+  console.log(labList)
 
   const classroomBody = () => {
     return (
@@ -192,25 +240,26 @@ export default function StudentList() {
             <Typography variant="h6" sx={{ marginTop: 1 }}>{item.ownerEmail}</Typography>
           </Grid> */}
           <Grid item xs={12}>
-          <Typography variant="h6" sx={{ marginTop: 1 }}>Student List ({item.students && item.students.length !== 0 ? item.students.length : 0})</Typography>
+          <Typography variant="h6" sx={{ marginTop: 1 }}>Student List ({students && students.length !== 0 ? students.length : 0})</Typography>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
                 <TableRow>
                   <StyledTableCell>Name</StyledTableCell>
-                  <StyledTableCell align="left">Email</StyledTableCell>
-                  <StyledTableCell align="center">Action</StyledTableCell>
+                  {/* <StyledTableCell align="left">Email</StyledTableCell> */}
+                  {/* <StyledTableCell align="center">Action</StyledTableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {item.students && item.students.map((row) => (
+                {students && students.map((row) => (
+                  <>
                   <StyledTableRow key={row.name}>
                     <StyledTableCell component="th" scope="row">
                       {row.displayName}
                     </StyledTableCell>
-                    <StyledTableCell align="left">{row.email}</StyledTableCell>
+                    {/* <StyledTableCell align="left">{row.email}</StyledTableCell> */}
                     <StyledTableCell align="center">
-                      {!row.isJoin ?
+                      {/* {!row.isJoin ?
                         <Button 
                             variant="contained" 
                             color="primary" 
@@ -228,11 +277,104 @@ export default function StudentList() {
                         >
                             Remove
                         </Button>
-                      }
-                      
+                      } */}
                       
                     </StyledTableCell>
                   </StyledTableRow>
+                  <TableRow key={row.name}>
+                    <Collapse in={true} timeout="auto" unmountOnExit>
+                      <Box sx={{ margin: 1 }}>
+                        <Typography variant="h6" gutterBottom component="div">
+                          Quiz
+                        </Typography>
+                        <Table size="small" aria-label="purchases">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Quiz Title</TableCell>
+                              <TableCell>Due Date</TableCell>
+                              <TableCell align="right">Score</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {quizList && quizList.map(item => (
+                              item.quiz && item.quiz.filter(item => item.studentId === row.ownerId).map(data => (
+                                <TableRow>
+                                  <TableCell component="th" scope="row">
+                                    {data.title}
+                                  </TableCell>
+                                  <TableCell>
+                                    {new Date(data.dueDate.seconds * 1000).toLocaleDateString()}
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    {data.result.correctPoints} / {data.result.totalPoints}
+                                  </TableCell>
+                                </TableRow>
+                              ))
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Collapse>
+                  </TableRow>
+                  <TableRow key={row.name}>
+                    <Collapse in={true} timeout="auto" unmountOnExit>
+                      <Box sx={{ margin: 1 }}>
+                        <Typography variant="h6" gutterBottom component="div">
+                          Laboratory
+                        </Typography>
+                        <Table size="small" aria-label="purchases">
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Lab Title</TableCell>
+                              <TableCell align="right">Score</TableCell>
+                              <TableCell align="right">View Lab</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {labList && labList.map((item,index) => (
+                              item.laboratory && item.laboratory.filter(item => item.studentId === row.ownerId).map((data,i) => (
+                                <TableRow>
+                                  <TableCell component="th" scope="row">
+                                    {data.title}
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    <TextField
+                                      id="input-with-icon-textfield"
+                                      label="Score"
+                                      value={data.score}
+                                      onChange={(e) => onChangeLabScore(e,i,index)}
+                                      disabled={!edit ? false : true}
+                                      InputProps={{
+                                        endAdornment: (
+                                          <InputAdornment position="end">
+                                            <EditOutlinedIcon
+                                              onClick={() => setEdit(!edit)}
+                                            />
+                                          </InputAdornment>
+                                        ),
+                                      }}
+                                      variant="standard"
+                                    />
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    <Button
+                                      variant="contained"
+                                      color="primary"
+                                      onClick={() => history.push(`/viewlab/${params.id}/${data.labId}/${data.studentId}`)}
+                                    >
+                                      View
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Box>
+                    </Collapse>
+                  </TableRow>
+                  </>
+                    
                 ))}
               </TableBody>
             </Table>
@@ -245,7 +387,7 @@ export default function StudentList() {
   }
 
     return (
-        <Teacherdrawer classCode={classCode}>
+        <Teacherdrawer classCode={params.id} headTitle={title}>
             {classroom ?
               <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
                   {classroomBody()}
