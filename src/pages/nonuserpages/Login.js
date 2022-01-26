@@ -1,15 +1,12 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import {
     Box,
     Button,
     Typography,
     Grid,
-    TextField,
     InputAdornment,
-    FormControl,
     IconButton,
-    Stack,
     Container,
     FormControlLabel,
     Radio,
@@ -23,17 +20,12 @@ import Input from '../../components/Input'
 import NavBar from '../../components/navbarcomponent/NavBar'
 import NewFooter from '../../components/linkcomponent/NewFooter';
 
-
-import logoRendezvous from '../../assets/img/jpg/RendezvousNewLogo.jpg'
-import GoogleIcon from '@mui/icons-material/Google';
-import EmailIcon from '@mui/icons-material/Email';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import LockIcon from '@mui/icons-material/Lock';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
-import { loginInitiate, logoutInitiate } from '../../redux/actions/userAction';
+import { Helmet } from 'react-helmet';
+
+import { loginInitiate } from '../../redux/actions/userAction';
 import { getUserLogin } from '../../utils/firebaseUtil'
 
 import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
@@ -41,6 +33,10 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } f
 import { setDoc, doc } from '@firebase/firestore';
 
 import { db } from '../../utils/firebase';
+
+import LoadingButton from '@mui/lab/LoadingButton';
+
+import logohelmet from '../../assets/img/png/logoforhelmet.png';
 
 const style = {
     //helper
@@ -156,7 +152,6 @@ const style = {
 export default function Login() {
 
     const dispatch = useDispatch();
-    const { user } = useSelector((state) => state);
 
     const history = useHistory();
 
@@ -164,8 +159,11 @@ export default function Login() {
         email: '',
         password: '',
         showPassword: false,
+        errors: ''
     });
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
+
+    const [loading, setLoading] = useState(false)
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
@@ -181,14 +179,15 @@ export default function Login() {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+    
 
     const btnSignIn = (e) => {
         // e.preventDefault();
         if (values.email === '' || values.password === '') {
             setValues({ ...values, errors: "Please Complete all fields", isLoading: false, password: "" })
-            alert(values.errors);
         }
         else {
+            setLoading(true)
             setValues({ ...values, errors: "", isLoading: true });
             dispatch(loginInitiate(values.email, values.password, history));
         }
@@ -210,24 +209,24 @@ export default function Login() {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
                 // Check if user is new
-                const {isNewUser}  = getAdditionalUserInfo(result)
+                const { isNewUser } = getAdditionalUserInfo(result)
                 const userId = result.user.uid
                 const user = result.user;
                 // handleNew(user);
                 if (isNewUser) {
                     setError(`account doesn't exist`)
-                }else {
+                } else {
                     getUserLogin(result.user.email).then(userData => {
                         userData.map(item => {
-                            if(item.isTeacher){
+                            if (item.isTeacher) {
                                 history.push('/classroom')
-                            }else {
+                            } else {
                                 history.push('/studentclassroom')
                             }
                         })
                     })
                 }
-                
+
                 // history.push('/classroom')
                 // ...
             }).catch((error) => {
@@ -247,6 +246,10 @@ export default function Login() {
 
     return (
         <Container maxWidth disableGutters={true}>
+            <Helmet>
+                <title>Login</title>
+                <link rel="Rendezous Icon" href={logohelmet} />
+            </Helmet>
             <NavBar />
             <Box sx={style.section1}>
                 <Box component={Grid} container justifyContent="center">
@@ -258,7 +261,7 @@ export default function Login() {
                             padding: "100px 80px"
                         }} justifyContent='center' spacing={4}>
                             <Grid item>
-                                <Typography sx={{color:'red'}}>{error}</Typography>
+                                <Typography sx={{ color: 'red' }}>{error}</Typography>
                             </Grid>
                             <Grid item xs={12} spacing={3}>
                                 <Typography sx={style.textStyle}>Email</Typography>
@@ -266,7 +269,7 @@ export default function Login() {
                                     type='text'
                                     value={values.email}
                                     onChange={handleChange('email')}
-                                    name='firstName'
+                                    name='email'
                                 // errorMessage={error.firstName}
                                 />
                             </Grid>
@@ -280,20 +283,21 @@ export default function Login() {
                                     id="outlined-adornment-password"
                                     endAdornment={
                                         <InputAdornment position="end">
-                                          <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                          >
-                                            {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                                          </IconButton>
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                edge="end"
+                                            >
+                                                {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
                                         </InputAdornment>
-                                      }
+                                    }
+                                    errorMessage={values.errors}
                                 />
                             </Grid>
-                            <Grid container justifyContent="space-between" sx={{ paddingLeft: 6 }}>
-                                <FormControlLabel value="best" control={<Radio />} label="Remember me" />
+                            <Grid container justifyContent="flex-end" sx={{ paddingLeft: 6 }}>
+                                {/* <FormControlLabel value="best" control={<Radio />} label="Remember me" /> */}
                                 <Link style={{ marginTop: 4, textDecoration: "none" }}
                                     to='/forgot'>Forget Password?</Link>
                             </Grid>
@@ -307,19 +311,21 @@ export default function Login() {
                                     Don't have an account.
                                     <Button
                                         variant="text"
-                                        sx={{ fontSize: 20, marginTop: -.5 }}
+                                        sx={{ fontSize: 20, marginTop: -.5, fontWeight: "bold" }}
                                         onClick={() => history.push('/register')}
                                     >Sign up
                                     </Button>
                                 </Typography>
-                                <Button
+                                <LoadingButton
+                                    loading={loading}
+                                    loadingIndicator="Loading..."
                                     variant="contained"
-                                    // onClick={signup}
+                                    color='primary'
                                     onClick={(e) => btnSignIn(e)}
-                                    sx={style.btnStyle}
+                                    sx={{ width: 150, borderRadius: 10, fontWeight: "bold" }}
                                 >
                                     Sign in
-                                </Button>
+                                </LoadingButton>
 
                                 {/* <Button
                                     variant="outlined"

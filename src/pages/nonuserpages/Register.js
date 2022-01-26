@@ -42,7 +42,9 @@ import NavBar from '../../components/navbarcomponent/NavBar'
 import NewFooter from '../../components/linkcomponent/NewFooter';
 import { loginInitiate } from '../../redux/actions/userAction';
 
+import { Helmet } from 'react-helmet';
 
+import logohelmet from '../../assets/img/png/logoforhelmet.png';
 
 const style = {
     marginTopButton: {
@@ -277,9 +279,7 @@ export default function Register() {
                     } else {
                         history.push('/studentclassroom')
                     }
-                  }, 2000)
-                
-
+                }, 1000)
                 console.log('success')
             })
         }
@@ -382,6 +382,10 @@ export default function Register() {
 
     return (
         <Container maxWidth disableGutters={true}>
+            <Helmet>
+                <title>Register</title>
+                <link rel="Rendezous Icon" href={logohelmet}/>
+            </Helmet>
             <NavBar />
             <Box sx={style.section1}>
                 <Box component={Grid} container justifyContent="center">
@@ -394,7 +398,7 @@ export default function Register() {
                         marginBottom: {
                             xs: 2,
                             sm: 0,
-                            md: 0
+                            md: 4
                         }
                     }}>Create Account</Typography>
                 </Box>
@@ -505,7 +509,7 @@ export default function Register() {
                                         alignItems="center"
                                     >
                                         <FormControlLabel
-                                            sx={{ padding: '10px 0' }}
+                                            sx={{ padding: '10px 0', }}
                                             control={
                                                 <Switch
                                                     defaultChecked
@@ -522,13 +526,13 @@ export default function Register() {
                                         >
                                             Sign up
                                         </Button> */}
-                                        <LoadingButton 
-                                            loading={loading} 
-                                            loadingIndicator="Loading..." 
+                                        <LoadingButton
+                                            loading={loading}
+                                            loadingIndicator="Loading..."
                                             variant="contained"
                                             color='primary'
                                             onClick={signup}
-                                            sx={{ width: 150, borderRadius: 10 }}
+                                            sx={{ width: 150, borderRadius: 10, fontWeight: 'bold' }}
                                         >
                                             Sign up
                                         </LoadingButton>

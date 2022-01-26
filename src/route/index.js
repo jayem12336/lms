@@ -4,13 +4,13 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 
 import theme from '../utils/theme';
 
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeProvider, CircularProgress } from '@mui/material';
 
 import { useDispatch, useSelector } from "react-redux";
 
 import { auth } from '../utils/firebase';
 
-import { setUser , getUserId, logoutInitiate} from '../redux/actions/userAction';
+import { setUser } from '../redux/actions/userAction';
 
 import { getUser } from '../utils/firebaseUtil'
 
@@ -33,11 +33,8 @@ import NotFoundPage from '../pages/nonuserpages/NotFound';
 
 //main classroom
 import ClassAnnouncement from '../pages/userpages/mainclassroom/classlinks/classannouncement/ClassAnnouncement';
-import ClassAnnouncementList from '../pages/userpages/mainclassroom/classlinks/classannouncement';
 import ClassJoinMeet from '../pages/userpages/mainclassroom/classlinks/classjoinmeet/ClassJoinMeet';
-import ClassPeople from '../pages/userpages/mainclassroom/classlinks/classpeople/ClassPeople';
 import { getClassroomData } from '../redux/actions/classAction';
-import ClassWork from '../pages/userpages/mainclassroom/classlinks/classwork/ClassWork';
 import ClassList from '../pages/userpages/mainclassroom/classlinks/classList';
 import ClassListDetail from '../pages/userpages/mainclassroom/classlinks/classList/ClassDetail';
 // import ClassListStudent from '../pages/userpages/mainclassroom/student/classListStudent';
@@ -45,10 +42,7 @@ import Laboratory from '../pages/userpages/mainclassroom/classlinks/classLaborat
 import LaboratoryDetail from '../pages/userpages/mainclassroom/classlinks/classLaboratory/LabDetails'
 import LaboratoryStudent from '../pages/userpages/mainclassroom/classlinks/studentLaboratory/Lab'
 import LaboratoryView from '../pages/userpages/mainclassroom/classlinks/classLaboratory/ViewWork'
-import LabList from '../pages/userpages/mainclassroom/classlinks/classLaboratory'
-import ClassQuiz from '../pages/userpages/mainclassroom/classlinks/classQuiz'
 import ClassNewQuiz from '../pages/userpages/mainclassroom/classlinks/classQuiz/NewQuiz'
-import ClassQuizList from '../pages/userpages/mainclassroom/classlinks/classQuiz/ClassQuizList'
 import QuizDetail from '../pages/userpages/mainclassroom/classlinks/classQuiz/QuizDetail'
 import Profile from '../pages/userpages/mainclassroom/classlinks/profile'
 import Calendar from '../pages/userpages/mainclassroom/classlinks/calendar'
@@ -68,15 +62,17 @@ import StudentClassJoinMeet from '../pages/userpages/mainclassroom/student/class
 import StudentList from '../pages/userpages/mainclassroom/student/studentList'
 
 
-
-
-
 export default function RouterComponent() {
 
     const dispatch = useDispatch();
 
     const { user, classUser } = useSelector((state) => state);
-    const [isTeacher, setIsTeacher]= useState(false)
+    const [isTeacher, setIsTeacher] = useState(false);
+
+    const [values, setValues] = useState({
+        isAuthenticated: false,
+        isLoading: true,
+      })
 
     useEffect(() => {
         auth.onAuthStateChanged((authUser) => {
@@ -84,92 +80,108 @@ export default function RouterComponent() {
             if (authUser) {
                 dispatch(setUser(authUser));
                 dispatch(getClassroomData());
+                setValues({ ...values, isLoading: false })
             } else {
                 dispatch(setUser(null));
+                setValues({ ...values, isLoading: false })
             }
         })
     }, [dispatch])
 
     useEffect(() => {
-        if(user.currentUser){
+        if (user.currentUser) {
             getUser().then(data => {
-                if(data){
-                        data.map(item => {
+                if (data) {
+                    data.map(item => {
                         setIsTeacher(item.isTeacher)
                     })
                 }
-                
             })
         }
-            
+
     }, [user])
 
     // console.log(user);
 
     console.log(classUser.classData)
-    console.log('asdasd',user.currentUser)
-    console.log('oijoiu',isTeacher)
+    console.log('asdasd', user.currentUser)
+    console.log('oijoiu', isTeacher)
     console.log(window.sessionStorage.getItem('user') === 'false')
     // console.log(sessionStorage.getItem("session"))
 
     const THEME = createTheme(theme);
 
-    const PublicRoute = ({component: Component, restricted, ...rest}) => {
+    const PublicRoute = ({ component: Component, restricted, ...rest }) => {
         // sessionStorage.clear();
         return (
             // restricted = false meaning public route
             // restricted = true meaning restricted route
             <Route {...rest} render={props => (
-                user.currentUser && window.sessionStorage.getItem('id') !== null && window.sessionStorage.getItem('user') !== null?
-                    <Redirect to={window.sessionStorage.getItem('user') === 'true' ? `/classroom` : `/studentclassroom` } />
-                : <Component {...props} />
+                user.currentUser && window.sessionStorage.getItem('id') !== null && window.sessionStorage.getItem('user') !== null ?
+                    <Redirect to={window.sessionStorage.getItem('user') === 'true' ? `/classroom` : `/studentclassroom`} />
+                    : <Component {...props} />
             )} />
         );
     };
 
-    const PrivateRoute = ({component: Component, ...rest}) => {
+    const PrivateRoute = ({ component: Component, ...rest }) => {
         // if (user) {
         //     dispatch(logoutInitiate());
         // }
         return (
-    
+
             // Show the component only when the user is logged in
             // Otherwise, redirect the user to /signin page
             <Route {...rest} render={props => (
                 user.currentUser && window.sessionStorage.getItem('id') !== null ?
                     <Component {...props} />
-                : <Redirect to="/404" />
+                    : <Redirect to="/404" />
             )} />
         );
     };
 
-    const TeacherRoute = ({component: Component, ...rest}) => {
+    const TeacherRoute = ({ component: Component, ...rest }) => {
         return (
-    
+
             // Show the component only when the user is logged in
             // Otherwise, redirect the user to /signin page
             <Route {...rest} render={props => (
                 user.currentUser && window.sessionStorage.getItem('id') !== null && window.sessionStorage.getItem('user') === 'true' ?
                     <Component {...props} />
-                : <Redirect to="/404" />
+                    : <Redirect to="/404" />
             )} />
         );
     };
 
-    const StudentRoute = ({component: Component, ...rest}) => {
+    const StudentRoute = ({ component: Component, ...rest }) => {
         return (
-    
+
             // Show the component only when the user is logged in
             // Otherwise, redirect the user to /signin page
             <Route {...rest} render={props => (
                 user.currentUser && window.sessionStorage.getItem('id') !== null && window.sessionStorage.getItem('user') === 'false' ?
                     <Component {...props} />
-                : <Redirect to="/404" />
+                    : <Redirect to="/404" />
             )} />
         );
     };
-    
 
+    if (values.isLoading) {
+        return (
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                // flexWrap: 'wrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                justifyItems: 'center',
+                height: '100vh',
+                width: '100vw'
+            }}>
+                <CircularProgress size={200} sx={{color: '#4BAEA6'}}/>
+            </div>
+        );
+    }
     return (
         <ThemeProvider theme={THEME}>
             <Router>
@@ -191,11 +203,11 @@ export default function RouterComponent() {
                     <Route component={DashboardAbout} path="/dashboardabout" exact /> */}
                     {/* <Route component={ClassSetting} path="/classsetting/:id" exact /> */}
 
-                    
+
                     {/* <Route component={ClassAnnouncementList} path="/classannouncement/" exact /> */}
                     {/* <Route component={ClassQuizList} path="/quiz/" exact /> */}
                     {/* <Route component={ClassWork} path="/classwork" exact /> */}
-                    
+
                     {/* teacher router */}
                     <PrivateRoute component={Profile} path="/profile" exact />
                     <PrivateRoute component={Calendar} path="/calendar" exact />
@@ -203,10 +215,10 @@ export default function RouterComponent() {
                     <PrivateRoute component={Files} path="/files/" exact />
 
                     {/* teacher mainclassroom */}
-                   
-             
-                  
-                  
+
+
+
+
                     <TeacherRoute component={ClassList} path="/classroom" exact />
                     <TeacherRoute component={ClassJoinMeet} path="/classjoinmeet/:id" exact />
                     <TeacherRoute component={ClassListDetail} path="/classroomdetail/:id" exact />
@@ -219,11 +231,11 @@ export default function RouterComponent() {
                     <TeacherRoute component={ClassNewQuiz} path="/quiz/:id/:quizId" exact />
                     <TeacherRoute component={QuizDetail} path="/quizdetail/:id/:quizId" exact />
                     <TeacherRoute component={ClassJoinMeet} path="/classjoinmeet/:id" exact />
-                    <TeacherRoute component={ClassSetting} path="/classsetting/:id" exact /> 
-                   
-                   
-                    
-                    
+                    <TeacherRoute component={ClassSetting} path="/classsetting/:id" exact />
+
+
+
+
                     {/*student router */}
                     {/* <Route component={ClassListStudent} path="/studentclassroom" exact /> */}
                     <StudentRoute component={LaboratoryStudent} path="/studentlaboratory/:id" exact />
@@ -234,11 +246,11 @@ export default function RouterComponent() {
                     <StudentRoute component={StudentClassAnnouncement} path="/studentclassannouncement/:id" exact />
                     <StudentRoute component={StudentClassJoinMeet} path="/studentclassjoinmeet/:id" exact />
                     <StudentRoute component={StudentList} path="/classstudentlist/:id" exact />
-                    
 
-                    <Route component={NotFound} path='/'/>
-                    <Route component={NotFoundPage} path='/404'/>
-                    
+
+                    <Route component={NotFound} path='/' />
+                    <Route component={NotFoundPage} path='/404' />
+
 
                     {/* common user page */}
                     {/* <Route component={LabList} path="/laboratory" exact /> */}

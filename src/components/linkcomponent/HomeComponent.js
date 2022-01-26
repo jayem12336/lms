@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getDocsByCollection } from '../../utils/firebaseUtil'
 
+import { getDocsByCollection } from '../../utils/firebaseUtil';
 import { useTheme } from '@mui/material/styles';
-import aboutImage from '../../assets/img/jpg/about.jpg'
 import {
     Box,
     Button,
@@ -12,7 +11,6 @@ import {
 } from '@mui/material';
 
 import NavBar from '../navbarcomponent/NavBar'
-import LiveTvIcon from '@mui/icons-material/LiveTv';
 
 const style = {
     //helper

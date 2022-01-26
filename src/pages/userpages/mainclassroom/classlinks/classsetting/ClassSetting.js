@@ -6,6 +6,8 @@ import Input from '../../../../../components/Input';
 
 import { useSelector } from 'react-redux';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 import {
     Typography,
     Box,
@@ -84,6 +86,11 @@ export default function ClassSetting() {
 
     const [classCode, setClassCode] = useState('')
 
+    const [classname, setClassName] = useState('')
+    const [room, setRoom] = useState('')
+    const [section, setSection] = useState('')
+    const [subject, setSubject] = useState('')
+
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
@@ -112,6 +119,10 @@ export default function ClassSetting() {
             );
             snapshot.docs.map(doc => {
                 setClassCode(doc.data().classCode)
+                setClassName(doc.data().className)
+                setRoom(doc.data().room)
+                setSection(doc.data().section)
+                setSubject(doc.data().subject)
             })
             // setLoading(false);
         }
@@ -120,7 +131,11 @@ export default function ClassSetting() {
     }
 
     return (
-        <TeacherDrawer classCode={classCode}>
+        <TeacherDrawer classCode={classCode} headTitle={classname} headRoom={room} headSubject={subject} headSection={section}>
+            <Helmet>
+                <title>Settings</title>
+                <link rel="Classroom Icon" href={logohelmetclass} />
+            </Helmet>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
                 <Grid container justifyContent="center" sx={style.gridcontainer}>
                     <Grid item sm>
@@ -129,7 +144,7 @@ export default function ClassSetting() {
                                 <Typography>Class Code</Typography>
                             </Grid>
                             <Grid container justifyContent="center" sx={{ marginTop: 1, paddingLeft: 5, paddingRight: 5 }}>
-                                <Input value="Addcb4" />
+                                <Input value={classCode} />
                             </Grid>
                         </Grid>
                         <Grid container justifyContent="flex-start" sx={{

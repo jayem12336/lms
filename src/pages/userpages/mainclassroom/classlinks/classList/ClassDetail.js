@@ -6,6 +6,8 @@ import { getUser, acceptStudent, removeStudent, getDocsByCollection } from '../.
 import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import {
   Typography,
@@ -151,6 +153,9 @@ export default function ClassListDetail() {
   const [labList, setLabList] = useState([])
   const [quizList, setQuizList] = useState([])
   const [title, setTitle] = useState('')
+  const [room, setRoom] = useState('')
+  const [section, setSection] = useState('')
+  const [subject, setSubject] = useState('')
   const [displayName, setDisplayName] = useState('')
 
   const open = Boolean(anchorEl);
@@ -263,6 +268,9 @@ export default function ClassListDetail() {
       snapshot.docs.map(doc => {
         setClassCode(doc.data().classCode)
         setTitle(doc.data().className)
+        setRoom(doc.data().room)
+        setSection(doc.data().section)
+        setSubject(doc.data().subject)
       })
       // setLoading(false);
     }
@@ -350,20 +358,6 @@ export default function ClassListDetail() {
           </Box>
 
           <Box component={Grid} container justifyContent="center" >
-            <Grid container sx={style.gridcontainerClass} >
-              <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
-                <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Classroom name : {item.className}</Typography>
-              </Grid>
-              <Grid container xs={12} direction='column'>
-                <Typography variant="p" sx={{ marginTop: 1 }}>section: {item.section}</Typography>
-                <Typography variant="p" sx={{ marginTop: 1 }}>subject: {item.subject}</Typography>
-                <Typography variant="p" sx={{ marginTop: 1 }}>room: {item.room}</Typography>
-              </Grid>
-            </Grid>
-
-          </Box>
-
-          <Box component={Grid} container justifyContent="center" >
             <Grid container sx={style.gridcontainerClass} style={{ padding: 0 }}>
               <Typography variant="h6">Laboratory List</Typography>
             </Grid>
@@ -390,7 +384,7 @@ export default function ClassListDetail() {
               <Typography variant="h6">Quiz List</Typography>
             </Grid>
 
-            {quizList.length !== 0 ? quizList.map(item => 
+            {quizList.length !== 0 ? quizList.map(item =>
               <Grid container sx={style.gridcontainerCard} onClick={() => history.push(`/quizdetail/${item.classCode}/${item.quizId}`)}>
                 <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
                   <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Quiz name : {item.title}</Typography>
@@ -422,7 +416,11 @@ export default function ClassListDetail() {
   console.log(classCode)
 
   return (
-    <Teacherdrawer classCode={params.id} headTitle={title}>
+    <Teacherdrawer classCode={params.id} headTitle={title} headRoom={room} headSubject={subject} headSection={section}>
+      <Helmet>
+        <title>ClassWork</title>
+        <link rel="Classroom Icon" href={logohelmetclass} />
+      </Helmet>
       {classroom ?
         <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
           {classroomBody()}

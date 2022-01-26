@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-    Typography,
-    Box,
-    Grid,
-    Avatar,
-    TextField,
-    Button,
-    IconButton
+  Typography,
+  Box,
+  Grid,
+  Avatar,
+  TextField,
+  Button,
+  IconButton
 } from '@mui/material';
 
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
 import { Timestamp } from 'firebase/firestore';
 
-import {getAnnouncement, getDocsByCollection, getUser, createDoc} from '../../../../../utils/firebaseUtil';
-import { useParams} from 'react-router-dom';
+import { getAnnouncement, getDocsByCollection, getUser, createDoc } from '../../../../../utils/firebaseUtil';
+import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
-
-
 
 import AddToDriveIcon from '@mui/icons-material/AddToDrive';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -25,26 +23,26 @@ import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 
 const style = {
-    gridcontainer: {
-        display: "flex",
-        boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
-        marginTop: 5,
-        padding: 2,
-        maxWidth: 1000
-    },
-    main: {
-        display: "flex",
-        cursor: "pointer",
-        alignItems: "center",
-    },
-    iconStyle: {
-        color: (theme) => theme.palette.primary.main,
-        margin: 0.5
-    },
-    btnStyle: {
-        width: 80,
-        marginLeft: 5
-    }
+  gridcontainer: {
+    display: "flex",
+    boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
+    marginTop: 5,
+    padding: 2,
+    maxWidth: 1000
+  },
+  main: {
+    display: "flex",
+    cursor: "pointer",
+    alignItems: "center",
+  },
+  iconStyle: {
+    color: (theme) => theme.palette.primary.main,
+    margin: 0.5
+  },
+  btnStyle: {
+    width: 80,
+    marginLeft: 5
+  }
 }
 
 export default function ClassAnnouncementList() {
@@ -54,6 +52,9 @@ export default function ClassAnnouncementList() {
   const [announcementData, setAnnouncementData] = useState();
   const [userId, setUserId] = useState('');
   const [className, setClassName] = useState('')
+  const [room, setRoom] = useState('')
+  const [section, setSection] = useState('')
+  const [subject, setSubject] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [announcementContent, setAnnoucncementContent] = useState('')
 
@@ -61,43 +62,46 @@ export default function ClassAnnouncementList() {
   const { user } = useSelector((state) => state);
 
   useEffect(() => {
-    
-    if(Object.keys(user.currentUser).length !== 0){
+
+    if (Object.keys(user.currentUser).length !== 0) {
       getUser().then(item => {
         item.map(data => {
           setUserId(data.ownerId)
           setOwnerName(data.displayName)
         })
-          
+
       })
       getClassData()
-      
-  }
+
+    }
     getDataAnnouncement()
   }, [user]);
 
   const getClassData = () => {
     getDocsByCollection('createclass')
-    .then(item => {
+      .then(item => {
         const data = item.filter(item => item.classCode === params.id)
         data.map(item => {
           setClassName(item.className)
+          setRoom(item.room)
+          setSection(item.section)
+          setSubject(item.subject)
         })
-    })
+      })
   }
 
   const getDataAnnouncement = () => {
     getAnnouncement('announcement', 'created')
-    .then(item => {
-      // const data = item.filter(item => item.classCode === params.id)
-      setAnnouncementData(item)
-    })
+      .then(item => {
+        // const data = item.filter(item => item.classCode === params.id)
+        setAnnouncementData(item)
+      })
   }
 
   const handleAnnoucement = (e) => {
     setAnnoucncementContent(e.target.value)
   }
-  
+
   const saveAnnoucement = () => {
     const data = {
       body: announcementContent,
@@ -106,7 +110,7 @@ export default function ClassAnnouncementList() {
       ownerId: user.currentUser.uid,
       ownerName: user.currentUser.displayName
     }
-    createDoc('announcement',data).then(() => {
+    createDoc('announcement', data).then(() => {
       setAnnoucncementContent('')
       getDataAnnouncement()
     })
@@ -118,7 +122,7 @@ export default function ClassAnnouncementList() {
   }
 
   const announcementBody = () => {
-    return announcementData && announcementData.map(item => 
+    return announcementData && announcementData.map(item =>
       <Grid container sx={style.gridcontainer} justifyContent='space-between'>
         <Grid xs={12} item>
           <Typography>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
@@ -129,7 +133,7 @@ export default function ClassAnnouncementList() {
         <Grid item xs={12}>
           <Typography sx={{ marginTop: 2 }}>{item.body}</Typography>
         </Grid>
-      
+
         {/* <Grid xs={12} justifyContent='flex-end' container>
           <Button 
             variant="contained" 
@@ -144,8 +148,9 @@ export default function ClassAnnouncementList() {
     )
   }
 
+
   return (
-    <Teacherdrawer headTitle={className} classCode={params.id}>
+    <Teacherdrawer headTitle={className} classCode={params.id} headRoom={room} headSubject={subject} headSection={section} >
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
         {/* <Grid container sx={style.gridcontainer}>
           {showInput ? (
@@ -200,7 +205,7 @@ export default function ClassAnnouncementList() {
             </Grid>
           )}
         </Grid> */}
-        {announcementData && announcementBody() }
+        {announcementData && announcementBody()}
       </Box>
     </Teacherdrawer>
   )

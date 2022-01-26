@@ -14,10 +14,9 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import Input from '../../components/Input'
 import NavBar from '../../components/navbarcomponent/NavBar'
 import NewFooter from '../../components/linkcomponent/NewFooter';
+import logohelmet from '../../assets/img/png/logoforhelmet.png';
 
-
-import EmailIcon from '@mui/icons-material/Email';
-
+import { Helmet } from 'react-helmet';
 
 const style = {
     //helper
@@ -49,8 +48,8 @@ const style = {
         display: 'flex'
     },
     btnStyle: {
-        height: 50,
-        width: 200,
+        height: 40,
+        width: 150,
         fontSize: 23,
         borderRadius: 100,
         textTransform: 'none',
@@ -112,6 +111,10 @@ export default function NewForgot() {
 
     return (
         <Container maxWidth disableGutters={true}>
+            <Helmet>
+                <title>Forgot</title>
+                <link rel="Rendezous Icon" href={logohelmet} />
+            </Helmet>
             <NavBar />
             <Box sx={style.section1}>
                 <Box component={Grid} container justifyContent="center">
@@ -143,7 +146,7 @@ export default function NewForgot() {
                                     onClick={forgotBtn}
                                     sx={style.btnStyle}
                                 >
-                                    Send Email
+                                    Recover
                                 </Button>
                             </Grid>
                         </Grid>

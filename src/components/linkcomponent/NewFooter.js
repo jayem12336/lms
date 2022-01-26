@@ -92,9 +92,11 @@ export default function Footer() {
                                 sm: 0,
 
                             },
-                            fontSize: 25
+                            
                         }}>
-                        Rendezvous &reg; {new Date().getFullYear()}
+                        <Typography sx={{fontSize: 25, fontWeight: 500}}>
+                            Rendezvous &reg; {new Date().getFullYear()}
+                        </Typography>
                     </Box>
                 </Container>
             </Box>

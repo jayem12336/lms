@@ -200,7 +200,7 @@ export default function StudentDrawer(props) {
             <CssBaseline />
             <AppBar position="fixed" open={matchMD ? false : open}>
                 <Toolbar>
-                    {matchMD ? <MobileViewTeachersDrawer props={props}/> :
+                    {matchMD ? <MobileViewTeachersDrawer props={props} /> :
                         <>
                             <IconButton
                                 color="inherit"
@@ -216,12 +216,28 @@ export default function StudentDrawer(props) {
                             </IconButton>
                         </>
                     }
-                    <Grid container justifyContent="flex-start">
-                        <Typography variant="h6" noWrap component="div">
-                            {/* {classUser.classData.className} */}
-                            {props.headTitle}
+                    <Grid container justifyContent="center">
+                        <Typography variant="h6" noWrap component="div" >
+                            {/* {classUser.classData.subject} */}
+                            Section: {props.headSection} |
                             {/* test */}
                         </Typography>
+                        <Typography variant="h6" noWrap component="div">
+                            {/* {classUser.classData.className} */}
+                            ClassName: {props.headTitle} |
+                            {/* test */}
+                        </Typography>
+                        <Typography variant="h6" noWrap component="div">
+                            {/* {classUser.classData.room} */}
+                            Room: {props.headRoom}|
+                            {/* test */}
+                        </Typography>
+                        <Typography variant="h6" noWrap component="div">
+                            {/* {classUser.classData.subject} */}
+                            Subject: {props.headSubject}
+                            {/* test */}
+                        </Typography>
+
                     </Grid>
                 </Toolbar>
                 {loading ?
@@ -365,15 +381,13 @@ export default function StudentDrawer(props) {
                             </Box>
                             <Box sx={style.listHover}>
                                 <ListItem
-                                    button
-                                    component={Link}
-                                    to={`/settings`}
+
                                     sx={style.listItemStyle}
                                 >
                                     <ListItemIcon> <SettingsIcon color="primary" sx={style.iconStyle} /></ListItemIcon>
                                     <ListItemText>
                                         <Typography sx={style.textStyle}>
-                                            Settings
+                                            Unenroll
                                         </Typography>
                                     </ListItemText>
                                 </ListItem>

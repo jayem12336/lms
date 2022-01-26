@@ -5,6 +5,9 @@ import { getUser, acceptStudent, removeStudent, getDocsByCollection } from '../.
 
 import { useSelector } from 'react-redux';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
+
 import {
     Typography,
     Box,
@@ -75,6 +78,11 @@ export default function ClassJoinMeet() {
 
     const [classCode, setClassCode] = useState('')
 
+    const [classname, setClassName] = useState('')
+    const [room, setRoom] = useState('')
+    const [section, setSection] = useState('')
+    const [subject, setSubject] = useState('')
+
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
@@ -103,6 +111,11 @@ export default function ClassJoinMeet() {
             );
             snapshot.docs.map(doc => {
                 setClassCode(doc.data().classCode)
+                setClassName(doc.data().className)
+                setRoom(doc.data().room)
+                setSection(doc.data().section)
+                setSubject(doc.data().subject)
+
             })
             // setLoading(false);
         }
@@ -111,7 +124,11 @@ export default function ClassJoinMeet() {
     }
 
     return (
-        <TeacherDrawer classCode={classCode}>
+        <TeacherDrawer classCode={classCode} headRoom={room} headSubject={subject} headSection={section} headTitle={classname}>
+            <Helmet>
+                <title>Classroom Meeting</title>
+                <link rel="Classroom Icon" href={logohelmetclass} />
+            </Helmet>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
                 <Grid container justifyContent="center" sx={style.gridcontainer}>
                     <Grid item sm>
@@ -139,7 +156,7 @@ export default function ClassJoinMeet() {
                         <Grid container sx={style.imageContainer}>
                             <Box
                                 component="img"
-                                src={Image} 
+                                src={Image}
                                 alt="Gmeet Image"
                                 sx={style.imgStyle}
                             />

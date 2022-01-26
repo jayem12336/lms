@@ -35,6 +35,9 @@ import CreateLabDialog from '../classwork/CreateLabDialog';
 import CreateClass from './CreateClass';
 import JoinClass from './JoinClass';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
+
 const style = {
     gridcontainer: {
         display: "flex",
@@ -94,7 +97,7 @@ const style = {
     txtContainer: {
         width: 500
     },
-    headerClass : {
+    headerClass: {
         backgroundColor: '#4BAEA6',
         width: '112%',
         marginLeft: -2,
@@ -177,13 +180,13 @@ export default function ClassList() {
         if (Object.keys(user.currentUser).length !== 0) {
             getClassData()
             getUser().then(data => {
-                if(data){
+                if (data) {
                     data.map(item => {
                         setIsTeacher(item.isTeacher)
                         setDisplayName(item.displayName)
                     })
                 }
-                
+
             })
         }
 
@@ -210,7 +213,7 @@ export default function ClassList() {
                 <Box component={Grid} container justifyContent="center">
                     <Grid container sx={style.gridcontainerClass}>
                         {classroom && classroom.map(item =>
-                            <Box sx={{ width:300, boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)', padding: 2, margin: 2, }}>
+                            <Box sx={{ width: 300, boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)', padding: 2, margin: 2, }}>
                                 <Box sx={style.headerClass} key={item.id} container justifyContent="center">
                                     <Typography sx={style.linkStyle} onClick={() => history.push(`/classroomdetail/${item.classCode}`)}>
                                         {item.className}
@@ -222,7 +225,7 @@ export default function ClassList() {
                                     <Typography variant="h6" sx={{ marginTop: 1 }}>{item.room}</Typography>
                                 </Box>
                                 <Box component={Grid} container justifyContent="center" sx={{ marginTop: 5 }}>
-                                    <Button variant="contained" sx={{backgroundColor: '#FFBD1F'}}> Go inside </Button>
+                                    <Button variant="contained" sx={{ backgroundColor: '#FFBD1F' }}> Go inside </Button>
                                 </Box>
                             </Box>
                         )}
@@ -236,6 +239,10 @@ export default function ClassList() {
 
     return (
         <Classdrawer headTitle='Classroom'>
+            <Helmet>
+                <title>Teacher Dashboard</title>
+                <link rel="Classroom Icon" href={logohelmetclass} />
+            </Helmet>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
                 <Grid container sx={style.gridcontainer} justifyContent="space-between">
                     <Grid item>

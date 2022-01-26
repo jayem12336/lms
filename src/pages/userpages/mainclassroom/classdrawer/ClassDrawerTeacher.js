@@ -216,12 +216,28 @@ export default function TeacherDrawer(props) {
                             </IconButton>
                         </>
                     }
-                    <Grid container justifyContent="flex-start">
-                        <Typography variant="h6" noWrap component="div">
-                            {/* {classUser.classData.className} */}
-                            {props.headTitle}
+                    <Grid container justifyContent="center">
+                        <Typography variant="h6" noWrap component="div" >
+                            {/* {classUser.classData.subject} */}
+                            Section: {props.headSection} |
                             {/* test */}
                         </Typography>
+                        <Typography variant="h6" noWrap component="div">
+                            {/* {classUser.classData.className} */}
+                            ClassName: {props.headTitle} |
+                            {/* test */}
+                        </Typography>
+                        <Typography variant="h6" noWrap component="div">
+                            {/* {classUser.classData.room} */}
+                            Room: {props.headRoom}|
+                            {/* test */}
+                        </Typography>
+                        <Typography variant="h6" noWrap component="div">
+                            {/* {classUser.classData.subject} */}
+                            Subject: {props.headSubject}
+                            {/* test */}
+                        </Typography>
+
                     </Grid>
                 </Toolbar>
                 {loading ?

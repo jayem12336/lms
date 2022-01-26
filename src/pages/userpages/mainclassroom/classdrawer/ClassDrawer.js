@@ -134,7 +134,7 @@ const style = {
         fontSize: 30,
     },
     headerTitle: {
-        fontSize: 27,
+        fontSize: 22,
         fontWeight: 600
     }
 }

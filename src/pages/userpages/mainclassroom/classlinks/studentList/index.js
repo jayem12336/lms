@@ -10,6 +10,8 @@ import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 
 import AddUserDialog from './AddUserDialog'
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import {
   Typography,
@@ -140,10 +142,13 @@ export default function StudentList() {
 
   const [addUserOpen, SetAddUserOpen] = useState(false);
   const [title, setTitle] = useState('')
+  const [room, setRoom] = useState('')
+  const [section, setSection] = useState('')
+  const [subject, setSubject] = useState('')
 
   const handleClose = () => {
     setAnchorEl(null);
-};
+  };
 
   const handleAddUserOpen = () => {
     SetAddUserOpen(!addUserOpen);
@@ -174,6 +179,9 @@ export default function StudentList() {
       snapshot.docs.map(doc => {
         setClassCode(doc.data().classCode)
         setTitle(doc.data().className)
+        setRoom(doc.data().room)
+        setSection(doc.data().section)
+        setSubject(doc.data().subject)
       })
       // setLoading(false);
     }
@@ -196,28 +204,20 @@ export default function StudentList() {
       <Box component={Grid} container justifyContent="center" >
         {classroom && classroom.map(item =>
           <Grid container sx={style.gridcontainerClass} >
-            <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
-              <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Classroom name : {item.className}</Typography>
-            </Grid>
-            <Grid container xs={12} direction='column'>
-              <Typography variant="p" sx={{ marginTop: 1 }}>section: {item.section}</Typography>
-              <Typography variant="p" sx={{ marginTop: 1 }}>subject: {item.subject}</Typography>
-              <Typography variant="p" sx={{ marginTop: 1 }}>room: {item.room}</Typography>
-            </Grid>
             {/* <Grid item xs={12}>
             <Typography variant="h6" sx={{ marginTop: 1 }}>{item.ownerEmail}</Typography>
           </Grid> */}
             <Grid item xs={12}>
-              <Typography variant="h6" sx={{ marginTop: 1 }}>Student List ({item.students && item.students.length !== 0 ? item.students.length : 0})</Typography>
+              <Typography variant="h6" sx={{ marginTop: 1, textAlign: "center", fontWeight: "bold", fontSize: 30 }}>Student List ({item.students && item.students.length !== 0 ? item.students.length : 0})</Typography>
               <Box component={Grid} container justifyContent="flex-end" sx={{ marginBottom: 2 }}>
-                <Button variant="contained" sx={style.btnStyle}><PersonAddAltIcon sx={style.iconStyle} />Request</Button>
+                {/* <Button variant="contained" sx={style.btnStyle}><PersonAddAltIcon sx={style.iconStyle} />Request</Button> */}
                 <Button variant="contained" sx={style.btnStyle} onClick={handleAddUserOpen}><PersonAddAltIcon sx={style.iconStyle} />User</Button>
               </Box>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
                   <TableHead>
                     <TableRow>
-                      <StyledTableCell>Student name A-Z</StyledTableCell>
+                      <StyledTableCell>Student Name</StyledTableCell>
                       <StyledTableCell align="left">Email</StyledTableCell>
                       <StyledTableCell align="left">Phone number</StyledTableCell>
                       <StyledTableCell align="left">Type</StyledTableCell>
@@ -274,7 +274,11 @@ export default function StudentList() {
   }
 
   return (
-    <Teacherdrawer classCode={params.id} headTitle={title}>
+    <Teacherdrawer classCode={params.id} headTitle={title} headRoom={room} headSubject={subject} headSection={section}>
+      <Helmet>
+        <title>Student List</title>
+        <link rel="Classroom Icon" href={logohelmetclass} />
+      </Helmet>
       {classroom ?
         <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
           {classroomBody()}

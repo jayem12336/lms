@@ -9,9 +9,13 @@ import {
     Button,
 } from '@mui/material';
 
+
 import Classdrawer from '../../classdrawer/ClassDrawer';
 import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
 import Logo from '../../../../../assets/img/png/LogoUserDash.png'
+
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 const style = {
     gridcontainer: {
@@ -86,6 +90,10 @@ export default function About() {
 
     return (
         <Classdrawer headTitle='About'>
+            <Helmet>
+                <title>About</title>
+                <link rel="About Icon" href={logohelmetclass} />
+            </Helmet>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
                 <Grid container sx={style.gridcontainer} justifyContent="space-between">
                     <Grid>
@@ -96,8 +104,8 @@ export default function About() {
                             sx={style.imgStyle}
                         />
                     </Grid>
-                    <Grid sx={{ width: { xs: 300, md: 500, },marginTop: { xs: 10, md: 15, } }}>
-                        <Typography sx={{textAlign:"center"}}>Rendezvous is a online platform for new normal education and provide user friendly environment for students and teacher</Typography>
+                    <Grid sx={{ width: { xs: 300, md: 500, }, marginTop: { xs: 10, md: 15, } }}>
+                        <Typography sx={{ textAlign: "center" }}>Rendezvous is a online platform for new normal education and provide user friendly environment for students and teacher</Typography>
                     </Grid>
                 </Grid>
             </Box>

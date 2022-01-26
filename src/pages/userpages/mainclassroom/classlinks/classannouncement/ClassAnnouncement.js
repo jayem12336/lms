@@ -18,6 +18,8 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Banner from '../../../../../assets/img/jpg/banner.jpg'
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import AddToDriveIcon from '@mui/icons-material/AddToDrive';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -76,6 +78,9 @@ export default function ClassAnnouncement() {
   const [className, setClassName] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [announcementContent, setAnnoucncementContent] = useState('')
+  const [room, setRoom] = useState('')
+  const [section, setSection] = useState('')
+  const [subject, setSubject] = useState('')
 
   const params = useParams()
   const { user } = useSelector((state) => state);
@@ -101,6 +106,9 @@ export default function ClassAnnouncement() {
         const data = item.filter(item => item.classCode === params.id)
         data.map(item => {
           setClassName(item.className)
+          setRoom(item.room)
+          setSection(item.section)
+          setSubject(item.subject)
           setOwnerName(item.displayName)
         })
       })
@@ -129,6 +137,7 @@ export default function ClassAnnouncement() {
     createDoc('announcement', data).then(() => {
       setAnnoucncementContent('')
       getDataAnnouncement()
+      setShowInput(false)
     })
   }
 
@@ -169,7 +178,11 @@ export default function ClassAnnouncement() {
   }
 
   return (
-    <Teacherdrawer headTitle={className} classCode={params.id}>
+    <Teacherdrawer headTitle={className} classCode={params.id} headRoom={room} headSubject={subject} headSection={section}>
+      <Helmet>
+        <title>Announcement</title>
+        <link rel="Classroom Icon" href={logohelmetclass} />
+      </Helmet>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
         <Box component={Grid} container justifyContent="center" sx={style.announcementBannerContainer}>
         </Box>
@@ -186,7 +199,7 @@ export default function ClassAnnouncement() {
               />
               <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
                 <Grid item>
-                  <IconButton sx={style.iconStyle}>
+                  {/* <IconButton sx={style.iconStyle}>
                     <AddToDriveIcon />
                   </IconButton>
                   <IconButton sx={style.iconStyle}>
@@ -197,7 +210,7 @@ export default function ClassAnnouncement() {
                   </IconButton>
                   <IconButton sx={style.iconStyle}>
                     <YouTubeIcon />
-                  </IconButton>
+                  </IconButton> */}
                 </Grid>
                 <Grid item sx={{ marginTop: 0.5 }}>
                   <Button

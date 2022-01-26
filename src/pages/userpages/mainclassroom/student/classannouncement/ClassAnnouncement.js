@@ -18,7 +18,8 @@ import { getAnnouncement, getDocsByCollection, getUser, createDoc } from '../../
 import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 
-
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import AddToDriveIcon from '@mui/icons-material/AddToDrive';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -72,6 +73,9 @@ export default function ClassAnnouncement() {
   const [announcementData, setAnnouncementData] = useState();
   const [userId, setUserId] = useState('');
   const [className, setClassName] = useState('')
+  const [room, setRoom] = useState('')
+  const [section, setSection] = useState('')
+  const [subject, setSubject] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [announcementContent, setAnnoucncementContent] = useState('')
 
@@ -99,6 +103,9 @@ export default function ClassAnnouncement() {
         const data = item.filter(item => item.classCode === params.id)
         data.map(item => {
           setClassName(item.className)
+          setRoom(item.room)
+          setSection(item.section)
+          setSubject(item.subject)
         })
       })
   }
@@ -166,9 +173,15 @@ export default function ClassAnnouncement() {
   }
 
   return (
-    <Studentdrawer headTitle={className} classCode={params.id}>
-      {/* <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
-        <Grid container sx={style.gridcontainer}>
+    <Studentdrawer headTitle={className} classCode={params.id} headRoom={room} headSubject={subject} headSection={section}>
+      <Helmet>
+        <title>Announcement</title>
+        <link rel="Classroom Icon" href={logohelmetclass} />
+      </Helmet>
+      <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
+        <Box component={Grid} container justifyContent="center" sx={style.announcementBannerContainer}>
+        </Box>
+        {/* <Grid container sx={style.gridcontainer}>
           {showInput ? (
             <Grid container>
               <TextField
@@ -220,8 +233,8 @@ export default function ClassAnnouncement() {
               <Typography style={{ paddingLeft: 20 }}>Announce Something To Class</Typography>
             </Grid>
           )}
-        </Grid>
-      </Box> */}
+        </Grid> */}
+      </Box>
       <Box component={Grid} container justifyContent="center">
         <Grid container sx={style.announcementcontainer}>
           {announcementData && announcementBody()}

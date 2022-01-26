@@ -18,6 +18,8 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { logoutInitiate } from '../../../../../redux/actions/userAction';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import Input from '../../../../../components/Input'
 
@@ -98,7 +100,7 @@ export default function ClassAnnouncementList() {
 
   const { user } = useSelector((state) => state);
   const [values, setValues] = useState({
-    newPassword : '',
+    newPassword: '',
     confirmPassword: ''
   })
   const [error, setError] = useState('')
@@ -120,37 +122,37 @@ export default function ClassAnnouncementList() {
     })
   }
 
-const onSave = () => {
-  setSuccess('')
-  setError('')
-  if(values.newPassword !== values.confirmPassword){
+  const onSave = () => {
     setSuccess('')
-    setError('Password not matched, please type again')
-  }else {
     setError('')
-    const auth = getAuth();
+    if (values.newPassword !== values.confirmPassword) {
+      setSuccess('')
+      setError('Password not matched, please type again')
+    } else {
+      setError('')
+      const auth = getAuth();
 
-    const user = auth.currentUser;
-    // const newPassword = getASecureRandomPassword();
-    updatePassword(user, values.newPassword).then(() => {
-      setSuccess('Password has been changed')
-      handleLogOut()
-    }).catch((error) => {
-      // An error ocurred
-      // ...
-    });
+      const user = auth.currentUser;
+      // const newPassword = getASecureRandomPassword();
+      updatePassword(user, values.newPassword).then(() => {
+        setSuccess('Password has been changed')
+        handleLogOut()
+      }).catch((error) => {
+        // An error ocurred
+        // ...
+      });
+    }
   }
-}
 
-const handleLogOut = () => {
-  if (user) {
+  const handleLogOut = () => {
+    if (user) {
       dispatch(logoutInitiate());
       history.push('/');
+    }
   }
-}
 
-console.log(user)
-console.log(values)
+  console.log(user)
+  console.log(values)
   const userDetailBody = () => {
     return userDetail && userDetail.map(item =>
       <Grid container sx={style.gridcontainer} justifyContent='center'>
@@ -215,17 +217,17 @@ console.log(values)
             />
           </Grid>
           <Grid container justifyContent='center'>
-          <Typography sx={{color:'red'}}>{error}</Typography>
-          <Typography sx={{color:'green'}}>{success}</Typography>
+            <Typography sx={{ color: 'red' }}>{error}</Typography>
+            <Typography sx={{ color: 'green' }}>{success}</Typography>
           </Grid>
           <Grid container justifyContent='center'>
-              <Button 
-                variant="contained" 
-                sx={style.saveBtn}
-                onClick={onSave}
-              > 
-                Save 
-              </Button>
+            <Button
+              variant="contained"
+              sx={style.saveBtn}
+              onClick={onSave}
+            >
+              Save
+            </Button>
           </Grid>
         </Grid>
       </Grid>
@@ -234,6 +236,10 @@ console.log(values)
 
   return (
     <ClassDrawer headTitle='Profile'>
+      <Helmet>
+        <title>Profile</title>
+        <link rel="Profile Icon" href={logohelmetclass} />
+      </Helmet>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
         {userDetail && userDetailBody()}
       </Box>

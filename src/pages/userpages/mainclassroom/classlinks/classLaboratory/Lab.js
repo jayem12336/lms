@@ -34,6 +34,9 @@ import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
+
 
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -129,7 +132,10 @@ export default function Laboratory() {
   const [instruction, setInstruction] = useState('')
   const [labId, setLabId] = useState('')
 
-
+  const [classname, setCLassName] = useState('')
+  const [room, setRoom] = useState('')
+  const [section, setSection] = useState('')
+  const [subject, setSubject] = useState('')
   const { user } = useSelector((state) => state);
   const params = useParams()
   const history = useHistory();
@@ -164,6 +170,9 @@ export default function Laboratory() {
 
   }, [user]);
 
+
+
+
   const getStudentList = () => {
     getDocsByCollection('users').then(data => {
       const students = data.map(item => {
@@ -172,10 +181,15 @@ export default function Laboratory() {
         return studentArr
       })
       setStudentsList(students)
+ 
     })
     getDocsByCollection('quiz').then(data => {
       data.filter(item => item.classCode === params.id).map(item => {
         setStudentName(item.students)
+        setCLassName(item.className)
+        setRoom(item.room)
+        setSection(item.section)
+        setSubject(item.subject)
       })
     })
   }
@@ -215,72 +229,77 @@ export default function Laboratory() {
   }
 
   const saveLab = () => {
-    const data = {
-      html: html,
-      css: css,
-      js: js,
-      ownerId: user.currentUser.uid,
-      classCode: params.id,
-      created: Timestamp.now(),
-      title: labTitle,
-      students: studentName,
-      instruction: instruction,
-      labId: params.id
+
+    if (labTitle === "" || instruction === "" || studentName === "") {
+      alert("Please Fill up the following fields");
     }
-    // if(isNew){
-    createClassDoc('laboratory', id, data).then(() => {
-      setOpen({ open: true });
-      studentName.map(student => {
-        const studentData = {
-          html: html,
-          css: css,
-          js: js,
-          ownerId: user.currentUser.uid,
-          classCode: params.id,
-          created: Timestamp.now(),
-          title: labTitle,
-          studentId: student,
-          instruction: instruction,
-          labId: params.labId
-        }
-        saveLabStudent(studentData)
+    else {
+      const data = {
+        html: html,
+        css: css,
+        js: js,
+        ownerId: user.currentUser.uid,
+        classCode: params.id,
+        created: Timestamp.now(),
+        title: labTitle,
+        students: studentName,
+        instruction: instruction,
+        labId: params.id
+      }
+      // if(isNew){
+      createClassDoc('laboratory', id, data).then(() => {
+        setOpen({ open: true });
+        studentName.map(student => {
+          const studentData = {
+            html: html,
+            css: css,
+            js: js,
+            ownerId: user.currentUser.uid,
+            classCode: params.id,
+            created: Timestamp.now(),
+            title: labTitle,
+            studentId: student,
+            instruction: instruction,
+            labId: params.labId
+          }
+          saveLabStudent(studentData)
+        })
+        console.log('success')
+        const timeout = setTimeout(() => {
+          history.push(`/classroomdetail/${params.id}`)
+        }, 2000)
+
+        return () => clearTimeout(timeout)
       })
-      console.log('success')
-      const timeout = setTimeout(() => {
-        history.push(`/classroomdetail/${params.id}`)
-      }, 2000)
+      // }
+      // else {
+      //   updateDocsByCollection('laboratory', data).then(() => {
+      //     console.log('success update')
+      //     setOpen({ open: true});
+      //     studentName.map(student => {
+      //       const studentData = {
+      //         html: html,
+      //         css : css,
+      //         js: js,
+      //         ownerId: user.currentUser.uid,
+      //         classCode: params.id,
+      //         created: Timestamp.now(),
+      //         title: labTitle,
+      //         studentId: student,
+      //         instruction: instruction,
+      //         labId: labId ? labId : id
+      //       }
+      //       saveLabStudent(studentData)
+      //       const timeout = setTimeout(() => {
+      //         history.push(`/classroomdetail/${params.id}`)
+      //       }, 2000)
 
-      return () => clearTimeout(timeout)
-    })
-    // }
-    // else {
-    //   updateDocsByCollection('laboratory', data).then(() => {
-    //     console.log('success update')
-    //     setOpen({ open: true});
-    //     studentName.map(student => {
-    //       const studentData = {
-    //         html: html,
-    //         css : css,
-    //         js: js,
-    //         ownerId: user.currentUser.uid,
-    //         classCode: params.id,
-    //         created: Timestamp.now(),
-    //         title: labTitle,
-    //         studentId: student,
-    //         instruction: instruction,
-    //         labId: labId ? labId : id
-    //       }
-    //       saveLabStudent(studentData)
-    //       const timeout = setTimeout(() => {
-    //         history.push(`/classroomdetail/${params.id}`)
-    //       }, 2000)
+      //       return () => clearTimeout(timeout)
+      //     })
 
-    //       return () => clearTimeout(timeout)
-    //     })
-
-    //   })
-    // }
-
+      //   })
+      // }
+    }
   }
 
   const handleTitle = (e) => {
@@ -306,7 +325,11 @@ export default function Laboratory() {
   console.log(studentName)
   console.log(studentsList)
   return (
-    <Teacherdrawer classCode={params.id} headTitle={'Create Laboratory'}>
+    <Teacherdrawer classCode={params.id} headTitle={classname} headRoom={room} headSubject={subject} headSection={section}>
+      <Helmet>
+        <title>Laboratory</title>
+        <link rel="Classroom Icon" href={logohelmetclass} />
+      </Helmet>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         autoHideDuration={3000}
@@ -327,8 +350,8 @@ export default function Laboratory() {
             </Grid>
             {matchMD ? <>
               <Grid container justifyContent="flex-end" sx={{ marginBottom: { xs: -30, md: -8 } }}>
-                <Button variant="contained" style={style.btnStyle} onClick={saveLab}>Create Task</Button>
-                <Button variant="contained" style={style.btnStyle}>Cancel</Button>
+                <Button variant="contained" style={style.btnStyle} onClick={saveLab}>Create task</Button>
+                <Button variant="contained" style={style.btnStyle} onClick={() => history.goBack()}>Cancel</Button>
               </Grid>
             </> : ""
             }
@@ -369,6 +392,7 @@ export default function Laboratory() {
               // )}
               // MenuProps={MenuProps}
               >
+
                 {studentsList.map((name, index) => (
                   <MenuItem
                     key={name.value}
@@ -419,7 +443,7 @@ export default function Laboratory() {
               </Grid>
             </Grid>
           </Grid>
-          <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
+          {/* <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
             <Grid item>
               <Typography sx={style.textStyle}>Total Score</Typography>
               <TextField />
@@ -436,14 +460,14 @@ export default function Laboratory() {
               <Typography sx={style.textStyle}>Language</Typography>
               <TextField />
             </Grid>
-          </Box>
+          </Box> */}
           {matchMD ?
             ""
-            : 
+            :
             <>
-              <Grid container justifyContent="center" sx={{ marginTop: 2}}>
+              <Grid container justifyContent="center" sx={{ marginTop: 2 }}>
                 <Button variant="contained" style={style.btnStyle} onClick={saveLab}>Create Task</Button>
-                <Button variant="contained" style={style.btnStyle}>Cancel</Button>
+                <Button variant="contained" style={style.btnStyle} onClick={() => history.goBack()}>Cancel</Button>
               </Grid>
             </>
           }

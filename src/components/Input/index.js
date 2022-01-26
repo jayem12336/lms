@@ -8,8 +8,6 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import OutlinedInput from '@mui/material/OutlinedInput';
 
-
-
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
     marginTop: theme.spacing(0),
@@ -90,7 +88,7 @@ export default function Input(props) {
   } = props
   return (
     <div style={{display:'flex',flexDirection:'column', width:'100%'}}>
-      <InputLabel shrink htmlFor="bootstrap-input" aria-describedby="component-error-text">
+      <InputLabel shrink htmlFor="bootstrap-input" aria-describedby="component-error-text" style={{fontWeight: "bold", fontSize: 20, color: 'black'}}>
           {label}
       </InputLabel>
       {/* <BootstrapInput 
@@ -105,7 +103,7 @@ export default function Input(props) {
         endAdornment={endAdornment ? endAdornment : ''}
       /> */}
       <OutlinedInput
-        style={{borderRadius:24, width: '100%'}}
+        style={{borderRadius:24, width: '100%', fontWeight: "bold"}}
         sx={style}
         id={id}
         name={name}

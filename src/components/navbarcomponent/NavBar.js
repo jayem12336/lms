@@ -31,6 +31,7 @@ const style = {
         textTransform: 'none',
         marginLeft: 1,
         color: '#000000',
+        fontWeight: "bold",
         // color: (theme) => theme.colors.navButton,
         '&:hover': {
             color: "#fff",
@@ -65,7 +66,7 @@ const style = {
         width: 'auto',
         textDecoration: 'none',
         color: "#fff",
-        fontWeight: 500,
+        fontWeight: 400,
         '&:hover': {
             background: '#4877c2',
             color: (theme) => theme.colors.navButton,
