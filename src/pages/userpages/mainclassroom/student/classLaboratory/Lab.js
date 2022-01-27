@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-    Typography,
     Box,
     Grid,
     Button,
-    Menu,
     MenuItem,
     TextField,
     OutlinedInput,
@@ -13,41 +11,20 @@ import {
     InputLabel,
     Select,
     Alert,
-    AlertTitle,
     Snackbar,
-    IconButton,
     Stack,
     Chip
 } from '@mui/material';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import YouTubeIcon from '@mui/icons-material/YouTube';
-
 
 import { v4 as uuidv4 } from 'uuid';
 
-import {createDoc, getDocsByCollection, updateDocsByCollection, createClassDoc, saveLabStudent} from '../../../../../utils/firebaseUtil'
+import { getDocsByCollection, createClassDoc, saveLabStudent} from '../../../../../utils/firebaseUtil'
 import { Timestamp } from 'firebase/firestore';
 
 import { useParams } from 'react-router';
 import { useSelector} from 'react-redux';
 import { useHistory } from 'react-router';
-
-
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-
-
-import Fade from '@mui/material/Fade';
-import Divider from '@mui/material/Divider';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
-
-import Editor from './Editor'
-
-
-
 
 
 const style = {

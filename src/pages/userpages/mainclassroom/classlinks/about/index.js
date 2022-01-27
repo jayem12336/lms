@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
-
-import { useHistory } from 'react-router';
+import React from 'react';
 
 import {
     Typography,
     Box,
     Grid,
-    Button,
 } from '@mui/material';
 
-
 import Classdrawer from '../../classdrawer/ClassDrawer';
-import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
 import Logo from '../../../../../assets/img/png/LogoUserDash.png'
 
 import { Helmet } from 'react-helmet';
@@ -92,7 +87,7 @@ export default function About() {
         <Classdrawer headTitle='About'>
             <Helmet>
                 <title>About</title>
-                <link rel="About Icon" href={logohelmetclass} />
+                <link rel="Calendar Icon" href={logohelmetclass} />
             </Helmet>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
                 <Grid container sx={style.gridcontainer} justifyContent="space-between">

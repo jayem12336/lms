@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { onSnapshot, collection, query, where } from 'firebase/firestore';
+import { onSnapshot, collection, query, where, Timestamp } from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
 import { getUser, acceptStudent, removeStudent, getDocsByCollection } from '../../../../../utils/firebaseUtil'
 
@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 
 import { Helmet } from 'react-helmet';
 import logohelmetclass from '../../../../../assets/img/png/monitor.png';
-
 import {
   Typography,
   Box,
@@ -21,7 +20,9 @@ import {
   Table,
   TableHead,
   TableRow,
-  TableBody
+  TableBody,
+  Snackbar,
+  Alert
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
@@ -151,11 +152,11 @@ export default function ClassListDetail() {
   const [isTeacher, setIsTeacher] = useState(false)
   const [classCode, setClassCode] = useState('')
   const [title, setTitle] = useState('')
-  const [room, setRoom] = useState('')
-  const [section, setSection] = useState('')
-  const [subject, setSubject] = useState('')
   const [labList, setLabList] = useState([])
   const [quizList, setQuizList] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [dateMessage, setDateMessage] = useState('')
+  const [openSnack, setOpenSnack] = useState(false)
 
 
   const open = Boolean(anchorEl);
@@ -267,10 +268,6 @@ export default function ClassListDetail() {
       snapshot.docs.map(doc => {
         setClassCode(doc.data().classCode)
         setTitle(doc.data().className)
-        setRoom(doc.data().room)
-        setSection(doc.data().section)
-        setSubject(doc.data().subject)
-       
       })
       // setLoading(false);
     }
@@ -278,10 +275,45 @@ export default function ClassListDetail() {
     return unsubscribe;
   }
 
+  const reDirectQuiz = (quizClassId,quizId, startDate, dueDate) => {
+    if(startDate.seconds >= Timestamp.now().seconds && dueDate.seconds > Timestamp.now().seconds){
+      setDateMessage('Quiz is not yet started')
+      setOpenSnack(true)
+    }else {
+      if(dueDate.seconds <= Timestamp.now().seconds){
+        setOpenSnack(true)
+        setDateMessage('Quiz end')
+      }else {
+        history.push(`/studentquizdetail/${quizClassId}/${quizId}`)
+      }
+    }
+  }
+  const handleCloseSnack = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnack(false)
+  };
+
   const classroomBody = () => {
     return (
       classroom && classroom.map(item =>
         <>
+          <Box component={Grid} container justifyContent="center" >
+
+            <Grid container sx={style.gridcontainerClass} >
+              <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
+                <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Classroom name : {item.className}</Typography>
+              </Grid>
+              <Grid container xs={12} direction='column'>
+                <Typography variant="p" sx={{ marginTop: 1 }}>section: {item.section}</Typography>
+                <Typography variant="p" sx={{ marginTop: 1 }}>subject: {item.subject}</Typography>
+                <Typography variant="p" sx={{ marginTop: 1 }}>room: {item.room}</Typography>
+              </Grid>
+            </Grid>
+
+          </Box>
+
           <Box component={Grid} container justifyContent="center" >
             <Grid container sx={style.gridcontainerClass}>
               <Typography variant="h6">Laboratory List</Typography>
@@ -310,15 +342,21 @@ export default function ClassListDetail() {
             </Grid>
 
             {quizList.length !== 0 ? quizList.map(item =>
-              <Grid container sx={style.gridcontainerCard} onClick={() => history.push(`/studentquizdetail/${item.classCode}/${item.quizId}`)}>
+              <Grid container sx={style.gridcontainerCard} onClick={() => reDirectQuiz(item.classCode,item.quizId,item.startDate, item.dueDate)}>
                 <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
                   <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Quiz name : {item.title}</Typography>
                 </Grid>
                 <Grid container xs={12} direction='column'>
-                  <Typography>created: {new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
+                  <Typography>start date: {new Date(item.startDate.seconds * 1000).toLocaleDateString()} {new Date(item.startDate.seconds * 1000).toLocaleTimeString()}</Typography>
                 </Grid>
                 <Grid container xs={12} direction='column'>
-                  <Typography>due data: {new Date(item.dueDate.seconds * 1000).toLocaleDateString()} {new Date(item.dueDate.seconds * 1000).toLocaleTimeString()}</Typography>
+                  <Typography>due date: {new Date(item.dueDate.seconds * 1000).toLocaleDateString()} {new Date(item.dueDate.seconds * 1000).toLocaleTimeString()}</Typography>
+                </Grid>
+                <Grid container xs={12} direction='column'>
+                  <Typography>{item.startDate.seconds >= Timestamp.now().seconds && item.dueDate.seconds > Timestamp.now().seconds  && 'Quiz is not yet started'}</Typography>
+                </Grid>
+                <Grid container xs={12} direction='column'>
+                  <Typography>{item.dueDate.seconds <= Timestamp.now().seconds && 'Quiz end'}</Typography>
                 </Grid>
               </Grid>
             ) :
@@ -338,16 +376,29 @@ export default function ClassListDetail() {
   }
 
   return (
-    <Studentdrawer classCode={classCode} headTitle={title} headRoom={room} headSubject={subject} headSection={section}>
+    <Studentdrawer classCode={classCode} headTitle={title} loading={loading}>
       <Helmet>
-        <title>ClassWork</title>
+        <title>Student Class Work</title>
         <link rel="Classroom Icon" href={logohelmetclass} />
       </Helmet>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={3000}
+        open={openSnack}
+        onClose={handleCloseSnack}
+        message="I love snacks"
+        // key={vertical + horizontal}
+      >
+        <Alert onClose={handleCloseSnack} severity="error" sx={{ width: '100%' }}>
+          {dateMessage}
+        </Alert>
+      </Snackbar>
       {classroom ?
         <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
           {classroomBody()}
         </Box>
         :
+        !loading &&
         <Box component={Grid} container justifyContent="center" alignItems="center" sx={{ paddingTop: 5, flexDirection: "column" }}>
           <Box component={Grid} container justifyContent="center" sx={style.imgContainer}>
             <Box component="img" src={bgImage} alt="Animated Computer" sx={style.imgStyle} />

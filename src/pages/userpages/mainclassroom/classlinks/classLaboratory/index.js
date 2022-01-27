@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState , useEffect} from 'react';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
-import { getUser, getDocsByCollection } from '../../../../../utils/firebaseUtil'
+import {getUser, getDocsByCollection} from '../../../../../utils/firebaseUtil'
 
 import { useHistory } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useSelector} from 'react-redux';
+
 
 import {
     Typography,
@@ -41,12 +42,12 @@ const style = {
         borderColor: (theme) => theme.palette.primary.main
     },
     gridcontainerClass: {
-        display: "flex",
-        boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
-        marginTop: 5,
-        padding: 2,
-        maxWidth: 1000
-    },
+      display: "flex",
+      boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
+      marginTop: 5,
+      padding: 2,
+      maxWidth: 1000
+  },
     main: {
         display: "flex",
         cursor: "pointer",
@@ -93,68 +94,68 @@ const style = {
 
 export default function LabList() {
 
-    const history = useHistory();
-    const { user } = useSelector((state) => state);
+  const history = useHistory();
+  const { user } = useSelector((state) => state);
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [isTeacher, setIsTeacher] = useState(false)
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isTeacher, setIsTeacher] = useState(false)
 
-    const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl);
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+  const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+  };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+  const handleClose = () => {
+      setAnchorEl(null);
+  };
 
-    const [labList, setLabList] = useState([]);
+  const [labList, setLabList] = useState([]);
 
-    //Create Class Dialog
-    const [classOpen, setClassOpen] = useState(false);
+  //Create Class Dialog
+  const [classOpen, setClassOpen] = useState(false);
 
-    const handleOpenClass = () => {
-        setClassOpen(!classOpen);
-    }
+  const handleOpenClass = () => {
+      setClassOpen(!classOpen);
+  }
 
-    //Join Class Dialog
-    const [joinClassOpen, setOpenJoinClass] = useState(false);
+  //Join Class Dialog
+  const [joinClassOpen, setOpenJoinClass] = useState(false);
 
-    const handleOpenJoinClass = () => {
-        setOpenJoinClass(!joinClassOpen);
-    }
+  const handleOpenJoinClass = () => {
+      setOpenJoinClass(!joinClassOpen);
+  }
 
-    //Load classrooms
-    useEffect(() => {
-
-        if (Object.keys(user.currentUser).length !== 0) {
-            getLabData()
-            getUser().then(data => {
-                data.map(item => {
-                    setIsTeacher(item.isTeacher)
-                })
+  //Load classrooms
+  useEffect(() => {
+     
+    if(Object.keys(user.currentUser).length !== 0){
+        getLabData()
+        getUser().then(data => {
+            data.map(item => {
+                setIsTeacher(item.isTeacher)
             })
-        }
-
-
-    }, [user]);
-
-    const getLabData = () => {
-        getDocsByCollection('laboratory').then(item => {
-            const data = item.filter(item => item.ownerId === user.currentUser.uid)
-            setLabList(data)
         })
-    }
+      }
+    
+    
+  }, [user]);
 
-    const classroomBody = () => {
-        return (
-            <Box component={Grid} container justifyContent="center" >
-                {labList && labList.map(item =>
-                    <Grid container sx={style.gridcontainerClass} >
-                        <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
-                            <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>{item.title}</Typography>
-                            {/* <MoreHorizIcon sx={{ marginTop: 0.5, cursor: 'pointer' }} onClick={handleClick} />
+  const getLabData = () => {
+    getDocsByCollection('laboratory').then(item => {
+      const data = item.filter(item => item.ownerId === user.currentUser.uid)
+      setLabList(data)
+    })
+  }
+
+  const classroomBody = () => {
+    return (
+      <Box component={Grid} container justifyContent="center" >
+      {labList && labList.map(item => 
+        <Grid container sx={style.gridcontainerClass} >
+          <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
+            <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>{item.title}</Typography>
+            {/* <MoreHorizIcon sx={{ marginTop: 0.5, cursor: 'pointer' }} onClick={handleClick} />
             <Menu
                 id='simple-menu'
                 anchorEl={anchorEl}
@@ -169,28 +170,28 @@ export default function LabList() {
                 Unenroll
               </MenuItem>
             </Menu> */}
-                        </Grid>
-                        <Grid container xs={12} direction='column'>
-                            <Typography>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
-
-                        </Grid>
-
-
-                        <Grid xs={12} justifyContent='flex-end' container>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                sx={{ marginTop: 2 }}
-                                onClick={() => history.push(`/laboratory/${item.classCode}`)}
-                            >
-                                Open Laboratory
-                            </Button>
-                        </Grid>
-                    </Grid>
-                )}
-            </Box>
-        )
-    }
+          </Grid>
+          <Grid container xs={12} direction='column'>
+          <Typography>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
+    
+          </Grid>
+          
+        
+          <Grid xs={12} justifyContent='flex-end' container>
+            <Button 
+                variant="contained" 
+                color="primary" 
+                sx={{ marginTop: 2 }}
+                onClick={() => history.push(`/laboratory/${item.classCode}`)}
+            >
+                Open Laboratory
+            </Button>
+          </Grid>
+        </Grid>
+      )}
+      </Box>
+    )
+  }
 
     return (
         <Classdrawer>
@@ -209,23 +210,23 @@ export default function LabList() {
                 </Grid>
             </Box> */}
             {labList ?
-                <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
-                    {classroomBody()}
+              <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
+                  {classroomBody()}
+              </Box>
+              :
+              <Box component={Grid} container justifyContent="center" alignItems="center" sx={{ paddingTop: 5, flexDirection: "column" }}>
+                <Box component={Grid} container justifyContent="center" sx={style.imgContainer}>
+                    <Box component="img" src={bgImage} alt="Animated Computer" sx={style.imgStyle} />
                 </Box>
-                :
-                <Box component={Grid} container justifyContent="center" alignItems="center" sx={{ paddingTop: 5, flexDirection: "column" }}>
-                    <Box component={Grid} container justifyContent="center" sx={style.imgContainer}>
-                        <Box component="img" src={bgImage} alt="Animated Computer" sx={style.imgStyle} />
-                    </Box>
-                    <Box component={Grid} container justifyContent="center" sx={style.txtContainer}>
-                        <Typography sx={style.linkStyle}>
-                            This is where you'll see classrooms.
-                        </Typography>
-                        <Typography sx={style.linkStyle}>
-                            You can join class, see activities and check available quiz
-                        </Typography>
-                    </Box>
+                <Box component={Grid} container justifyContent="center" sx={style.txtContainer}>
+                    <Typography sx={style.linkStyle}>
+                        This is where you'll see classrooms.
+                    </Typography>
+                    <Typography sx={style.linkStyle}>
+                        You can join class, see activities and check available quiz
+                    </Typography>
                 </Box>
+              </Box>
             }
         </Classdrawer >
     )

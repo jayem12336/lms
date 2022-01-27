@@ -55,14 +55,14 @@ const style = {
         fontSize: 20
     },
     btnSubmit: {
-          
+
     }
 }
 
 export default function ContactComponent() {
 
     return (
-        <Box component={Grid} container justifyContent="center" sx={style.root} id="Contact">
+        <Box component={Grid} container justifyContent="center" sx={style.root}>
             <Box sx={style.section1}>
                 <ScrollAnimation animateIn='fadeIn'>
                     <Grid container justifyContent="center">
@@ -80,10 +80,14 @@ export default function ContactComponent() {
                         </Grid>
                         <Grid sm item sx={style.columnContainer}>
                             <Grid container justifyContent="center">
-                                <Typography variant="h4">Seems To be Interesting</Typography>
-                                <Typography variant="subtitle1">Got my Portfolio seen , then feel free to contact me for your future projects</Typography>
-
+                                <Typography variant="h4">Contact Us</Typography>
                             </Grid>
+                            <Grid container justifyContent="center" alignItems="center" sx={{ flexDirection: "column" }}>
+                                <Typography variant="subtitle1" sx={{textAlign:"center"}}>G-mail: rendezvous@gmail.com</Typography>
+                                <Typography variant="subtitle1" sx={{textAlign:"center"}}>Yahoo mail: rendezvous@yahoo.com</Typography>
+                                <Typography variant="subtitle1" sx={{textAlign:"center"}}>Phone: 09567960622</Typography>
+                            </Grid>
+
 
                             <Grid container sx={{
                                 marginTop: {
@@ -97,41 +101,7 @@ export default function ContactComponent() {
                                     md: 5,
                                 }
                             }}>
-                                <form>
-                                    <TextField
-                                        variant="outlined"
-                                        placeholder="Name" 
-                                        fullWidth
-                                        InputProps={{
-                                            sx: { ...style.marginTop, ...style.textfieldStyle }
-                                        }}
 
-                                    />
-                                    <TextField
-                                        variant="outlined"
-                                        placeholder="Email" fullWidth
-                                        InputProps={{
-                                            sx: { ...style.marginTop, ...style.textfieldStyle }
-                                        }}
-                                    />
-                                    <TextField
-                                        label=""
-                                        variant="outlined"
-                                        placeholder="Message"
-                                        fullWidth
-                                        InputProps={{
-                                            sx: { ...style.marginTop, ...style.textfieldStyle }
-                                        }}
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        size="large"
-                                        fullWidth
-                                        sx={{...style.marginTop, ...style.btnSubmit}}
->
-                                        Submit
-                                    </Button>
-                                </form>
                             </Grid>
                         </Grid>
                     </Grid>

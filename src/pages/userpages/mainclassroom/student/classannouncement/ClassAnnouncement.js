@@ -5,9 +5,6 @@ import {
   Box,
   Grid,
   Avatar,
-  TextField,
-  Button,
-  IconButton
 } from '@mui/material';
 
 import Studentdrawer from '../../classdrawer/ClassDrawerStudent';
@@ -20,11 +17,6 @@ import { useSelector } from "react-redux";
 
 import { Helmet } from 'react-helmet';
 import logohelmetclass from '../../../../../assets/img/png/monitor.png';
-
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import YouTubeIcon from '@mui/icons-material/YouTube';
 
 const style = {
   gridcontainer: {

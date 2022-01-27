@@ -8,34 +8,16 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider,
-    Grid,
     Typography,
-    Link,
-    Button
 } from '@mui/material';
-
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from 'react-router';
 
 import { Link as ReactLink } from 'react-router-dom';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import HomeIcon from '@mui/icons-material/Home';
-import ContactSupportIcon from '@mui/icons-material/ContactSupport';
-import FlagIcon from '@mui/icons-material/Flag';
-
-import { logoutInitiate } from '../../../../redux/actions/userAction';
 
 
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import PersonIcon from '@mui/icons-material/Person';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import ArticleIcon from '@mui/icons-material/Article';
-import InfoIcon from '@mui/icons-material/Info';
-
 
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
@@ -99,21 +81,15 @@ const style = {
 
 export default function MobileViewTeachersDrawer(props) {
 
-    const { user } = useSelector((state) => state);
-
-    const dispatch = useDispatch();
-
-    const history = useHistory();
-
     const [openDrawer, setOpenDrawer] = useState(false);
 
-
+    /*
     const handleLogOut = () => {
         if (user) {
             dispatch(logoutInitiate());
             history.push('/');
         }
-    }
+    }*/
 
     return (
         <Box >

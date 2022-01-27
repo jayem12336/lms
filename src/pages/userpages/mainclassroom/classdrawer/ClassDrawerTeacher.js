@@ -17,8 +17,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { LinearProgress } from '@mui/material';
-import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from 'react-router';
+import { useSelector } from "react-redux";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import MobileViewTeachersDrawer from './MobileViewTeachersDrawer';
 
@@ -27,10 +26,6 @@ import MobileViewTeachersDrawer from './MobileViewTeachersDrawer';
 import { Link } from 'react-router-dom'
 
 //Material Icons
-import AnnouncementIcon from '@mui/icons-material/Announcement';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import DuoIcon from '@mui/icons-material/Duo';
-import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
@@ -40,14 +35,9 @@ import GradingIcon from '@mui/icons-material/Grading';
 import PhotoCameraFrontIcon from '@mui/icons-material/PhotoCameraFront';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
-import { logoutInitiate } from '../../../../redux/actions/userAction';
-
-import { getUser } from '../../../../utils/firebaseUtil'
+import { getUser } from '../../../../utils/firebaseUtil';
 
 import LogoDash from '../../../../assets/img/png/LogoUserDash.png'
-
-
-
 
 const drawerWidth = 240;
 
@@ -151,8 +141,6 @@ const style = {
 
 export default function TeacherDrawer(props) {
 
-    const dispatch = useDispatch();
-    const history = useHistory();
     const { user } = useSelector((state) => state);
 
     const theme = useTheme();
@@ -187,12 +175,13 @@ export default function TeacherDrawer(props) {
 
     console.log(classUser);
 
+    /*
     const handleLogOut = () => {
         if (user) {
             dispatch(logoutInitiate());
             history.push('/');
         }
-    }
+    } */
 
     console.log(props)
     return (
@@ -216,31 +205,15 @@ export default function TeacherDrawer(props) {
                             </IconButton>
                         </>
                     }
-                    <Grid container justifyContent="center">
-                        <Typography variant="h6" noWrap component="div" >
-                            {/* {classUser.classData.subject} */}
-                            Section: {props.headSection} |
-                            {/* test */}
-                        </Typography>
+                    <Grid container justifyContent="flex-start">
                         <Typography variant="h6" noWrap component="div">
                             {/* {classUser.classData.className} */}
-                            ClassName: {props.headTitle} |
+                            {props.headTitle}
                             {/* test */}
                         </Typography>
-                        <Typography variant="h6" noWrap component="div">
-                            {/* {classUser.classData.room} */}
-                            Room: {props.headRoom}|
-                            {/* test */}
-                        </Typography>
-                        <Typography variant="h6" noWrap component="div">
-                            {/* {classUser.classData.subject} */}
-                            Subject: {props.headSubject}
-                            {/* test */}
-                        </Typography>
-
                     </Grid>
                 </Toolbar>
-                {loading ?
+                {props.loading ?
                     (
                         <LinearProgress />
                     ) :
@@ -350,9 +323,9 @@ export default function TeacherDrawer(props) {
                       </ListItem> */}
                             <Box sx={style.listHover}>
                                 <ListItem
-                                    button
-                                    component={Link}
-                                    to={`/classjoinmeet/${props.classCode}`}
+                                     button
+                                     component={Link}
+                                     to={`/classjoinmeet/${props.classCode}`}
                                     sx={style.listItemStyle}
 
                                 >

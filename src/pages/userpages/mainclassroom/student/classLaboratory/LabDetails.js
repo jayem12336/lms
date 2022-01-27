@@ -5,38 +5,26 @@ import {
     Box,
     Grid,
     Button,
-    Menu,
-    MenuItem,
-    TextField,
-    OutlinedInput,
-    FormControl,
-    InputLabel,
-    Select,
     Alert,
-    AlertTitle,
     Snackbar,
-    IconButton,
-    Stack,
-    Chip
 } from '@mui/material';
 
 
 import { v4 as uuidv4 } from 'uuid';
 
-import {getDocsByCollection, getLabStudent, saveLabRecord, saveLabStudent, getStudentByAssigned} from '../../../../../utils/firebaseUtil'
+import {getLabStudent, saveLabRecord, saveLabStudent, getStudentByAssigned} from '../../../../../utils/firebaseUtil'
 import { Timestamp } from 'firebase/firestore';
 
 import { useParams } from 'react-router';
 import { useSelector} from 'react-redux';
 import { useHistory } from 'react-router';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
+
 
 import Studentdrawer from '../../classdrawer/ClassDrawerStudent';
 import Editor from './Editor'
-
-
-
-
 
 const style = {
     gridcontainer: {
@@ -252,6 +240,10 @@ export default function Laboratory() {
           Successfully Saved Lab
         </Alert>
       </Snackbar>
+      <Helmet>
+        <title>Student Laboratory</title>
+        <link rel="Classroom Icon" href={logohelmetclass} />
+      </Helmet>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
         <>
           <Grid xs={12} justifyContent='space-between' container>

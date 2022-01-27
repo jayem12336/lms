@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { getDocsByCollection } from '../../utils/firebaseUtil'
 
-import { getDocsByCollection } from '../../utils/firebaseUtil';
-import { useTheme } from '@mui/material/styles';
 import {
     Box,
     Button,
     Typography,
     Grid,
-    useMediaQuery
+    Link
 } from '@mui/material';
 
-import NavBar from '../navbarcomponent/NavBar'
+import NavBar from '../navbarcomponent/NavBar';
+
+import { Link as ReactLink } from 'react-router-dom';
 
 const style = {
     //helper
@@ -130,11 +131,6 @@ const style = {
             md: 700,
         },
     },
-    columnContainer: {
-        display: "flex",
-        justifyContent: "center",
-        padding: 5
-    },
     title: {
         fontSize: 40,
         fontWeight: 500
@@ -193,7 +189,7 @@ const style = {
             md: 10
         },
     },
-    section2container :{
+    section2container: {
         flexDirection: {
             md: 'row',
             sm: 'column',
@@ -204,10 +200,10 @@ const style = {
             md: '1000px'
         }
     },
-    section2 : {
+    section2: {
         padding: {
-            xs:"100px 0px",
-            md:"150px 0px"
+            xs: "100px 0px",
+            md: "150px 0px"
         },
         display: "flex",
         flexDirection: "column",
@@ -219,12 +215,15 @@ const style = {
         fontSize: 45,
         fontWeight: 500,
         color: '#fff'
-    }
+    },
+    linkStyle: {
+        textDecoration: "none",
+        marginRight: 2,
+        marginTop: 0.5,
+    },
 }
 
 export default function HomeComponent() {
-
-    const theme = useTheme();
 
     const [users, setUsers] = useState(0)
     const [classRooms, setClassRooms] = useState(0)
@@ -237,9 +236,6 @@ export default function HomeComponent() {
             setClassRooms(item.length)
         })
     }, []);
-
-    const matchMD = useMediaQuery(theme.breakpoints.up('md'));
-
     return (
         <Box id="Home">
             <NavBar />
@@ -250,15 +246,17 @@ export default function HomeComponent() {
                             <Typography sx={style.title}>Learning never exhausts the mind</Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="flex-start" sx={style.textContainer}>
-                            <Typography sx={style.text}>  Rendezvous aims to create an innovative e-learning environment for the teachers and students</Typography>
+                            <Typography sx={style.text}>Rendezvous aims to create an innovative e-learning environment for the teachers and students</Typography>
                         </Box>
                         <Box component={Grid} container justifyContent="center" sx={style.buttonContainer}>
-                            <Button
-                                variant="contained"
-                                sx={style.button}
-                            >
-                                Start Now
-                            </Button>
+                            <Link component={ReactLink} to="/login" sx={style.linkStyle}>
+                                <Button
+                                    variant='contained'
+                                    sx={style.button}
+                                >
+                                    START NOW
+                                </Button>
+                            </Link>
                         </Box>
                     </Box>
                     <Box sx={style.imgContainer}>
@@ -275,10 +273,10 @@ export default function HomeComponent() {
             </Box>
             <Box sx={style.section2}>
                 <Box component={Grid} justifyContent="space-between" sx={style.section2container}>
-                    <Box sx={{textAlign: 'center'}}>
+                    <Box sx={{ textAlign: 'center' }}>
                         <Typography sx={style.textsection2}>{users} Users</Typography>
                     </Box>
-                    <Box sx={{textAlign: 'center', marginTop: { sm: 10, xs : 10, md: 0}}}>
+                    <Box sx={{ textAlign: 'center', marginTop: { sm: 10, xs: 10, md: 0 } }}>
                         <Typography sx={style.textsection2}>{classRooms} Classrooms</Typography>
                     </Box>
                 </Box>

@@ -32,12 +32,10 @@ const style = {
 	gridcontainerClass: {
 		display: "flex",
 		padding: 2,
-		cursor: 'pointer',
 		marginTop: -3
 	},
 	main: {
 		display: "flex",
-		cursor: "pointer",
 		alignItems: "center",
 	},
 	iconStyle: {
@@ -46,8 +44,8 @@ const style = {
 	},
 	btnStyle: {
 		borderRadius: 20,
-		fontSize: 20,
-		width: 150,
+		fontSize: 18,
+		width: 'auto',
 		marginRight: 2,
 		marginBottom: 4,
 		textTransform: 'none',
@@ -64,7 +62,6 @@ const style = {
 		fontWeight: 400
 	},
 	linkStyle: {
-		cursor: 'pointer',
 		color: 'white',
 		fontSize: 25,
 		textAlign: 'center',
@@ -132,9 +129,9 @@ export default function ClassList() {
 
 	const getClassData = () => {
 		const classCollection = collection(db, "studentRecord", user.currentUser.uid, "classroom")
-		// const q = query(classCollection, where('students', "array-contains", user.currentUser.uid));
+		const q = query(classCollection, where('isDeleted', "==", false));
 		// const qTeacher = query(classCollection, where('ownerId', "==", user.currentUser.uid));
-		const unsubscribe = onSnapshot(classCollection, (snapshot) => {
+		const unsubscribe = onSnapshot(q, (snapshot) => {
 			setClassroom(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
 			// const classlist = snapshot.docs
 			// .map(doc => (
@@ -155,12 +152,16 @@ export default function ClassList() {
 	const classroomBody = () => {
 		return (
 			<Box component={Grid} container justifyContent="center">
+				<Helmet>
+					<title>Student Classroom</title>
+					<link rel="Classroom Icon" href={logohelmetclass} />
+				</Helmet>
 				<Box component={Grid} container justifyContent="center">
 					<Grid container sx={style.gridcontainerClass}>
 						{classroom && classroom.map(item =>
 							<Box sx={{ minWidth: 300, boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)', padding: 2, margin: 2, }}>
 								<Box sx={style.headerClass} key={item.id} container justifyContent="center">
-									<Typography sx={style.linkStyle} onClick={() => history.push(`/studentclassroomdetail/${item.classCode}`)}>
+									<Typography sx={style.linkStyle}>
 										{item.className}
 									</Typography>
 								</Box>
@@ -201,7 +202,7 @@ export default function ClassList() {
 							aria-expanded={open ? 'true' : undefined}
 							onClick={handleOpenJoinClass}
 						>
-							Join
+							Request Class
 						</Button>
 					</Grid>
 				</Grid>

@@ -7,12 +7,8 @@ import {
     Paper
 } from '@mui/material';
 
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
-import Bulb from '../../assets/img/png/bulb.png'
-import Find from '../../assets/img/jpg/find.jpg'
-import Message from '../../assets/img/jpg/message.jpg'
 const style = {
     //helper
     textAlignStyle: {
@@ -37,7 +33,7 @@ const style = {
     },
     cardStyle: {
         maxWidth: 345,
-        height: 450,
+        height: 350,
         marginTop: 10,
     },
     imgStyle: {
@@ -62,10 +58,10 @@ export default function GuideComponent() {
                                 </Grid>
                                 <CardContent>
                                     <Typography gutterBottom sx={{ ...style.textStyle, ...style.textAlignStyle }}>
-                                        Find ypu classroom
+                                        Find your Classroom
                                     </Typography>
                                     <Typography variant="body2" sx={{ ...style.textAlignStyle, ...style.descriptStyle }}>
-                                        Elementary students don’t learn the same way as college students or adults. Rendezvous was designed for all students—from kindergarten through 12th grade—to be fully engaged with their learning.
+                                        To connect with your instructor and see all your assigned task in a specific space.
                                     </Typography>
                                 </CardContent>
                             </Paper>
@@ -82,7 +78,7 @@ export default function GuideComponent() {
                                         Join meeting
                                     </Typography>
                                     <Typography variant="body2" sx={{ ...style.textAlignStyle, ...style.descriptStyle }}>
-                                        Rendezvous has spent the last 10 years learning from our 1,600+ customers and more than 20 million users about what products and services classrooms, schools, and entire districts need to be successful.
+                                        To keep you connected and know the latest topic
                                     </Typography>
                                 </CardContent>
                             </Paper>
@@ -99,7 +95,7 @@ export default function GuideComponent() {
                                         Monitor your students
                                     </Typography>
                                     <Typography variant="body2" sx={{ ...style.textAlignStyle, ...style.descriptStyle }}>
-                                        Learning is not just about teachers and students. Rendezvous allows you to bring everyone together—students, teachers, coaches, parents, administrators—with one communication and collaboration platform.
+                                        To guide and teach them to be creative and resourceful to learn. Rendezvous can give it all to you.
                                     </Typography>
                                 </CardContent>
                             </Paper>

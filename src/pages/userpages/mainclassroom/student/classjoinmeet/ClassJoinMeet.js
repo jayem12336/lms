@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { onSnapshot, collection, query, where } from 'firebase/firestore';
+import { onSnapshot, collection, query, where, getDoc, doc } from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
-import { getUser, acceptStudent, removeStudent, getDocsByCollection } from '../../../../../utils/firebaseUtil'
+import { getUser } from '../../../../../utils/firebaseUtil'
 
 import { useSelector } from 'react-redux';
 
@@ -9,20 +9,15 @@ import {
     Typography,
     Box,
     Grid,
-    TextField,
-    Button
+    Link
 } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import Classdrawer from '../../classdrawer/ClassDrawer';
 import Image from '../../../../../assets/img/png/gmeet_image.png'
-import OutlinedInput from '@mui/material/OutlinedInput';
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 
 import { useParams } from 'react-router-dom';
 import StudentDrawer from '../../classdrawer/ClassDrawerStudent';
+
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 const style = {
     gridcontainer: {
         maxWidth: 1100,
@@ -79,11 +74,14 @@ export default function ClassJoinMeet() {
 
     const [isTeacher, setIsTeacher] = useState(false)
 
+    const [meetingLink, setMeetingLink] = useState('')
+
     //Load classrooms
     useEffect(() => {
 
         if (Object.keys(user.currentUser).length !== 0) {
             getClassData()
+            getMeeting()
             getUser().then(data => {
                 data.map(item => {
                     setIsTeacher(item.isTeacher)
@@ -93,6 +91,18 @@ export default function ClassJoinMeet() {
 
 
     }, [user]);
+
+    const getMeeting = async () => {
+        const docRef = doc(db, "meeting", params.id)
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            setMeetingLink(docSnap.data().meetingLink)
+            console.log("Document data:", docSnap.data());
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }
 
     const getClassData = () => {
         const classCollection = collection(db, "createclass")
@@ -112,12 +122,16 @@ export default function ClassJoinMeet() {
 
     return (
         <StudentDrawer classCode={params.id}>
+            <Helmet>
+                <title>Meeting</title>
+                <link rel="Classroom Icon" href={logohelmetclass} />
+            </Helmet>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
                 <Grid container justifyContent="center" sx={style.gridcontainer}>
                     <Grid item sm>
                         <Grid container justifyContent="center" sx={style.gmeetContainer}>
                             <Grid Container>
-                                <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                {/* <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
                                     <InputLabel htmlFor="outlined-adornment-password">meet.google.com</InputLabel>
                                     <OutlinedInput
                                         id="outlined-adornment-password"
@@ -128,18 +142,22 @@ export default function ClassJoinMeet() {
                                         }
                                         label="Password"
                                     />
-                                </FormControl>
+                                </FormControl> */}
+                                <Typography>Meeting Link :</Typography>
+                                <Link href={meetingLink} target="_blank" underline="none">
+                                    {meetingLink}
+                                </Link>
                             </Grid>
-                            <Grid container justifyContent="center">
+                            {/* <Grid container justifyContent="center">
                                 <Button variant="contained" sx={style.btnStyle}>Save</Button>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Grid>
                     <Grid item sm>
                         <Grid container sx={style.imageContainer}>
                             <Box
                                 component="img"
-                                src={Image} 
+                                src={Image}
                                 alt="Gmeet Image"
                                 sx={style.imgStyle}
                             />

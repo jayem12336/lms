@@ -5,8 +5,6 @@ import {
     Button,
     Typography,
     Grid,
-    TextField,
-    InputAdornment,
     Container,
 } from '@mui/material';
 
@@ -14,9 +12,9 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import Input from '../../components/Input'
 import NavBar from '../../components/navbarcomponent/NavBar'
 import NewFooter from '../../components/linkcomponent/NewFooter';
-import logohelmet from '../../assets/img/png/logoforhelmet.png';
 
 import { Helmet } from 'react-helmet';
+import logohelmet from '../../assets/img/png/logoforhelmet.png';
 
 const style = {
     //helper
@@ -48,8 +46,8 @@ const style = {
         display: 'flex'
     },
     btnStyle: {
-        height: 40,
-        width: 150,
+        height: 50,
+        width: 200,
         fontSize: 23,
         borderRadius: 100,
         textTransform: 'none',
@@ -146,7 +144,7 @@ export default function NewForgot() {
                                     onClick={forgotBtn}
                                     sx={style.btnStyle}
                                 >
-                                    Recover
+                                    Send Email
                                 </Button>
                             </Grid>
                         </Grid>

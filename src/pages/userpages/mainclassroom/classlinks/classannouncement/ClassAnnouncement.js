@@ -32,7 +32,7 @@ const style = {
     boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
     marginTop: 5,
     padding: 2,
-    maxWidth: 1100
+    maxWidth: 1100,
   },
   announcementBannerContainer: {
     boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
@@ -44,7 +44,7 @@ const style = {
     backgroundRepeat: "no-repeat",
     backgroundImage: `url(${Banner})`,
     alignItems: "center",
-    maxWidth: 1100
+    maxWidth: 1100,
   },
   imageContainer: {
 
@@ -78,9 +78,6 @@ export default function ClassAnnouncement() {
   const [className, setClassName] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [announcementContent, setAnnoucncementContent] = useState('')
-  const [room, setRoom] = useState('')
-  const [section, setSection] = useState('')
-  const [subject, setSubject] = useState('')
 
   const params = useParams()
   const { user } = useSelector((state) => state);
@@ -106,9 +103,6 @@ export default function ClassAnnouncement() {
         const data = item.filter(item => item.classCode === params.id)
         data.map(item => {
           setClassName(item.className)
-          setRoom(item.room)
-          setSection(item.section)
-          setSubject(item.subject)
           setOwnerName(item.displayName)
         })
       })
@@ -137,7 +131,6 @@ export default function ClassAnnouncement() {
     createDoc('announcement', data).then(() => {
       setAnnoucncementContent('')
       getDataAnnouncement()
-      setShowInput(false)
     })
   }
 
@@ -178,7 +171,7 @@ export default function ClassAnnouncement() {
   }
 
   return (
-    <Teacherdrawer headTitle={className} classCode={params.id} headRoom={room} headSubject={subject} headSection={section}>
+    <Teacherdrawer headTitle={className} classCode={params.id}>
       <Helmet>
         <title>Announcement</title>
         <link rel="Classroom Icon" href={logohelmetclass} />

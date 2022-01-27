@@ -2,13 +2,13 @@ import React from 'react'
 import {
     Box,
     Grid,
-    Link,
     Container,
     Avatar,
     Typography,
     useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { HashLink } from 'react-router-hash-link';
 
 const style = {
     avatarStyle: {
@@ -23,7 +23,16 @@ const style = {
     fontStyle: {
         fontSize: 20,
         color: "#FFFFFF"
-    }
+    },
+    btnLinks: {
+        color: "#fff",
+        '&:hover': {
+            background: '#4877c2',
+            color: (theme) => theme.colors.navButton,
+        },
+        display: 'inline-flex',
+        alignItems: 'center',
+    },
 }
 
 export default function Footer() {
@@ -38,9 +47,9 @@ export default function Footer() {
                 padding: {
                     xs: 3,
                     sm: 10,
-
                 }
-            }}>
+            }}
+                id="Contact">
                 <Container maxWidth="lg">
                     <Grid container spacing={matchMD ? 20 : 10}>
                         <Grid item xs={12} sm={4}>
@@ -56,12 +65,12 @@ export default function Footer() {
                             <Box sx={{ fontSize: 25 }}>Information</Box>
                             <Box sx={{ paddingTop: 2 }}>
                                 <Typography sx={style.fontStyle}>
-                                    About
+                                    <HashLink style={style.btnLinks} to="/#Guide">Guide</HashLink>
                                 </Typography>
                             </Box>
                             <Box sx={{ paddingTop: 2 }}>
                                 <Typography sx={style.fontStyle}>
-                                    Service
+                                    <HashLink style={style.btnLinks} to="/#About">About</HashLink>
                                 </Typography>
                             </Box>
                         </Grid>
@@ -75,6 +84,11 @@ export default function Footer() {
                             <Box sx={{ paddingTop: 2 }}>
                                 <Typography sx={style.fontStyle}>
                                     Yahoo mail: rendezvous@yahoo.com
+                                </Typography>
+                            </Box>
+                            <Box sx={{ paddingTop: 2 }}>
+                                <Typography sx={style.fontStyle}>
+                                    Phone:  09567960622
                                 </Typography>
                             </Box>
                         </Grid>
@@ -92,11 +106,9 @@ export default function Footer() {
                                 sm: 0,
 
                             },
-                            
+                            fontSize: 25
                         }}>
-                        <Typography sx={{fontSize: 25, fontWeight: 500}}>
-                            Rendezvous &reg; {new Date().getFullYear()}
-                        </Typography>
+                        Rendezvous &reg; {new Date().getFullYear()}
                     </Box>
                 </Container>
             </Box>

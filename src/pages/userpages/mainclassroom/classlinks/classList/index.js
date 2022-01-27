@@ -12,19 +12,10 @@ import {
     Box,
     Grid,
     Button,
-    Menu,
-    MenuItem
+    CircularProgress
 } from '@mui/material';
 
 import Classdrawer from '../../classdrawer/ClassDrawer';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-
-
-import Fade from '@mui/material/Fade';
-import Divider from '@mui/material/Divider';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
 
 import CreateActivityDialog from '../classwork/CreateActivityDialog';
@@ -34,7 +25,6 @@ import CreateLabDialog from '../classwork/CreateLabDialog';
 
 import CreateClass from './CreateClass';
 import JoinClass from './JoinClass';
-
 import { Helmet } from 'react-helmet';
 import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
@@ -48,12 +38,10 @@ const style = {
     gridcontainerClass: {
         display: "flex",
         padding: 2,
-        cursor: 'pointer',
         marginTop: -3
     },
     main: {
         display: "flex",
-        cursor: "pointer",
         alignItems: "center",
     },
     iconStyle: {
@@ -80,7 +68,6 @@ const style = {
         fontWeight: 400
     },
     linkStyle: {
-        cursor: 'pointer',
         color: 'white',
         fontSize: 18,
         textAlign: 'center',
@@ -115,6 +102,7 @@ export default function ClassList() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [isTeacher, setIsTeacher] = useState(false)
     const [displayName, setDisplayName] = useState('')
+    const [loading, setLoading] = useState(true)
 
     const open = Boolean(anchorEl);
 
@@ -196,10 +184,10 @@ export default function ClassList() {
     const getClassData = () => {
         const classCollection = collection(db, "createclass")
         const q = query(classCollection, where('students', "array-contains", user.currentUser.uid));
-        const qTeacher = query(classCollection, where('ownerId', "==", user.currentUser.uid));
+        const qTeacher = query(classCollection, where('ownerId', "==", user.currentUser.uid), where("isDeleted", "==", false), where("isArchived", "==", false));
         const unsubscribe = onSnapshot(qTeacher, (snapshot) => {
             setClassroom(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-            // setLoading(false);
+            setLoading(false);
         }
         )
         return unsubscribe;
@@ -215,7 +203,7 @@ export default function ClassList() {
                         {classroom && classroom.map(item =>
                             <Box sx={{ width: 300, boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)', padding: 2, margin: 2, }}>
                                 <Box sx={style.headerClass} key={item.id} container justifyContent="center">
-                                    <Typography sx={style.linkStyle} onClick={() => history.push(`/classroomdetail/${item.classCode}`)}>
+                                    <Typography sx={style.linkStyle}>
                                         {item.className}
                                     </Typography>
                                 </Box>
@@ -225,7 +213,7 @@ export default function ClassList() {
                                     <Typography variant="h6" sx={{ marginTop: 1 }}>{item.room}</Typography>
                                 </Box>
                                 <Box component={Grid} container justifyContent="center" sx={{ marginTop: 5 }}>
-                                    <Button variant="contained" sx={{ backgroundColor: '#FFBD1F' }}> Go inside </Button>
+                                    <Button variant="contained" sx={{ backgroundColor: '#FFBD1F' }} onClick={() => history.push(`/classroomdetail/${item.classCode}`)}> Go inside </Button>
                                 </Box>
                             </Box>
                         )}
@@ -330,24 +318,33 @@ export default function ClassList() {
                     </Grid> */}
                 </Grid>
             </Box>
-            {classroom ?
-                <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
-                    {classroomBody()}
+            {/* <Box sx={{ display: 'flex', widhth: '100%',height:'30em', justifyContent:'center', alignItems: 'center' }}>
+                <CircularProgress />
+            </Box> */}
+            {loading ?
+                <Box sx={{ display: 'flex', widhth: '100%', height: '30em', justifyContent: 'center', alignItems: 'center' }}>
+                    <CircularProgress />
                 </Box>
                 :
-                <Box component={Grid} container justifyContent="center" alignItems="center" sx={{ paddingTop: 5, flexDirection: "column" }}>
-                    <Box component={Grid} container justifyContent="center" sx={style.imgContainer}>
-                        <Box component="img" src={bgImage} alt="Animated Computer" sx={style.imgStyle} />
+                classroom ?
+                    <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
+                        {classroomBody()}
                     </Box>
-                    <Box component={Grid} container justifyContent="center" sx={style.txtContainer}>
-                        <Typography>
-                            This is where you'll see classrooms.
-                        </Typography>
-                        <Typography>
-                            You can join class, see activities and check available quiz
-                        </Typography>
+                    :
+                    <Box component={Grid} container justifyContent="center" alignItems="center" sx={{ paddingTop: 5, flexDirection: "column" }}>
+                        <Box component={Grid} container justifyContent="center" sx={style.imgContainer}>
+                            <Box component="img" src={bgImage} alt="Animated Computer" sx={style.imgStyle} />
+                        </Box>
+                        <Box component={Grid} container justifyContent="center" sx={style.txtContainer}>
+                            <Typography>
+                                This is where you'll see classrooms.
+                            </Typography>
+                            <Typography>
+                                You can join class, see activities and check available quiz
+                            </Typography>
+                        </Box>
                     </Box>
-                </Box>
+
             }
 
 

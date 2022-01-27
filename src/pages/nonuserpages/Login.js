@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import {
     Box,
@@ -8,11 +8,17 @@ import {
     InputAdornment,
     IconButton,
     Container,
-    FormControlLabel,
-    Radio,
+    Alert
 } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 
-import { useDispatch, useSelector } from 'react-redux';
+
+import Stack from '@mui/material/Stack';
+// import MuiAlert from '@mui/material/Alert';
+
+import Snackbar from '@mui/material/Snackbar';
+
+import { useDispatch } from 'react-redux';
 
 import { Link, useHistory } from 'react-router-dom';
 
@@ -23,19 +29,12 @@ import NewFooter from '../../components/linkcomponent/NewFooter';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
+import { loginSuccess } from '../../redux/actions/userAction';
+import { getDocsByCollection } from '../../utils/firebaseUtil'
+
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 import { Helmet } from 'react-helmet';
-
-import { loginInitiate } from '../../redux/actions/userAction';
-import { getUserLogin } from '../../utils/firebaseUtil'
-
-import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
-
-import { setDoc, doc } from '@firebase/firestore';
-
-import { db } from '../../utils/firebase';
-
-import LoadingButton from '@mui/lab/LoadingButton';
-
 import logohelmet from '../../assets/img/png/logoforhelmet.png';
 
 const style = {
@@ -149,7 +148,33 @@ const style = {
     },
 }
 
+// const Alert = React.forwardRef(function Alert(props, ref) {
+//     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// });
+
 export default function Login() {
+
+    const [openSuccess, setOpenSuccess] = React.useState(false);
+    const [openError, setOpenError] = React.useState(false);
+
+    const handleClick = () => {
+        setOpenSuccess(true);
+    };
+
+    const handleCloseSuccess = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSuccess(false);
+    };
+
+    const handleCloseError = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenError(false);
+    };
 
     const dispatch = useDispatch();
 
@@ -161,8 +186,6 @@ export default function Login() {
         showPassword: false,
         errors: ''
     });
-    const [error, setError] = useState('');
-
     const [loading, setLoading] = useState(false)
 
     const handleChange = (prop) => (event) => {
@@ -179,25 +202,70 @@ export default function Login() {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
-    
 
     const btnSignIn = (e) => {
         // e.preventDefault();
+        setLoading(true)
         if (values.email === '' || values.password === '') {
             setValues({ ...values, errors: "Please Complete all fields", isLoading: false, password: "" })
+            setOpenError({ open: true });
+            setLoading(false)
         }
         else {
-            setLoading(true)
-            setValues({ ...values, errors: "", isLoading: true });
-            dispatch(loginInitiate(values.email, values.password, history));
+            setValues({ ...values, errors: "Successfully Login", isLoading: true });
+
+            // dispatch(loginInitiate(values.email, values.password, history));
+            try {
+                const auth = getAuth();
+                signInWithEmailAndPassword(auth, values.email, values.password)
+                    .then((userCredential) => {
+                        // Signed in 
+                        const user = userCredential.user;
+                        dispatch(loginSuccess(user));
+                        window.sessionStorage.setItem('id', user.uid)
+                        getDocsByCollection('users').then(data => {
+                            data.filter(data => data.ownerId === user.uid).map(data => {
+                                setOpenSuccess({ open: true });
+                                window.sessionStorage.setItem('user', data.isTeacher)
+                                if (data.isTeacher) {
+
+                                    history.push('/classroom')
+                                } else {
+
+                                    history.push('/studentclassroom')
+                                }
+                                // if(data.isTeacher){
+                                // history.push('/classroom')
+                                // }else {
+                                // history.push('/studentclassroom')
+                                // }
+                            })
+                        })
+                        //   history.push('/classroom');
+                        // ...
+                    })
+                    .catch((error) => {
+                        const errorMessage = error.message;
+                        setValues({ ...values, errors: errorMessage, isLoading: false, password: "" })
+                        setOpenError({ open: true });
+                        setLoading(false);
+                    });
+
+            } catch (err) {
+                console.error(err)
+            }
         }
     };
 
-    const handleNew = async (user) => {
+
+
+
+
+    /* const handleNew = async (user) => {
         const docRef = doc(db, "users", user.uid);
         const payload = { displayName: user.displayName, email: user.email, uid: user.uid, photoURL: user.photoURL };
         await setDoc(docRef, payload);
-    }
+    } 
 
     const btnSignInWithGoogle = () => {
         const provider = new GoogleAuthProvider()
@@ -241,7 +309,7 @@ export default function Login() {
                 // ...
                 alert(credential);
             });
-    }
+    } */
     console.log(values)
 
     return (
@@ -250,6 +318,31 @@ export default function Login() {
                 <title>Login</title>
                 <link rel="Rendezous Icon" href={logohelmet} />
             </Helmet>
+            <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    autoHideDuration={3000}
+                    open={openError}
+                    onClose={handleCloseError}
+                    message="I love snacks"
+                // key={vertical + horizontal}
+                >
+                    <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+                        {values.errors}
+                    </Alert>
+                </Snackbar>
+
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    autoHideDuration={3000}
+                    open={openSuccess}
+                    onClose={handleCloseSuccess}
+                    message="I love snacks"
+                // key={vertical + horizontal}
+                >
+                    <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                        {values.errors}
+                    </Alert>
+                </Snackbar>
             <NavBar />
             <Box sx={style.section1}>
                 <Box component={Grid} container justifyContent="center">
@@ -260,16 +353,14 @@ export default function Login() {
                         <Grid container style={{
                             padding: "100px 80px"
                         }} justifyContent='center' spacing={4}>
-                            <Grid item>
-                                <Typography sx={{ color: 'red' }}>{error}</Typography>
-                            </Grid>
                             <Grid item xs={12} spacing={3}>
                                 <Typography sx={style.textStyle}>Email</Typography>
                                 <Input
                                     type='text'
                                     value={values.email}
                                     onChange={handleChange('email')}
-                                    name='email'
+                                    onKeyDown={(e) => e.key === 'Enter' && btnSignIn(e)}
+                                    name='firstName'
                                 // errorMessage={error.firstName}
                                 />
                             </Grid>
@@ -279,6 +370,7 @@ export default function Login() {
                                     type={values.showPassword ? 'text' : 'password'}
                                     onChange={handleChange('password')}
                                     value={values.password}
+                                    onKeyDown={(e) => e.key === 'Enter' && btnSignIn(e)}
                                     name='password'
                                     id="outlined-adornment-password"
                                     endAdornment={
@@ -293,13 +385,11 @@ export default function Login() {
                                             </IconButton>
                                         </InputAdornment>
                                     }
-                                    errorMessage={values.errors}
                                 />
                             </Grid>
                             <Grid container justifyContent="flex-end" sx={{ paddingLeft: 6 }}>
-                                {/* <FormControlLabel value="best" control={<Radio />} label="Remember me" /> */}
                                 <Link style={{ marginTop: 4, textDecoration: "none" }}
-                                    to='/forgot'>Forget Password?</Link>
+                                    to='/forgot'>Forgot Password?</Link>
                             </Grid>
                             <Grid
                                 container
@@ -311,18 +401,25 @@ export default function Login() {
                                     Don't have an account.
                                     <Button
                                         variant="text"
-                                        sx={{ fontSize: 20, marginTop: -.5, fontWeight: "bold" }}
+                                        sx={{ fontSize: 20, marginTop: -.5 }}
                                         onClick={() => history.push('/register')}
                                     >Sign up
                                     </Button>
                                 </Typography>
+                                {/* <Button
+                                    variant="contained"
+                                    // onClick={signup}
+                                    onClick={(e) => btnSignIn(e)}
+                                    sx={style.btnStyle}
+                                >
+                                    Sign in
+                                </Button> */}
                                 <LoadingButton
                                     loading={loading}
-                                    loadingIndicator="Loading..."
                                     variant="contained"
                                     color='primary'
                                     onClick={(e) => btnSignIn(e)}
-                                    sx={{ width: 150, borderRadius: 10, fontWeight: "bold" }}
+                                    sx={style.btnStyle}
                                 >
                                     Sign in
                                 </LoadingButton>
@@ -350,8 +447,10 @@ export default function Login() {
                     </Box>
                 </Box>
             </Box>
+
             <NewFooter />
         </Container>
+
         // <Box sx={style.root}>
         //     <Grid container justifyContent="center">    
         //         <Box sx={style.section1} boxShadow={12}>

@@ -25,16 +25,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link } from 'react-router-dom'
 
 //Material Icons
-import AnnouncementIcon from '@mui/icons-material/Announcement';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import DuoIcon from '@mui/icons-material/Duo';
-import PeopleIcon from '@mui/icons-material/People';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PersonIcon from '@mui/icons-material/Person';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import ArticleIcon from '@mui/icons-material/Article';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { logoutInitiate } from '../../../../redux/actions/userAction';
@@ -134,7 +128,7 @@ const style = {
         fontSize: 30,
     },
     headerTitle: {
-        fontSize: 22,
+        fontSize: 27,
         fontWeight: 600
     }
 }

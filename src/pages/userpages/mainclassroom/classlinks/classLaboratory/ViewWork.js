@@ -317,6 +317,15 @@ export default function Laboratory() {
                       Save
                     </Button>
                   </Grid> */}
+                  <Grid item sx={{ marginTop: 0.5, marginBottom: 1}}>
+                    <Button 
+                      variant="contained"
+                      style={style.btnStyle} 
+                      onClick={() => history.goBack()}
+                    > 
+                      Back
+                    </Button>
+                  </Grid>
                 </Box>
               </Grid>
             </Grid>

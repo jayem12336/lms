@@ -111,24 +111,11 @@ export default function AboutComponent() {
                 <Box sx={style.aboutContainer}>
                     <Box sx={style.marginStyle}>
                         <Box component={Grid} container justifyContent="flex-start" sx={style.titleContainer}>
-                            <Typography sx={style.title}>About</Typography>
-                            <Typography sx={style.title}>What is Rendezvous?</Typography>
-                            <Typography sx={style.title}>The Solution for Education</Typography>
+                            <Typography sx={style.title}>About Rendezvous</Typography>
                         </Box>
+                        
                         <Box component={Grid} container justifyContent="flex-start" sx={style.textContainer}>
-                            <Typography sx={style.text}> But we’re not only the makers of a leading learning</Typography>
-                            <Typography sx={style.text}> management system. We're an education technology</Typography>
-                            <Typography sx={style.text}> company with a mission to elevate student success,</Typography>
-                            <Typography sx={style.text}> amplify the power of teaching, and inspire everyone to</Typography>
-                            <Typography sx={style.text}> learn together.</Typography>
-                        </Box>
-                        <Box component={Grid} container justifyContent={matchMD ? "flex-start" : "center"} sx={style.buttonContainer}>
-                            <Button
-                                variant="contained"
-                                sx={style.button}
-                            >
-                                Read Our Story
-                            </Button>
+                            <Typography sx={style.text}> Rendezvous: A Learning Management Platform for Education is an online platform website for the students and teachers that adopting the new learning platform for education that features laboratory that will be used specially for ICT students.</Typography>
                         </Box>
                     </Box>
                     <Box sx={style.imgContainer}>

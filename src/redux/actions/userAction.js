@@ -45,7 +45,7 @@ export const registerInitiate = (email, password, displayName, history) => (disp
     }
 }
 
-const loginSuccess = (user) => ({
+export const loginSuccess = (user) => ({
     type: actionTypes.LOGIN_SUCCESS,
     payload: user
 });

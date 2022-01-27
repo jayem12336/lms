@@ -17,8 +17,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { LinearProgress } from '@mui/material';
-import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from 'react-router';
+import { useSelector } from "react-redux";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import MobileViewTeachersDrawer from './MobileViewTeachersDrawer';
 
@@ -27,20 +26,14 @@ import MobileViewTeachersDrawer from './MobileViewTeachersDrawer';
 import { Link } from 'react-router-dom'
 
 //Material Icons
-import AnnouncementIcon from '@mui/icons-material/Announcement';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import DuoIcon from '@mui/icons-material/Duo';
-import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import GradingIcon from '@mui/icons-material/Grading';
 import PhotoCameraFrontIcon from '@mui/icons-material/PhotoCameraFront';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
-import { logoutInitiate } from '../../../../redux/actions/userAction';
 
 import { getUser } from '../../../../utils/firebaseUtil'
 
@@ -151,8 +144,6 @@ const style = {
 
 export default function StudentDrawer(props) {
 
-    const dispatch = useDispatch();
-    const history = useHistory();
     const { user } = useSelector((state) => state);
 
     const theme = useTheme();
@@ -187,12 +178,13 @@ export default function StudentDrawer(props) {
 
     console.log(classUser);
 
+    /*
     const handleLogOut = () => {
         if (user) {
             dispatch(logoutInitiate());
             history.push('/');
         }
-    }
+    } */ 
 
     console.log(props)
     return (
@@ -200,7 +192,7 @@ export default function StudentDrawer(props) {
             <CssBaseline />
             <AppBar position="fixed" open={matchMD ? false : open}>
                 <Toolbar>
-                    {matchMD ? <MobileViewTeachersDrawer props={props} /> :
+                    {matchMD ? <MobileViewTeachersDrawer props={props}/> :
                         <>
                             <IconButton
                                 color="inherit"
@@ -216,28 +208,12 @@ export default function StudentDrawer(props) {
                             </IconButton>
                         </>
                     }
-                    <Grid container justifyContent="center">
-                        <Typography variant="h6" noWrap component="div" >
-                            {/* {classUser.classData.subject} */}
-                            Section: {props.headSection} |
-                            {/* test */}
-                        </Typography>
+                    <Grid container justifyContent="flex-start">
                         <Typography variant="h6" noWrap component="div">
                             {/* {classUser.classData.className} */}
-                            ClassName: {props.headTitle} |
+                            {props.headTitle}
                             {/* test */}
                         </Typography>
-                        <Typography variant="h6" noWrap component="div">
-                            {/* {classUser.classData.room} */}
-                            Room: {props.headRoom}|
-                            {/* test */}
-                        </Typography>
-                        <Typography variant="h6" noWrap component="div">
-                            {/* {classUser.classData.subject} */}
-                            Subject: {props.headSubject}
-                            {/* test */}
-                        </Typography>
-
                     </Grid>
                 </Toolbar>
                 {loading ?
@@ -381,13 +357,15 @@ export default function StudentDrawer(props) {
                             </Box>
                             <Box sx={style.listHover}>
                                 <ListItem
-
+                                    button
+                                    component={Link}
+                                    to={`/studentsetting/${props.classCode}`}
                                     sx={style.listItemStyle}
                                 >
                                     <ListItemIcon> <SettingsIcon color="primary" sx={style.iconStyle} /></ListItemIcon>
                                     <ListItemText>
                                         <Typography sx={style.textStyle}>
-                                            Unenroll
+                                            Settings
                                         </Typography>
                                     </ListItemText>
                                 </ListItem>

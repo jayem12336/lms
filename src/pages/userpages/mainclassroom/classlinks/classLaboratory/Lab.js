@@ -5,7 +5,6 @@ import {
   Box,
   Grid,
   Button,
-  Menu,
   MenuItem,
   TextField,
   OutlinedInput,
@@ -13,42 +12,27 @@ import {
   InputLabel,
   Select,
   Alert,
-  AlertTitle,
   Snackbar,
-  IconButton,
   Stack,
   Chip,
   useMediaQuery
 } from '@mui/material';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import YouTubeIcon from '@mui/icons-material/YouTube';
 
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { createDoc, getDocsByCollection, updateDocsByCollection, createClassDoc, saveLabStudent } from '../../../../../utils/firebaseUtil'
+import { getDocsByCollection, createClassDoc, saveLabStudent, getStudentByAssigned } from '../../../../../utils/firebaseUtil'
 import { Timestamp } from 'firebase/firestore';
 
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
-import { Helmet } from 'react-helmet';
-import logohelmetclass from '../../../../../assets/img/png/monitor.png';
-
 
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 
-
-import Fade from '@mui/material/Fade';
-import Divider from '@mui/material/Divider';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
-
-import Editor from './Editor'
 import { useTheme } from '@mui/material/styles';
 
 
@@ -112,10 +96,6 @@ const style = {
     display: 'flex',
     width: '100%'
   },
-  textStyle: {
-    margin: 0.5
-  }
-
 }
 
 export default function Laboratory() {
@@ -131,11 +111,12 @@ export default function Laboratory() {
   const [open, setOpen] = useState(false)
   const [instruction, setInstruction] = useState('')
   const [labId, setLabId] = useState('')
+  const [error, setError] = useState({
+    title: '',
+    instruction: ''
+  })
 
-  const [classname, setCLassName] = useState('')
-  const [room, setRoom] = useState('')
-  const [section, setSection] = useState('')
-  const [subject, setSubject] = useState('')
+
   const { user } = useSelector((state) => state);
   const params = useParams()
   const history = useHistory();
@@ -170,26 +151,26 @@ export default function Laboratory() {
 
   }, [user]);
 
-
-
-
   const getStudentList = () => {
-    getDocsByCollection('users').then(data => {
-      const students = data.map(item => {
+    // getDocsByCollection('users').then(data => {
+    //   const students = data.map(item => {
+    //     let studentArr = []
+    //     studentArr = { label: item.displayName, value: item.ownerId }
+    //     return studentArr
+    //   })
+    //   setStudentsList(students)
+    // })
+    getStudentByAssigned(params.id).then(item => {
+      const students = item.students.filter(item => item.isJoin === true).map(item => {
         let studentArr = []
         studentArr = { label: item.displayName, value: item.ownerId }
         return studentArr
       })
       setStudentsList(students)
- 
     })
     getDocsByCollection('quiz').then(data => {
       data.filter(item => item.classCode === params.id).map(item => {
         setStudentName(item.students)
-        setCLassName(item.className)
-        setRoom(item.room)
-        setSection(item.section)
-        setSubject(item.subject)
       })
     })
   }
@@ -229,24 +210,35 @@ export default function Laboratory() {
   }
 
   const saveLab = () => {
-
-    if (labTitle === "" || instruction === "" || studentName === "") {
-      alert("Please Fill up the following fields");
+    const data = {
+      html: html,
+      css: css,
+      js: js,
+      ownerId: user.currentUser.uid,
+      classCode: params.id,
+      created: Timestamp.now(),
+      title: labTitle,
+      students: studentName,
+      instruction: instruction,
+      labId: params.labId
     }
-    else {
-      const data = {
-        html: html,
-        css: css,
-        js: js,
-        ownerId: user.currentUser.uid,
-        classCode: params.id,
-        created: Timestamp.now(),
-        title: labTitle,
-        students: studentName,
-        instruction: instruction,
-        labId: params.id
-      }
-      // if(isNew){
+    // if(isNew){
+    if (labTitle === '' && instruction === '') {
+      setError({
+        title: 'please input title',
+        instruction: 'please input instruction'
+      })
+    } else if (instruction === '') {
+      setError({
+        ...error,
+        instruction: 'please input instruction'
+      })
+    } else if (labTitle === '') {
+      setError({
+        ...error,
+        title: 'please input instruction'
+      })
+    } else {
       createClassDoc('laboratory', id, data).then(() => {
         setOpen({ open: true });
         studentName.map(student => {
@@ -271,38 +263,44 @@ export default function Laboratory() {
 
         return () => clearTimeout(timeout)
       })
-      // }
-      // else {
-      //   updateDocsByCollection('laboratory', data).then(() => {
-      //     console.log('success update')
-      //     setOpen({ open: true});
-      //     studentName.map(student => {
-      //       const studentData = {
-      //         html: html,
-      //         css : css,
-      //         js: js,
-      //         ownerId: user.currentUser.uid,
-      //         classCode: params.id,
-      //         created: Timestamp.now(),
-      //         title: labTitle,
-      //         studentId: student,
-      //         instruction: instruction,
-      //         labId: labId ? labId : id
-      //       }
-      //       saveLabStudent(studentData)
-      //       const timeout = setTimeout(() => {
-      //         history.push(`/classroomdetail/${params.id}`)
-      //       }, 2000)
-
-      //       return () => clearTimeout(timeout)
-      //     })
-
-      //   })
-      // }
     }
+
+    // }
+    // else {
+    //   updateDocsByCollection('laboratory', data).then(() => {
+    //     console.log('success update')
+    //     setOpen({ open: true});
+    //     studentName.map(student => {
+    //       const studentData = {
+    //         html: html,
+    //         css : css,
+    //         js: js,
+    //         ownerId: user.currentUser.uid,
+    //         classCode: params.id,
+    //         created: Timestamp.now(),
+    //         title: labTitle,
+    //         studentId: student,
+    //         instruction: instruction,
+    //         labId: labId ? labId : id
+    //       }
+    //       saveLabStudent(studentData)
+    //       const timeout = setTimeout(() => {
+    //         history.push(`/classroomdetail/${params.id}`)
+    //       }, 2000)
+
+    //       return () => clearTimeout(timeout)
+    //     })
+
+    //   })
+    // }
+
   }
 
   const handleTitle = (e) => {
+    setError({
+      ...error,
+      title: ''
+    })
     setLabTitle(e.target.value)
   }
 
@@ -319,15 +317,19 @@ export default function Laboratory() {
   };
 
   const handleInstruction = (e) => {
+    setError({
+      ...error,
+      instruction: ''
+    })
     setInstruction(e.target.value)
   }
 
   console.log(studentName)
   console.log(studentsList)
   return (
-    <Teacherdrawer classCode={params.id} headTitle={classname} headRoom={room} headSubject={subject} headSection={section}>
+    <Teacherdrawer classCode={params.id} headTitle={'Create Laboratory'}>
       <Helmet>
-        <title>Laboratory</title>
+        <title>Create Laboratory</title>
         <link rel="Classroom Icon" href={logohelmetclass} />
       </Helmet>
       <Snackbar
@@ -350,7 +352,7 @@ export default function Laboratory() {
             </Grid>
             {matchMD ? <>
               <Grid container justifyContent="flex-end" sx={{ marginBottom: { xs: -30, md: -8 } }}>
-                <Button variant="contained" style={style.btnStyle} onClick={saveLab}>Create task</Button>
+                <Button variant="contained" style={style.btnStyle} onClick={saveLab}>Create Task</Button>
                 <Button variant="contained" style={style.btnStyle} onClick={() => history.goBack()}>Cancel</Button>
               </Grid>
             </> : ""
@@ -363,6 +365,8 @@ export default function Laboratory() {
                 sx={{ marginBottom: 2 }}
                 value={labTitle}
                 onChange={handleTitle}
+                error={error.title ? true : false}
+                helperText={error.title}
               />
               {/* <Button 
                 variant="contained" 
@@ -392,7 +396,6 @@ export default function Laboratory() {
               // )}
               // MenuProps={MenuProps}
               >
-
                 {studentsList.map((name, index) => (
                   <MenuItem
                     key={name.value}
@@ -423,6 +426,8 @@ export default function Laboratory() {
                   onChange={(e) => handleInstruction(e)}
                   fullWidth
                   minRows={5}
+                  error={error.instruction ? true : false}
+                  helperText={error.instruction}
                 />
                 <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
                   <Grid item>

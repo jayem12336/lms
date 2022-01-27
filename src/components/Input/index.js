@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { alpha, styled } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
-import Box from '@mui/material/Box';
+/*import { alpha, styled } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';*/
 import InputLabel from '@mui/material/InputLabel';
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import OutlinedInput from '@mui/material/OutlinedInput';
 
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
+/*const BootstrapInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
     marginTop: theme.spacing(0),
   },
@@ -47,7 +44,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
     },
     border:'1px solid red'
   },
-}));
+}));*/
 
 const style = {
   '.MuiOutlinedInput-input': {
@@ -85,10 +82,11 @@ export default function Input(props) {
     errorMessage,
     endAdornment,
     id,
+    onKeyDown
   } = props
   return (
     <div style={{display:'flex',flexDirection:'column', width:'100%'}}>
-      <InputLabel shrink htmlFor="bootstrap-input" aria-describedby="component-error-text" style={{fontWeight: "bold", fontSize: 20, color: 'black'}}>
+      <InputLabel shrink htmlFor="bootstrap-input" aria-describedby="component-error-text">
           {label}
       </InputLabel>
       {/* <BootstrapInput 
@@ -103,13 +101,14 @@ export default function Input(props) {
         endAdornment={endAdornment ? endAdornment : ''}
       /> */}
       <OutlinedInput
-        style={{borderRadius:24, width: '100%', fontWeight: "bold"}}
+        style={{borderRadius:24, width: '100%'}}
         sx={style}
         id={id}
         name={name}
         type={type}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         pattern={pattern}
         endAdornment={endAdornment ? endAdornment : ''}
       />

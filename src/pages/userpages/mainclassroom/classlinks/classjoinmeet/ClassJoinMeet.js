@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { onSnapshot, collection, query, where } from 'firebase/firestore';
+import { onSnapshot, collection, query, where, getDoc, doc} from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
-import { getUser, acceptStudent, removeStudent, getDocsByCollection } from '../../../../../utils/firebaseUtil'
+import { getUser, acceptStudent, removeStudent, getDocsByCollection, saveMeeting } from '../../../../../utils/firebaseUtil'
 
 import { useSelector } from 'react-redux';
-
-import { Helmet } from 'react-helmet';
-import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import {
     Typography,
     Box,
     Grid,
     TextField,
-    Button
+    Button,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import InputLabel from '@mui/material/InputLabel';
@@ -78,19 +77,18 @@ export default function ClassJoinMeet() {
 
     const [classCode, setClassCode] = useState('')
 
-    const [classname, setClassName] = useState('')
-    const [room, setRoom] = useState('')
-    const [section, setSection] = useState('')
-    const [subject, setSubject] = useState('')
-
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
+    
+    const [meetingLink, setMeetingLink] = useState('')
+    const [open, setOpen] = useState(false)
 
     //Load classrooms
     useEffect(() => {
 
         if (Object.keys(user.currentUser).length !== 0) {
+            getMeeting()
             getClassData()
             getUser().then(data => {
                 data.map(item => {
@@ -102,6 +100,18 @@ export default function ClassJoinMeet() {
 
     }, [user]);
 
+    const getMeeting = async () => {
+        const docRef = doc(db, "meeting", params.id)
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            setMeetingLink(docSnap.data().meetingLink)
+            console.log("Document data:", docSnap.data());
+          } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+          }
+    }
+
     const getClassData = () => {
         const classCollection = collection(db, "createclass")
         const qTeacher = query(classCollection, where('ownerId', "==", user.currentUser.uid), where('classCode', "==", params.id));
@@ -111,11 +121,6 @@ export default function ClassJoinMeet() {
             );
             snapshot.docs.map(doc => {
                 setClassCode(doc.data().classCode)
-                setClassName(doc.data().className)
-                setRoom(doc.data().room)
-                setSection(doc.data().section)
-                setSubject(doc.data().subject)
-
             })
             // setLoading(false);
         }
@@ -123,12 +128,34 @@ export default function ClassJoinMeet() {
         return unsubscribe;
     }
 
+    const onSaveMeeting = () => {
+        saveMeeting(params.id, meetingLink).then(() => {
+            setOpen(true)
+        })
+
+    }
+
+    const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    setOpen(false)
+    };
+
     return (
-        <TeacherDrawer classCode={classCode} headRoom={room} headSubject={subject} headSection={section} headTitle={classname}>
-            <Helmet>
-                <title>Classroom Meeting</title>
-                <link rel="Classroom Icon" href={logohelmetclass} />
-            </Helmet>
+        <TeacherDrawer classCode={classCode}>
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                autoHideDuration={3000}
+                open={open}
+                onClose={handleClose}
+                message="I love snacks"
+                // key={vertical + horizontal}
+            >
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                Successfully saved meeting
+                </Alert>
+            </Snackbar>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
                 <Grid container justifyContent="center" sx={style.gridcontainer}>
                     <Grid item sm>
@@ -137,6 +164,9 @@ export default function ClassJoinMeet() {
                                 <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
                                     <InputLabel htmlFor="outlined-adornment-password">meet.google.com</InputLabel>
                                     <OutlinedInput
+                                        value={meetingLink}
+                                        type='url'
+                                        onChange={(e) => setMeetingLink(e.target.value)}
                                         id="outlined-adornment-password"
                                         endAdornment={
                                             <InputAdornment position="end">
@@ -148,7 +178,11 @@ export default function ClassJoinMeet() {
                                 </FormControl>
                             </Grid>
                             <Grid container justifyContent="center">
-                                <Button variant="contained" sx={style.btnStyle}>Save</Button>
+                                <Button 
+                                    variant="contained" 
+                                    sx={style.btnStyle}
+                                    onClick={onSaveMeeting}
+                                >Save</Button>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -156,7 +190,7 @@ export default function ClassJoinMeet() {
                         <Grid container sx={style.imageContainer}>
                             <Box
                                 component="img"
-                                src={Image}
+                                src={Image} 
                                 alt="Gmeet Image"
                                 sx={style.imgStyle}
                             />

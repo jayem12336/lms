@@ -2,49 +2,43 @@ import React, { useState } from 'react'
 
 import {
     Box,
-    Button,
     Typography,
     Grid,
-    Stack,
     Switch,
     FormControlLabel,
     InputAdornment,
     IconButton,
+    Alert
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-import { getAuth, signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
 
 import { useHistory } from 'react-router-dom';
 
 import { useDispatch } from 'react-redux';
 
-import GoogleIcon from '@mui/icons-material/Google';
-
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import LockIcon from '@mui/icons-material/Lock';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PersonIcon from '@mui/icons-material/Person';
 
-import { createUser, createDoc, createUserGoogle, getUserLogin } from '../../utils/firebaseUtil'
-
-import { setDoc, doc, addDoc, collection } from '@firebase/firestore';
-
-import { db } from '../../utils/firebase';
+import { createUser, getDocsByCollection } from '../../utils/firebaseUtil'
 
 import Container from '@mui/material/Container';
-import Input from '../../components/Input'
+import Input from '../../components/Input';
 // import {validPhone} from '../../utils/validations'
 
 import NavBar from '../../components/navbarcomponent/NavBar'
 import NewFooter from '../../components/linkcomponent/NewFooter';
-import { loginInitiate } from '../../redux/actions/userAction';
+import { loginInitiate, loginSuccess} from '../../redux/actions/userAction';
+
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 
 import { Helmet } from 'react-helmet';
-
 import logohelmet from '../../assets/img/png/logoforhelmet.png';
+
+import Stack from '@mui/material/Stack';
+// import MuiAlert from '@mui/material/Alert';
+
+import Snackbar from '@mui/material/Snackbar';
 
 const style = {
     marginTopButton: {
@@ -139,11 +133,37 @@ const style = {
 }
 
 
-
+// const Alert = React.forwardRef(function Alert(props, ref) {
+//     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// });
 
 export default function Register() {
 
     const dispatch = useDispatch();
+
+    const [open, setOpen] = React.useState(false);
+    const [openError, setOpenError] = useState(false)
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const handleCloseError = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenError(false);
+    };
 
     const [values, setValues] = useState({
         firstName: '',
@@ -164,6 +184,7 @@ export default function Register() {
         password: ''
     })
     const [loading, setLoading] = useState(false)
+
 
     const history = useHistory();
 
@@ -223,6 +244,10 @@ export default function Register() {
             error.email = 'Please enter email'
             isValid = false
         }
+        if (!values.phone) {
+            error.phone = 'Please enter phone number'
+            isValid = false
+        }
 
         //validate password
         if (!values.password) {
@@ -271,21 +296,65 @@ export default function Register() {
                 isTeacher: values.isTeacher,
                 phone: values.phone
             }
-            createUser(values.email, values.password, data).then(() => {
-                dispatch(loginInitiate(values.email, values.password, history));
-                setTimeout(() => {
-                    if (data.isTeacher) {
-                        history.push('/classroom')
-                    } else {
-                        history.push('/studentclassroom')
-                    }
-                }, 1000)
-                console.log('success')
-            })
+            setValues({ ...values, errors: "Successfully Login", isLoading: true });
+
+            // dispatch(loginInitiate(values.email, values.password, history));
+            try {
+                const auth = getAuth();
+                signInWithEmailAndPassword(auth, values.email, values.password)
+                    .then((userCredential) => {
+                        // Signed in 
+                        const user = userCredential.user;
+                        dispatch(loginSuccess(user));
+                        window.sessionStorage.setItem('id', user.uid)
+                        getDocsByCollection('users').then(data => {
+                            data.filter(data => data.ownerId === user.uid).map(data => {
+                                setOpen({ open: true });
+                                window.sessionStorage.setItem('user', data.isTeacher)
+                                if (data.isTeacher) {
+
+                                    history.push('/classroom')
+                                } else {
+
+                                    history.push('/studentclassroom')
+                                }
+                                // if(data.isTeacher){
+                                // history.push('/classroom')
+                                // }else {
+                                // history.push('/studentclassroom')
+                                // }
+                            })
+                        })
+                        //   history.push('/classroom');
+                        // ...
+                    })
+                    .catch((error) => {
+                        const errorMessage = error.message;
+                        setValues({ ...values, errors: errorMessage, isLoading: false, password: "", confirmPassword: '' })
+                        setOpenError({ open: true });
+                        setLoading(false);
+                    });
+
+            } catch (err) {
+                console.error(err)
+            }
+            // createUser(values.email, values.password, data).then(() => {
+            //     dispatch(loginInitiate(values.email, values.password, history));
+            //     setTimeout(() => {
+            //         if (data.isTeacher) {
+              
+            //             history.push('/classroom')
+            //         } else {
+                   
+            //             history.push('/studentclassroom')
+            //         }
+            //     }, 2000)
+            // })
         }
 
     }
 
+    /*
     const btnSignInWithGoogle = () => {
         const provider = new GoogleAuthProvider()
         const auth = getAuth();
@@ -350,9 +419,9 @@ export default function Register() {
                 alert(credential);
             });
     }
+    */
 
-
-    const handleNew = async (user) => {
+    /* const handleNew = async (user) => {
         const docRef = doc(db, 'users', user.uid);
         // await addDoc(collection(db, "users"), {
         //     displayName: user.displayName, 
@@ -375,7 +444,7 @@ export default function Register() {
         // await db.collection('users').doc(user.uid).set(payload, {merge:true})
         // console.log(payload)
         // console.log(user)
-    }
+    } */
 
     console.log(error)
     // console.log(validPhone(values.phone))
@@ -384,8 +453,33 @@ export default function Register() {
         <Container maxWidth disableGutters={true}>
             <Helmet>
                 <title>Register</title>
-                <link rel="Rendezous Icon" href={logohelmet}/>
+                <link rel="Rendezous Icon" href={logohelmet} />
             </Helmet>
+            <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    autoHideDuration={3000}
+                    open={openError}
+                    onClose={handleCloseError}
+                    message="I love snacks"
+                // key={vertical + horizontal}
+                >
+                    <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+                        {values.errors}
+                    </Alert>
+                </Snackbar>
+
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    autoHideDuration={3000}
+                    open={open}
+                    onClose={handleClose}
+                    message="I love snacks"
+                // key={vertical + horizontal}
+                >
+                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        {values.errors}
+                    </Alert>
+                </Snackbar>
             <NavBar />
             <Box sx={style.section1}>
                 <Box component={Grid} container justifyContent="center">
@@ -422,6 +516,7 @@ export default function Register() {
                                             label='Firstname'
                                             type='text'
                                             onChange={e => handleChange(e)}
+                                            onKeyDown={(e) => e.key === 'Enter' && signup()}
                                             value={values.firstName}
                                             name='firstName'
                                             errorMessage={error.firstName}
@@ -432,6 +527,7 @@ export default function Register() {
                                             label='Lastname'
                                             type='text'
                                             onChange={e => handleChange(e)}
+                                            onKeyDown={(e) => e.key === 'Enter' && signup()}
                                             value={values.lastName}
                                             name='lastName'
                                             errorMessage={error.lastName}
@@ -442,6 +538,7 @@ export default function Register() {
                                             label='Email'
                                             type='email'
                                             onChange={e => handleChange(e)}
+                                            onKeyDown={(e) => e.key === 'Enter' && signup()}
                                             value={values.email}
                                             name='email'
                                             errorMessage={error.email}
@@ -453,8 +550,10 @@ export default function Register() {
                                             type='tel'
                                             patern='^(09|\+639)\d{9}$'
                                             onChange={e => handleChange(e)}
+                                            onKeyDown={(e) => e.key === 'Enter' && signup()}
                                             value={values.phone}
                                             name='phone'
+                                            errorMessage={error.phone}
                                         />
                                     </Grid>
                                     <Grid item xs={12} spacing={3}>
@@ -462,6 +561,7 @@ export default function Register() {
                                             label='Password'
                                             type={values.showPassword ? 'text' : 'password'}
                                             onChange={e => handleChange(e)}
+                                            onKeyDown={(e) => e.key === 'Enter' && signup()}
                                             value={values.password}
                                             name='password'
                                             id="outlined-adornment-password"
@@ -485,6 +585,7 @@ export default function Register() {
                                             label='Confirm Password'
                                             type={values.showPassword ? 'text' : 'password'}
                                             onChange={e => handleChange(e)}
+                                            onKeyDown={(e) => e.key === 'Enter' && signup()}
                                             value={values.confirmPassword}
                                             name='confirmPassword'
                                             errorMessage={error.confirmPassword}
@@ -509,7 +610,7 @@ export default function Register() {
                                         alignItems="center"
                                     >
                                         <FormControlLabel
-                                            sx={{ padding: '10px 0', }}
+                                            sx={{ padding: '10px 0' }}
                                             control={
                                                 <Switch
                                                     defaultChecked
@@ -532,7 +633,7 @@ export default function Register() {
                                             variant="contained"
                                             color='primary'
                                             onClick={signup}
-                                            sx={{ width: 150, borderRadius: 10, fontWeight: 'bold' }}
+                                            sx={{ width: 150, borderRadius: 10 }}
                                         >
                                             Sign up
                                         </LoadingButton>
@@ -731,6 +832,18 @@ export default function Register() {
                 </Box>
             </Grid>
         </Box> */}
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                autoHideDuration={3000}
+                open={open}
+                onClose={handleClose}
+                message="I love snacks"
+            // key={vertical + horizontal}
+            >
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Succesfully Register
+                </Alert>
+            </Snackbar>
             <NewFooter />
         </Container>
     )

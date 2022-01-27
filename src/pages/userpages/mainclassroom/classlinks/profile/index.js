@@ -5,30 +5,28 @@ import {
   Box,
   Grid,
   Avatar,
-  TextField,
   Button,
-  IconButton
+  Snackbar,
+  Alert
 } from '@mui/material';
 
 import ClassDrawer from '../../classdrawer/ClassDrawer';
-import { Timestamp } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../../../../../utils/firebase'
 
-import { getAnnouncement, getDocsByCollection, getUser, createDoc } from '../../../../../utils/firebaseUtil';
+import { getUser } from '../../../../../utils/firebaseUtil';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { logoutInitiate } from '../../../../../redux/actions/userAction';
 
-import { Helmet } from 'react-helmet';
-import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import Input from '../../../../../components/Input'
-
-import AddIcon from '@mui/icons-material/Add';
 
 import { getAuth, updatePassword } from "firebase/auth";
 import { useHistory } from 'react-router';
 
-
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 
 const style = {
@@ -101,10 +99,12 @@ export default function ClassAnnouncementList() {
   const { user } = useSelector((state) => state);
   const [values, setValues] = useState({
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    phone: ''
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
 
@@ -128,14 +128,21 @@ export default function ClassAnnouncementList() {
     if (values.newPassword !== values.confirmPassword) {
       setSuccess('')
       setError('Password not matched, please type again')
+    } else if (userDetail[0].phone !== values.phone) {
+      setError('')
+      setOpen(true)
+      const docRef = doc(db, 'users', user.currentUser.uid);
+      setDoc(docRef, { phone: values.phone }, { merge: true });
     } else {
       setError('')
+      const docRef = doc(db, 'users', user.currentUser.uid);
+      setDoc(docRef, { phone: values.phone }, { merge: true });
       const auth = getAuth();
-
       const user = auth.currentUser;
       // const newPassword = getASecureRandomPassword();
       updatePassword(user, values.newPassword).then(() => {
-        setSuccess('Password has been changed')
+        setOpen(true)
+        setSuccess('Profile has been updated')
         handleLogOut()
       }).catch((error) => {
         // An error ocurred
@@ -157,10 +164,10 @@ export default function ClassAnnouncementList() {
     return userDetail && userDetail.map(item =>
       <Grid container sx={style.gridcontainer} justifyContent='center'>
         <Grid container justifyContent='center'>
-          <Avatar sx={style.profileLogo} variant="square" />
-          <IconButton sx={style.addbtn}>
+          <Avatar sx={style.profileLogo} variant="square" src={user.currentUser.photoUrl} />
+          {/* <IconButton sx={style.addbtn}>
             <AddIcon sx={{ color: 'white' }} />
-          </IconButton>
+          </IconButton> */}
         </Grid>
         <Grid xs={12} item sx={{ maxWidth: 500 }}>
           <Grid item xs={12} spacing={3}>
@@ -189,10 +196,9 @@ export default function ClassAnnouncementList() {
             <Typography sx={style.textStyle}>Phone Number</Typography>
             <Input
               type='text'
-              value={item.phone}
+              value={values.phone ? values.phone : item.phone}
               name='phone'
-              disabled
-              onChange={null}
+              onChange={onChange}
             // errorMessage={error.firstName}
             />
           </Grid>
@@ -234,12 +240,31 @@ export default function ClassAnnouncementList() {
     )
   }
 
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false)
+  };
+
   return (
     <ClassDrawer headTitle='Profile'>
       <Helmet>
         <title>Profile</title>
         <link rel="Profile Icon" href={logohelmetclass} />
       </Helmet>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={3000}
+        open={open}
+        onClose={handleClose}
+        message="I love snacks"
+      // key={vertical + horizontal}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Successfully Updated Profile
+        </Alert>
+      </Snackbar>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
         {userDetail && userDetailBody()}
       </Box>

@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
-import { getUser, acceptStudent, removeStudent, getQuizStudent, updateLabScore } from '../../../../../utils/firebaseUtil'
+import { getUser, updateLabScore } from '../../../../../utils/firebaseUtil'
 
 import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
-
-import { Helmet } from 'react-helmet';
-import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 import {
   Typography,
   Box,
   Grid,
   Button,
-  Menu,
-  MenuItem,
   TableContainer,
   Paper,
   Table,
@@ -26,8 +21,6 @@ import {
   TextField
 } from '@mui/material';
 
-import Input from '../../../../../components/Input'
-
 import { styled } from '@mui/material/styles';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -36,15 +29,11 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { useParams } from 'react-router-dom';
 
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 
-
-import Fade from '@mui/material/Fade';
-import Divider from '@mui/material/Divider';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
+
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 // import CreateClass from './CreateClass';
 // import JoinClass from './JoinClass';
@@ -136,17 +125,12 @@ export default function StudentList() {
   const { user } = useSelector((state) => state);
   const params = useParams()
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [isTeacher, setIsTeacher] = useState(false)
   const [classCode, setClassCode] = useState('')
-
 
   const [classroom, setClassroom] = useState([]);
   const [students, setStudents] = useState([])
   const [title, setTitle] = useState('')
-  const [room, setRoom] = useState('')
-  const [section, setSection] = useState('')
-  const [subject, setSubject] = useState('')
   const [quizList, setQuizList] = useState([])
   const [labList, setLabList] = useState([])
   const [edit, setEdit] = useState(false)
@@ -193,7 +177,6 @@ export default function StudentList() {
     const timeout = setTimeout(() => {
       updateLabScore(lab[index].laboratory[i], i)
     }, 250)
-
     // return () => clearTimeout(timeout)
 
   }
@@ -208,11 +191,7 @@ export default function StudentList() {
       snapshot.docs.map(doc => {
         setClassCode(doc.data().classCode)
         setTitle(doc.data().className)
-        setRoom(doc.data().room)
-        setSection(doc.data().section)
-        setSubject(doc.data().subject)
         setStudents(doc.data().students.filter(item => item.isJoin === true))
-
       })
 
       // setLoading(false);
@@ -221,13 +200,14 @@ export default function StudentList() {
     return unsubscribe;
   }
 
+  /*
   const handleAccept = (classCode, userId, classData, studentData) => {
     acceptStudent('createclass', classCode, classData, studentData)
   }
 
   const handleRemove = (classCode, userId, studentData) => {
     removeStudent('createclass', classCode, userId, studentData)
-  }
+  } */
   console.log(students)
   console.log(quizList)
   console.log(labList)
@@ -237,12 +217,19 @@ export default function StudentList() {
       <Box component={Grid} container justifyContent="center" >
         {classroom && classroom.map(item =>
           <Grid container sx={style.gridcontainerClass} >
-
+            <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }} container>
+              <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Classroom name : {item.className}</Typography>
+            </Grid>
+            <Grid container xs={12} direction='column'>
+              <Typography variant="p" sx={{ marginTop: 1 }}>section: {item.section}</Typography>
+              <Typography variant="p" sx={{ marginTop: 1 }}>subject: {item.subject}</Typography>
+              <Typography variant="p" sx={{ marginTop: 1 }}>room: {item.room}</Typography>
+            </Grid>
             {/* <Grid item xs={12}>
             <Typography variant="h6" sx={{ marginTop: 1 }}>{item.ownerEmail}</Typography>
           </Grid> */}
             <Grid item xs={12}>
-              <Typography variant="h6" sx={{ marginBottom: 1, textAlign: "center", fontWeight: "bold" }}>CLassWork</Typography>
+              <Typography variant="h6" sx={{ marginTop: 1 }}>Student List ({students && students.length !== 0 ? students.length : 0})</Typography>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
                   <TableHead>
@@ -389,9 +376,9 @@ export default function StudentList() {
   }
 
   return (
-    <Teacherdrawer classCode={params.id} headTitle={title} headRoom={room} headSubject={subject} headSection={section}>
+    <Teacherdrawer classCode={params.id} headTitle={title}>
       <Helmet>
-        <title>Grades</title>
+        <title>Class Grade</title>
         <link rel="Classroom Icon" href={logohelmetclass} />
       </Helmet>
       {classroom ?

@@ -405,3 +405,33 @@ export const getUserLogin = async (email) => {
    
          
   }
+
+export const deleteClass = async (id) => {
+  const docRef = doc(db, "createclass", id);
+
+  await updateDoc(docRef, {
+    isDeleted: true
+  });
+}
+
+export const archiveClass = async (id) => {
+  const docRef = doc(db, "createclass", id);
+
+  await updateDoc(docRef, {
+    isArchived: true
+  });
+}
+
+export const unenrollStudent = async (studentId, id) => {
+  const docRef = doc(db, "studentRecord", studentId, "classroom", id);
+
+  await updateDoc(docRef, {
+    isDeleted: true
+  });
+}
+
+export const saveMeeting = async (classCode, link) => {
+  const docRef = doc(db, 'meeting', classCode);
+  setDoc(docRef, { meetingLink: link }, { merge: true });
+  return docRef
+}

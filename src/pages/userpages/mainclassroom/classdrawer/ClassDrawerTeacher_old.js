@@ -27,8 +27,6 @@ import { Link } from 'react-router-dom'
 //Material Icons
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import DuoIcon from '@mui/icons-material/Duo';
-import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 

@@ -8,7 +8,6 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider,
     Grid,
     Typography,
     Link,
@@ -16,13 +15,15 @@ import {
 } from '@mui/material';
 
 import { Link as ReactLink } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
+
+import Scroll from "react-scroll";
 
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import HomeIcon from '@mui/icons-material/Home';
-import InfoIcon from '@mui/icons-material/Info';
-import ContactSupportIcon from '@mui/icons-material/ContactSupport';
-import FlagIcon from '@mui/icons-material/Flag';
+
+const ScrollLink = Scroll.Link;
 
 const style = {
     menuIconContainer: {
@@ -69,6 +70,10 @@ const style = {
         },
         borderRadius: 10,
     },
+    btnLinks: {
+        textDecoration: 'none',
+        color: 'black'
+    },
 };
 
 export default function DrawerComponent() {
@@ -92,54 +97,82 @@ export default function DrawerComponent() {
                         />
                     </Box>
                     <List>
-                        <ListItem
-                            button
+                        <ScrollLink
+                            className="navy"
+                            smooth={true}
+                            duration={500}
+                            to="Home"
                         >
-                            <ListItemIcon>
-                                <HomeIcon sx={style.icons} color="primary" />
-                                <ListItemText>
-                                    <Typography sx={style.textStyle}>
-                                        Home
-                                    </Typography>
-                                </ListItemText>
-                            </ListItemIcon>
-                        </ListItem>
-                        <ListItem
-                            button
+                            <ListItem
+                                button
+                            >
+                                <ListItemIcon>
+                                    <HomeIcon sx={style.icons} color="primary" />
+                                    <ListItemText>
+                                        <Typography sx={style.textStyle}>
+                                            <HashLink style={style.btnLinks} to="/#Home">Home</HashLink>
+                                        </Typography>
+                                    </ListItemText>
+                                </ListItemIcon>
+                            </ListItem>
+                        </ScrollLink>
+                        <ScrollLink
+                            className="navy"
+                            smooth={true}
+                            duration={500}
+                            to="Guide"
                         >
-                            <ListItemIcon>
-                                <FlagIcon sx={style.icons} color="primary" />
-                                <ListItemText>
-                                    <Typography sx={style.textStyle}>
-                                        Guide
-                                    </Typography>
-                                </ListItemText>
-                            </ListItemIcon>
-                        </ListItem>
-                        <ListItem
-                            button
+                            <ListItem
+                                button
+                            >
+                                <ListItemIcon>
+                                    <HomeIcon sx={style.icons} color="primary" />
+                                    <ListItemText>
+                                        <Typography sx={style.textStyle}>
+                                            <HashLink style={style.btnLinks} to="/#Guide">Guide</HashLink>
+                                        </Typography>
+                                    </ListItemText>
+                                </ListItemIcon>
+                            </ListItem>
+                        </ScrollLink>
+                        <ScrollLink
+                            className="navy"
+                            smooth={true}
+                            duration={500}
+                            to="About"
                         >
-                            <ListItemIcon>
-                                <InfoIcon sx={style.icons} color="primary" />
-                                <ListItemText>
-                                    <Typography sx={style.textStyle}>
-                                        About
-                                    </Typography>
-                                </ListItemText>
-                            </ListItemIcon>
-                        </ListItem>
-                        <ListItem
-                            button
+                            <ListItem
+                                button
+                            >
+                                <ListItemIcon>
+                                    <HomeIcon sx={style.icons} color="primary" />
+                                    <ListItemText>
+                                        <Typography sx={style.textStyle}>
+                                            <HashLink style={style.btnLinks} to="/#About">About</HashLink>
+                                        </Typography>
+                                    </ListItemText>
+                                </ListItemIcon>
+                            </ListItem>
+                        </ScrollLink>
+                        <ScrollLink
+                            className="navy"
+                            smooth={true}
+                            duration={500}
+                            to="Contact"
                         >
-                            <ListItemIcon>
-                                <ContactSupportIcon sx={style.icons} color="primary" />
-                                <ListItemText>
-                                    <Typography sx={style.textStyle}>
-                                        Contact
-                                    </Typography>
-                                </ListItemText>
-                            </ListItemIcon>
-                        </ListItem>
+                            <ListItem
+                                button
+                            >
+                                <ListItemIcon>
+                                    <HomeIcon sx={style.icons} color="primary" />
+                                    <ListItemText>
+                                        <Typography sx={style.textStyle}>
+                                            <HashLink style={style.btnLinks} to="/#Contact">Contact</HashLink>
+                                        </Typography>
+                                    </ListItemText>
+                                </ListItemIcon>
+                            </ListItem>
+                        </ScrollLink>
                         <ListItem>
                             <Link component={ReactLink} to="/login" sx={style.linkStyle}>
                                 <Button variant='contained' sx={style.accountButton}>

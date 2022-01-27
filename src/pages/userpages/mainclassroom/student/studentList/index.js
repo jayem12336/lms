@@ -6,8 +6,6 @@ import { getUser, acceptStudent, removeStudent } from '../../../../../utils/fire
 import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
 
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
-
 import AddUserDialog from './AddUserDialog'
 
 
@@ -15,9 +13,6 @@ import {
   Typography,
   Box,
   Grid,
-  Button,
-  Menu,
-  MenuItem,
   TableContainer,
   Paper,
   Table,
@@ -33,15 +28,10 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { useParams } from 'react-router-dom';
 
 import Studentdrawer from '../../classdrawer/ClassDrawerStudent';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-
-
-import Fade from '@mui/material/Fade';
-import Divider from '@mui/material/Divider';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import bgImage from '../../../../../assets/img/jpg/animatedcomputer.jpg';
+
+import { Helmet } from 'react-helmet';
+import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
 // import CreateClass from './CreateClass';
 // import JoinClass from './JoinClass';
@@ -139,10 +129,11 @@ export default function StudentList() {
 
 
   const [addUserOpen, SetAddUserOpen] = useState(false);
+  const [title, setTitle] = useState('')
 
   const handleClose = () => {
     setAnchorEl(null);
-};
+  };
 
   const handleAddUserOpen = () => {
     SetAddUserOpen(!addUserOpen);
@@ -165,13 +156,14 @@ export default function StudentList() {
 
   const getClassData = () => {
     const classCollection = collection(db, "createclass")
-    const qTeacher = query(classCollection, where('ownerId', "==", user.currentUser.uid), where('classCode', "==", params.id));
+    const qTeacher = query(classCollection, where('classCode', "==", params.id));
     const unsubscribe = onSnapshot(qTeacher, (snapshot) => {
       setClassroom(
         snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
       );
       snapshot.docs.map(doc => {
         setClassCode(doc.data().classCode)
+        setTitle(doc.data().className)
       })
       // setLoading(false);
     }
@@ -207,10 +199,10 @@ export default function StudentList() {
           </Grid> */}
             <Grid item xs={12}>
               <Typography variant="h6" sx={{ marginTop: 1 }}>Student List ({item.students && item.students.length !== 0 ? item.students.length : 0})</Typography>
-              <Box component={Grid} container justifyContent="flex-end" sx={{ marginBottom: 2 }}>
+              {/* <Box component={Grid} container justifyContent="flex-end" sx={{ marginBottom: 2 }}>
                 <Button variant="contained" sx={style.btnStyle}><PersonAddAltIcon sx={style.iconStyle} />Request</Button>
                 <Button variant="contained" sx={style.btnStyle} onClick={handleAddUserOpen}><PersonAddAltIcon sx={style.iconStyle} />User</Button>
-              </Box>
+              </Box> */}
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
                   <TableHead>
@@ -219,7 +211,7 @@ export default function StudentList() {
                       <StyledTableCell align="left">Email</StyledTableCell>
                       <StyledTableCell align="left">Phone number</StyledTableCell>
                       <StyledTableCell align="left">Type</StyledTableCell>
-                      <StyledTableCell align="center">Action</StyledTableCell>
+                      {/* <StyledTableCell align="center">Action</StyledTableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -231,7 +223,7 @@ export default function StudentList() {
                         <StyledTableCell align="left">{row.email}</StyledTableCell>
                         <StyledTableCell align="left">{row.phone}</StyledTableCell>
                         <StyledTableCell align="left">{row.isTeacher ? "Teacher" : "Student"}</StyledTableCell>
-                        <StyledTableCell align="center">
+                        {/* <StyledTableCell align="center">
                           {!row.isJoin ?
                             <Button
                               variant="contained"
@@ -253,7 +245,7 @@ export default function StudentList() {
                           }
 
 
-                        </StyledTableCell>
+                        </StyledTableCell> */}
                       </StyledTableRow>
                     ))}
                   </TableBody>
@@ -272,7 +264,11 @@ export default function StudentList() {
   }
 
   return (
-    <Studentdrawer classCode={params.id}>
+    <Studentdrawer classCode={params.id} headTitle={title}>
+      <Helmet>
+        <title>People</title>
+        <link rel="Classroom Icon" href={logohelmetclass} />
+      </Helmet>
       {classroom ?
         <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
           {classroomBody()}
