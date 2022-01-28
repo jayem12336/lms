@@ -25,6 +25,7 @@ const style = {
 export default function JoinClass({ isJoinClassOpen, toggleJoinClass, handleOpenJoinClass, userId }) {
     // const [userId, setUserId] = useState('');
     const [classCode, setClassCode] = useState('');
+    const [error, setError] = useState('')
 
 
     // useEffect(() => {
@@ -36,11 +37,15 @@ export default function JoinClass({ isJoinClassOpen, toggleJoinClass, handleOpen
     //   }, []);
 
     const hanldeJoinClass = () => {
+        if(classCode === ''){
+            setError('Please input class code')
+        }else {
+            joinClass('createclass', classCode, userId ).then(() => {
+                setClassCode('')
+                handleOpenJoinClass()
+            })
+        }
         
-        joinClass('createclass', classCode, userId ).then(() => {
-            setClassCode('')
-            handleOpenJoinClass()
-        })
     }
 
     const handleChangeClassCode = (e) => {
@@ -68,6 +73,7 @@ export default function JoinClass({ isJoinClassOpen, toggleJoinClass, handleOpen
                             sx={style.textfieldStyle} 
                             value={classCode}
                             onChange ={e => handleChangeClassCode(e)}
+                            helperText={error}
                         />
                     </Box>
                 </DialogContent>

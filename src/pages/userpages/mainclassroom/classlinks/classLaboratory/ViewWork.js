@@ -259,6 +259,7 @@ export default function Laboratory() {
               <Typography 
                 variant="h6" 
                 onClick={() => null}
+                sx={{ fontWeight: "bold" }}
               >
                 {labTitle}
               </Typography>
@@ -283,6 +284,7 @@ export default function Laboratory() {
                 <Typography 
                   variant="p" 
                   onClick={() => null}
+                  sx={{ fontWeight: "bold" }}
                 >
                   {instruction}
                 </Typography>

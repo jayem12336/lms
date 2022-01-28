@@ -24,7 +24,7 @@ import DatePicker from '@mui/lab/DatePicker';
 import Studentdrawer from '../../classdrawer/ClassDrawerStudent';
 import { Timestamp } from 'firebase/firestore';
 
-import { getStudentByAssigned, getDocsByCollection, saveQuizStudent, saveQuizRecord, getQuizStudent } from '../../../../../utils/firebaseUtil';
+import { getStudentByAssigned, getDocsByCollection, saveExamStudent, saveExamRecord, getExamStudent } from '../../../../../utils/firebaseUtil';
 import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { useHistory } from 'react-router';
@@ -76,7 +76,6 @@ const style = {
 }
 
 
-
 export default function QuizDetail() {
   const setQuizResult = (obj) => {
     console.log(obj);
@@ -123,17 +122,17 @@ export default function QuizDetail() {
     saveQuiz(data)
     return (
       <>
-        <Typography variant='h6' sx={{ fontWeight: "bold" }}>
-          You have completed the quiz. You got {data.numberOfCorrectAnswers} out of {data.numberOfQuestions} questions.
+        <Typography variant='h6' sx={{fontWeight:"bold"}}>
+          You have completed the exam. You got {data.numberOfCorrectAnswers} out of {data.numberOfQuestions} questions.
         </Typography>
-        <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+        <Typography variant='h6' sx={{fontWeight:"bold"}}>
           You scored {data.correctPoints} out of {data.totalPoints}.
         </Typography>
 
         {data.questions.map((item, index) =>
           <Grid container sx={style.gridcontainer} justifyContent='space-between'>
             <Grid container xs={12}>
-              <Typography variant='p' sx={{ fontWeight: "bold" }}>
+              <Typography variant='p'>
                 {item.question}
               </Typography>
             </Grid>
@@ -143,19 +142,18 @@ export default function QuizDetail() {
                   variant={answer == data.userInput[index] ? 'contained' : 'outlined'}
                   color={data.userInput[index] == item.correctAnswer ? 'success' : 'error'}
                   disbaled
-                  sx={{ fontWeight: "bold" }}
                 >
                   {answer}
                 </Button>
               </Grid>
             )}
             <Grid container xs={12} style={{ marginTop: 8 }}>
-              <Typography variant='p' sx={{ fontWeight: "bold" }}>
+              <Typography variant='p'>
                 Correct answer : {item.correctAnswer}
               </Typography>
             </Grid>
             <Grid container xs={12} style={{ marginTop: 8 }}>
-              <Typography variant='p' sx={{ fontWeight: "bold" }}>
+              <Typography variant='p'>
                 Points : {item.point}
               </Typography>
             </Grid>
@@ -211,10 +209,15 @@ export default function QuizDetail() {
     const studentData = {
       classCode: params.id,
       studentId: user.currentUser.uid,
-      quizId: params.quizId
+      examId: params.examId
     }
-    getQuizStudent(studentData).then(item => {
-      setQuizQuestions({ questions: item.questions })
+    getExamStudent(studentData).then(item => {
+      // setQuizQuestions({questions:item.questions})
+      setQuizQuestions({
+        questions: item.questions, "appLocale": {
+          "startQuizBtn": "Start Exam",
+        }
+      })
       // setQuizQuestions(item.questions)
       setQuizTitle(item.title)
       setDueDate(new Date(item.dueDate.seconds * 1000).toLocaleDateString())
@@ -264,12 +267,12 @@ export default function QuizDetail() {
       created: Timestamp.now(),
       dueDate: Timestamp.fromDate(new Date(dueDate)),
       subject: subject,
-      quizId: params.quizId,
+      examId: params.examId,
       studentId: user.currentUser.uid,
       result: result
     }
-    saveQuizStudent(studentData)
-    saveQuizRecord(studentData)
+    saveExamStudent(studentData)
+    saveExamRecord(studentData)
     // const timeout = setTimeout(() => {
     //   // history.push(`/classroomdetail/${params.id}`)
     //   console.log(studentData)
@@ -295,94 +298,6 @@ export default function QuizDetail() {
     setDuration(e.target.value)
   }
 
-  // const quizBody = () => {
-  //   return quizQuiestions && quizQuiestions.map((item,index) => 
-  //     <Grid container sx={style.gridcontainer} justifyContent='space-between'>
-  //       <Grid xs={12} item>
-  //         <TextField 
-  //           label='Question' 
-  //           variant="outlined" 
-  //           fullWidth
-  //           sx={{marginRight: 2, marginBottom: 2}}
-  //           name='question'
-  //           value={item.question}
-  //           onChange={(e) => handleQuizChange(e, index)}
-  //         />
-  //       </Grid>
-  //       <Grid xs={12} container direction='column'>
-  //         <Grid container alignItems="center">
-  //           <Typography sx={{marginRight: 2}}>a.)</Typography>
-  //           <TextField 
-  //             label='Choice 1' 
-  //             variant="outlined" 
-  //             sx={{marginRight: 2, marginBottom: 2}}
-  //             name='choiceOne'
-  //             value={item.choiceOne}
-  //             onChange={(e) => handleQuizChange(e, index)}
-  //           />
-  //         </Grid>
-  //         <Grid container alignItems="center">
-  //           <Typography sx={{marginRight: 2}}>b.)</Typography>
-  //           <TextField 
-  //             label='Choice 2' 
-  //             variant="outlined" 
-  //             sx={{marginRight: 2, marginBottom: 2}}
-  //             name='choiceTwo'
-  //             value={item.choiceTwo}
-  //             onChange={(e) => handleQuizChange(e, index)}
-  //           />
-  //         </Grid>
-  //         <Grid container alignItems="center">
-  //           <Typography sx={{marginRight: 2}}>c.)</Typography>
-  //           <TextField 
-  //             label='Choice 3' 
-  //             variant="outlined" 
-  //             sx={{marginRight: 2, marginBottom: 2}}
-  //             name='choiceThree'
-  //             value={item.choiceThree}
-  //             onChange={(e) => handleQuizChange(e, index)}
-  //           />
-  //         </Grid>
-  //         <Grid container alignItems="center">
-  //           <Typography sx={{marginRight: 2}}>d.)</Typography>
-  //           <TextField 
-  //             label='Choice 4' 
-  //             variant="outlined" 
-  //             sx={{marginRight: 2, marginBottom: 2}}
-  //             name='choiceFour'
-  //             value={item.choiceFour}
-  //             onChange={(e) => handleQuizChange(e, index)}
-  //           />
-  //         </Grid>          
-
-  //         {/* <Typography>{item.ownerName}</Typography> */}
-  //       </Grid>
-  //       <Grid item xs={12}>
-  //       <TextField 
-  //           label='Answer' 
-  //           variant="outlined" 
-  //           sx={{marginRight: 2, marginBottom: 2}}
-  //           name='answerKey'
-  //           value={item.answerKey}
-  //           onChange={(e) => handleQuizChange(e, index)}
-  //         />
-  //         {/* <Typography sx={{ marginTop: 2 }}>{item.body}</Typography> */}
-  //       </Grid>
-
-  //       {/* <Grid xs={12} justifyContent='flex-end' container>
-  //         <Button 
-  //           variant="contained" 
-  //           color="primary" 
-  //           sx={{ marginTop: 2 }}
-  //           onClick={(e) => handleQuizChange(e, index)}
-  //         >
-  //           Delete
-  //         </Button>
-  //       </Grid> */}
-  //     </Grid>
-  //   )
-  // }
-
   console.log(quizQuiestions)
 
   return (
@@ -393,7 +308,7 @@ export default function QuizDetail() {
           <Grid container>
             <Grid container>
               <TextField
-                label='Quiz Title'
+                label='Exam Title'
                 variant="outlined"
                 sx={{ marginRight: 2, marginBottom: 2 }}
                 value={quizTitle}
@@ -485,7 +400,7 @@ export default function QuizDetail() {
         </Grid>
         {/* {quizData && quizBody() } */}
 
-        <Grid container sx={style.gridcontainer} justifyContent='space-between' >
+        <Grid container sx={style.gridcontainer} justifyContent='space-between'>
           {result.length !== 0 ?
             renderCustomResultPage()
             :

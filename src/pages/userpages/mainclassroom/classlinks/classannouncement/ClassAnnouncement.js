@@ -65,8 +65,12 @@ const style = {
   },
   btnStyle: {
     width: 80,
-    marginLeft: 5
-  }
+    marginLeft: 5,
+    fontWeight: 'bold'
+  },
+  inputText: {
+    fontWeight: 'bold'
+  },
 }
 
 export default function ClassAnnouncement() {
@@ -132,6 +136,7 @@ export default function ClassAnnouncement() {
       setAnnoucncementContent('')
       getDataAnnouncement()
     })
+    setShowInput(false)
   }
 
   const cancelAnnouncement = () => {
@@ -146,21 +151,21 @@ export default function ClassAnnouncement() {
           <Avatar />
           <Grid container sx={{ paddingLeft: 1 }}>
             <Grid container>
-              <Typography>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
+              <Typography sx={{fontWeight: 'bold', color:'black'}}>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
             </Grid>
             <Grid container>
-              <Typography>{item.ownerName}</Typography>
+              <Typography sx={{fontWeight: 'bold', color:'black'}}>{item.ownerName}</Typography>
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} sx={{ marginTop: 1 }}>
-          <Typography sx={{ marginTop: 2 }}>{item.body}</Typography>
+          <Typography sx={{ marginTop: 2, fontWeight: 'bold', color:'black' }}>{item.body}</Typography>
         </Grid>
         <Grid xs={12} justifyContent='flex-end' container>
           <Button
             variant="contained"
             color="error"
-            sx={{ marginTop: 2 }}
+            sx={{ marginTop: 2, fontWeight: 'bold' }}
             onClick={() => null}
           >
             Delete
@@ -189,6 +194,9 @@ export default function ClassAnnouncement() {
                 onChange={handleAnnoucement}
                 fullWidth
                 minRows={5}
+                InputProps={{
+                  sx: style.inputText
+                }}
               />
               <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
                 <Grid item>
@@ -228,7 +236,7 @@ export default function ClassAnnouncement() {
               onClick={() => setShowInput(true)}
             >
               <Avatar />
-              <Typography style={{ paddingLeft: 20 }}>Announce Something To Class</Typography>
+              <Typography style={{ paddingLeft: 20, fontWeight: 'bold', color:'black' }}>Announce Something To Class</Typography>
             </Grid>
           )}
         </Grid>

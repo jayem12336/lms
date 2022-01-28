@@ -135,8 +135,8 @@ export default function ClassSetting() {
             setOpenDeleteSnack(true)
             setTimeout(() => {
                 history.push('/studentclassroom')
-              }, 2000)
-            
+            }, 2000)
+
         })
     }
 
@@ -145,10 +145,10 @@ export default function ClassSetting() {
     }
 
     const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
-    setOpenDeleteSnack(false)
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenDeleteSnack(false)
     };
 
     return (
@@ -159,10 +159,10 @@ export default function ClassSetting() {
                 open={openDeleteSnack}
                 onClose={handleClose}
                 message="I love snacks"
-                // key={vertical + horizontal}
+            // key={vertical + horizontal}
             >
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                Successfully Unenrolled
+                    Successfully Unenrolled
                 </Alert>
             </Snackbar>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
@@ -170,11 +170,11 @@ export default function ClassSetting() {
                     <Grid item sm>
                         <Grid container sx={style.settingsContainer} justifyContent="flex-start">
                             <Grid container justifyContent="center">
-                                <Typography>Class Code</Typography>
+                                <Typography sx={{ fontWeight: "bold" }}>Class Code</Typography>
                             </Grid>
                             <Grid container justifyContent="center" sx={{ marginTop: 1, paddingLeft: 5, paddingRight: 5 }}>
                                 <Input
-                                    value={params.id} 
+                                    value={params.id}
                                 />
                             </Grid>
                         </Grid>
@@ -187,6 +187,7 @@ export default function ClassSetting() {
                                         xs: 120,
                                         md: 180
                                     },
+                                    fontWeight: "bold",
                                     fontSize: 12,
                                 }}
                                 onClick={() => setIsOpen(true)}

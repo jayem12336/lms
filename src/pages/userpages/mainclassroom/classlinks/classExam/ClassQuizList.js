@@ -1,119 +1,116 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  Typography,
-  Box,
-  Grid,
-  Avatar,
+    Typography,
+    Box,
+    Grid,
+    Avatar,
+    TextField,
+    Button,
+    IconButton
 } from '@mui/material';
 
-import Studentdrawer from '../../classdrawer/ClassDrawerStudent';
+import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
 import { Timestamp } from 'firebase/firestore';
-import Banner from '../../../../../assets/img/jpg/banner.jpg'
 
-import { getAnnouncement, getDocsByCollection, getUser, createDoc } from '../../../../../utils/firebaseUtil';
-import { useParams } from 'react-router-dom';
+import {getAnnouncement, getDocsByCollection, getUser, createDoc} from '../../../../../utils/firebaseUtil';
+import { useParams} from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { useHistory } from 'react-router';
 
-import { Helmet } from 'react-helmet';
-import logohelmetclass from '../../../../../assets/img/png/monitor.png';
+
+
+
+import AddToDriveIcon from '@mui/icons-material/AddToDrive';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 
 const style = {
-  gridcontainer: {
-    display: "flex",
-    boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
-    marginTop: 5,
-    padding: 2,
-    maxWidth: 1100
-  },
-  announcementcontainer: {
-    display: "flex",
-    marginTop: { xs: 0, md: 2 },
-    maxWidth: 1100
-  },
-  announcementBannerContainer: {
-    boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
-    marginTop: 5,
-    height: {
-      xs: 120, md: 300
+    gridcontainer: {
+        display: "flex",
+        boxShadow: '0 3px 5px 2px rgb(126 126 126 / 30%)',
+        marginTop: 5,
+        padding: 2,
+        maxWidth: 1000
     },
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundImage: `url(${Banner})`,
-    alignItems: "center",
-    maxWidth: 1100
-  },
-  main: {
-    display: "flex",
-    cursor: "pointer",
-    alignItems: "center",
-  },
-  iconStyle: {
-    color: (theme) => theme.palette.primary.main,
-    margin: 0.5
-  },
-  btnStyle: {
-    width: 80,
-    marginLeft: 5
-  }
+    main: {
+        display: "flex",
+        cursor: "pointer",
+        alignItems: "center",
+    },
+    iconStyle: {
+        color: (theme) => theme.palette.primary.main,
+        margin: 0.5
+    },
+    btnStyle: {
+        width: 80,
+        marginLeft: 5
+    }
 }
 
-export default function ClassAnnouncement() {
+export default function ClassQuizList() {
 
   const [showInput, setShowInput] = useState(false);
   // const [inputValue, setInputValue] = useState('');
   const [announcementData, setAnnouncementData] = useState();
   const [userId, setUserId] = useState('');
   const [className, setClassName] = useState('')
-  const [room, setRoom] = useState('')
-  const [section, setSection] = useState('')
-  const [subject, setSubject] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [announcementContent, setAnnoucncementContent] = useState('')
+  const [classQuizList, setClassQuizList] = useState([])
 
   const params = useParams()
   const { user } = useSelector((state) => state);
+  const history = useHistory();
 
   useEffect(() => {
-
-    if (Object.keys(user.currentUser).length !== 0) {
+    
+    if(Object.keys(user.currentUser).length !== 0){
       getUser().then(item => {
         item.map(data => {
           setUserId(data.ownerId)
           setOwnerName(data.displayName)
         })
-
+          
       })
       getClassData()
-    }
+      
+  }
+    getDataQuiz()
     getDataAnnouncement()
   }, [user]);
 
   const getClassData = () => {
     getDocsByCollection('createclass')
-      .then(item => {
+    .then(item => {
         const data = item.filter(item => item.classCode === params.id)
         data.map(item => {
           setClassName(item.className)
-          setRoom(item.room)
-          setSection(item.section)
-          setSubject(item.subject)
         })
-      })
+    })
   }
 
   const getDataAnnouncement = () => {
     getAnnouncement('announcement', 'created')
-      .then(item => {
-        const data = item.filter(item => item.classCode === params.id)
-        setAnnouncementData(data)
-      })
+    .then(item => {
+      // const data = item.filter(item => item.classCode === params.id)
+      setAnnouncementData(item)
+    })
   }
+
+  const getDataQuiz = () => {
+    getDocsByCollection('quiz')
+    .then(item => {
+      // const data = item.filter(item => item.classCode === params.id)
+      setClassQuizList(item)
+    })
+  }  
 
   const handleAnnoucement = (e) => {
     setAnnoucncementContent(e.target.value)
   }
-
+  
   const saveAnnoucement = () => {
     const data = {
       body: announcementContent,
@@ -122,7 +119,7 @@ export default function ClassAnnouncement() {
       ownerId: user.currentUser.uid,
       ownerName: user.currentUser.displayName
     }
-    createDoc('announcement', data).then(() => {
+    createDoc('announcement',data).then(() => {
       setAnnoucncementContent('')
       getDataAnnouncement()
     })
@@ -134,45 +131,37 @@ export default function ClassAnnouncement() {
   }
 
   const announcementBody = () => {
-    return announcementData && announcementData.map(item =>
+    return classQuizList && classQuizList.map(item => 
       <Grid container sx={style.gridcontainer} justifyContent='space-between'>
-        <Grid xs={12} item sx={{ display: 'flex' }}>
-          <Avatar />
-          <Grid container sx={{ paddingLeft: 1 }}>
-            <Grid container>
-              <Typography sx={{ fontWeight: "bold" }}>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
-            </Grid>
-            <Grid container>
-              <Typography sx={{ fontWeight: "bold" }}>{item.ownerName}</Typography>
-            </Grid>
-          </Grid>
+        <Grid container justifyContent="space-between">
+          <Typography>created : {new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
+          <Typography>due date:: {new Date(item.dueDate.seconds * 1000).toLocaleDateString()} {new Date(item.dueDate.seconds * 1000).toLocaleTimeString()}</Typography>
         </Grid>
-        <Grid item xs={12} sx={{ marginTop: 1 }}>
-          <Typography sx={{ marginTop: 2, fontWeight: "bold" }}>{item.body}</Typography>
+        <Grid item xs={12}>
+          <Typography sx={{ marginTop: 2 }}>subject : {item.subject ? item.subject: 'not available'}</Typography>
         </Grid>
-        {/* <Grid xs={12} justifyContent='flex-end' container>
-          <Button
-            variant="contained"
-            color="error"
+        <Grid xs={12} item>
+          <Typography sx={{ marginTop: 2 }}>no of students : {item.students.length !== 0 ? item.students.length: '0'}</Typography>
+        </Grid>
+        <Grid xs={12} justifyContent='flex-end' container>
+          <Button 
+            variant="contained" 
+            color="primary" 
             sx={{ marginTop: 2 }}
-            onClick={() => null}
+            // onClick={() => history.push(`/quiz/${item.classCode}`)}
           >
-            Delete
+            View
           </Button>
-        </Grid> */}
+        </Grid>
       </Grid>
     )
   }
+  console.log(classQuizList)
+  console.log(announcementData)
 
   return (
-    <Studentdrawer headTitle={className} classCode={params.id} headRoom={room} headSubject={subject} headSection={section}>
-      <Helmet>
-        <title>Announcement</title>
-        <link rel="Classroom Icon" href={logohelmetclass} />
-      </Helmet>
+    <Teacherdrawer headTitle='All Quiz' classCode={params.id}>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
-        <Box component={Grid} container justifyContent="center" sx={style.announcementBannerContainer}>
-        </Box>
         {/* <Grid container sx={style.gridcontainer}>
           {showInput ? (
             <Grid container>
@@ -200,18 +189,18 @@ export default function ClassAnnouncement() {
                   </IconButton>
                 </Grid>
                 <Grid item sx={{ marginTop: 0.5 }}>
-                  <Button
-                    style={style.btnStyle}
+                  <Button 
+                    style={style.btnStyle} 
                     onClick={cancelAnnouncement}
-                  >
-                    Cancel
+                  > 
+                    cancel
                   </Button>
-                  <Button
-                    variant="contained"
-                    disabled={announcementContent ? false : true}
+                  <Button 
+                    variant="contained" 
+                    disabled={announcementContent ? false : true} 
                     style={style.btnStyle}
                     onClick={saveAnnoucement}
-                  >
+                  > 
                     Post
                   </Button>
                 </Grid>
@@ -226,12 +215,8 @@ export default function ClassAnnouncement() {
             </Grid>
           )}
         </Grid> */}
+        {announcementData && announcementBody() }
       </Box>
-      <Box component={Grid} container justifyContent="center">
-        <Grid container sx={style.announcementcontainer}>
-          {announcementData && announcementBody()}
-        </Grid>
-      </Box>
-    </Studentdrawer>
+    </Teacherdrawer>
   )
 }

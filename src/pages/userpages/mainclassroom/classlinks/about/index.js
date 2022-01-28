@@ -100,7 +100,7 @@ export default function About() {
                         />
                     </Grid>
                     <Grid sx={{ width: { xs: 300, md: 500, }, marginTop: { xs: 10, md: 15, } }}>
-                        <Typography sx={{ textAlign: "center" }}>Rendezvous is a online platform for new normal education and provide user friendly environment for students and teacher</Typography>
+                        <Typography sx={{ textAlign: "center", fontWeight: "bold" }}>Rendezvous is a online platform for new normal education and provide user friendly environment for students and teacher</Typography>
                     </Grid>
                 </Grid>
             </Box>

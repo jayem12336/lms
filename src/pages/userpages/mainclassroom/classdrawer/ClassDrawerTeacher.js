@@ -206,7 +206,7 @@ export default function TeacherDrawer(props) {
                         </>
                     }
                     <Grid container justifyContent="flex-start">
-                        <Typography variant="h6" noWrap component="div">
+                        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: "bold", fontSize: 25 }}>
                             {/* {classUser.classData.className} */}
                             {props.headTitle}
                             {/* test */}
@@ -323,9 +323,9 @@ export default function TeacherDrawer(props) {
                       </ListItem> */}
                             <Box sx={style.listHover}>
                                 <ListItem
-                                     button
-                                     component={Link}
-                                     to={`/classjoinmeet/${props.classCode}`}
+                                    button
+                                    component={Link}
+                                    to={`/classjoinmeet/${props.classCode}`}
                                     sx={style.listItemStyle}
 
                                 >

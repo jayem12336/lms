@@ -135,7 +135,7 @@ export default function ClassSetting() {
     }
     console.log(classroom)
 
-    
+
 
     const onArchived = () => {
         archiveClass(params.id).then(() => {
@@ -165,15 +165,15 @@ export default function ClassSetting() {
             classroom.map(item => {
                 item.students.map(data => {
                     unenrollStudent(data.ownerId, params.id).then(() => {
-                    setOpenDeleteSnack(true)
-                    setTimeout(() => {
-                        history.push('/classroom')
-                      }, 2000) 
+                        setOpenDeleteSnack(true)
+                        setTimeout(() => {
+                            history.push('/classroom')
+                        }, 2000)
+                    })
                 })
+
             })
-                
-            })
-            
+
             // setTimeout(() => {
             //     history.push('/classroom')
             // }, 2000)
@@ -215,7 +215,7 @@ export default function ClassSetting() {
                     <Grid item sm>
                         <Grid container sx={style.settingsContainer} justifyContent="flex-start">
                             <Grid container justifyContent="center">
-                                <Typography>Class Code</Typography>
+                                <Typography sx={{ fontWeight: "bold" }}>Class Code</Typography>
                             </Grid>
                             <Grid container justifyContent="center" sx={{ marginTop: 1, paddingLeft: 5, paddingRight: 5 }}>
                                 <Input
@@ -232,6 +232,7 @@ export default function ClassSetting() {
                                         xs: 120,
                                         md: 160
                                     },
+                                    fontWeight: "bold",
                                     fontSize: 12,
                                     marginLeft: 5
                                 }}

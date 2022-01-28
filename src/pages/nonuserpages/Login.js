@@ -245,7 +245,7 @@ export default function Login() {
                         // ...
                     })
                     .catch((error) => {
-                        const errorMessage = error.message;
+                        const errorMessage = error.code;
                         setValues({ ...values, errors: errorMessage, isLoading: false, password: "" })
                         setOpenError({ open: true });
                         setLoading(false);

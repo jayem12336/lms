@@ -102,6 +102,8 @@ export default function Laboratory() {
   const [open, setOpen] = useState(false)
   const [instruction, setInstruction] = useState('')
   const [labId, setLabId] = useState('')
+  const [dueDate, setDueDate] = useState('')
+  const [startDate, setStartDate] = useState('')
 
 
   const { user } = useSelector((state) => state);
@@ -192,6 +194,8 @@ export default function Laboratory() {
       ownerId: user.currentUser.uid,
       classCode: params.id,
       created: Timestamp.now(),
+      startDate: Timestamp.fromDate(new Date(startDate)),
+      dueDate: Timestamp.fromDate(new Date(dueDate)),
       title: labTitle,
       students: studentName,
       instruction: instruction,
@@ -208,10 +212,12 @@ export default function Laboratory() {
             ownerId: user.currentUser.uid,
             classCode: params.id,
             created: Timestamp.now(),
+            startDate: Timestamp.fromDate(new Date(startDate)),
+            dueDate: Timestamp.fromDate(new Date(dueDate)),
             title: labTitle,
             studentId: student,
             instruction: instruction,
-            labId: params.labId
+            labId: params.labId,
           }
           saveLabStudent(studentData)
         })

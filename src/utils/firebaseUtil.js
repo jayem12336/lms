@@ -112,13 +112,27 @@ export const saveLabStudent = async (data) => {
 export const updateLabScore = async (data, index) => {
   const colRef = doc(db, "studentRecord", data.studentId);
   const docSnap = await getDoc(colRef);
-  const labData = [...docSnap.data().laboratory]
-  labData[index].score = data.score
-  console.log(labData)
+  // const labData = [...docSnap.data().laboratory]
+  // labData[data.labId].score = data.score
+  // const labData = docSnap.data().laboratory[data.labId]
+  console.log(index)
+  let labData = {}
+  labData[`laboratory.${index}`] = {
+    labId: data.labId,
+    title: data.title,
+    classCode: data.classCode,
+    // submitDate: data.submitDate,
+    score: data.score,
+    studentId: data.studentId
+  }
+  // console.log(docSnap.data().laboratory[data.labId].score)
+  await updateDoc(colRef, labData);
+  const colRef2 = doc(db, "createclass", data.classCode, "students", data.studentId, 'laboratory', data.labId)
+  await setDoc(colRef2,{score: data.score}, { merge: true });
   
-  await updateDoc(colRef, {
-  laboratory: labData
-});
+  // await updateDoc(colRef, {
+  //   laboratory: labData
+  // });
 
 }
 
@@ -129,22 +143,35 @@ export const updateLabScore = async (data, index) => {
 // save quiz
 export const saveLabRecord = async (data) => {
   const colRef = doc(db, "studentRecord", data.studentId)
-  // await setDoc(colRef,data);
-  console.log(data)
-  const dataRecord = {
-    labId: data.labId,
-    title: data.title,
-    classCode: data.classCode,
-    // submitDate: data.submitDate,
-    score: data.score,
-    studentId: data.studentId
+  const docRef = doc(db, "studentRecord", data.studentId)
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    let dataRecord = {}
+    dataRecord[`laboratory.${data.labId}`] = {
+      labId: data.labId,
+      title: data.title,
+      classCode: data.classCode,
+      // submitDate: data.submitDate,
+      score: data.score,
+      studentId: data.studentId
+    }
+    updateDoc(colRef, dataRecord);;
+  } else {
+    setDoc(colRef, {laboratory:{}})
+    let dataRecord = {}
+    dataRecord[`laboratory.${data.labId}`] = {
+      labId: data.labId,
+      title: data.title,
+      classCode: data.classCode,
+      // submitDate: data.submitDate,
+      score: data.score,
+      studentId: data.studentId
+    }
+    updateDoc(colRef, dataRecord);
   }
-  const docInstance = await setDoc(colRef, {
-    laboratory: arrayUnion(dataRecord)
-  },{ merge: true });
-
-
-  return docInstance
+  
+  
 }
 
 /**
@@ -162,6 +189,16 @@ export const saveQuizStudent = async (data) => {
   return docInstance
 }
 
+export const saveExamStudent = async (data) => {
+  const colRef = doc(db, "createclass", data.classCode, "students", data.studentId, 'exam', data.examId)
+  // await setDoc(colRef,data);
+  console.log(data)
+  const docInstance = await setDoc(colRef, data);
+
+
+  return docInstance
+}
+
 /**
  * 
  * @param {object} data
@@ -169,9 +206,11 @@ export const saveQuizStudent = async (data) => {
 // save quiz
 export const saveQuizRecord = async (data) => {
   const colRef = doc(db, "studentRecord", data.studentId)
-  // await setDoc(colRef,data);
-  console.log(data)
-  const dataRecord = {
+  const docSnap = await getDoc(colRef);
+
+  if (docSnap.exists()) {
+    let dataRecord = {}
+  dataRecord[`quiz.${data.quizId}`] = {
     quizId: data.quizId,
     title: data.title,
     result: data.result,
@@ -180,12 +219,87 @@ export const saveQuizRecord = async (data) => {
     subject: data.subject,
     studentId: data.studentId
   }
-  const docInstance = await setDoc(colRef, {
-    quiz: arrayUnion(dataRecord)
-  },{ merge: true });
+    updateDoc(colRef, dataRecord);;
+  } else {
+    setDoc(colRef, {laboratory:{}})
+    let dataRecord = {}
+  dataRecord[`quiz.${data.quizId}`] = {
+    quizId: data.quizId,
+    title: data.title,
+    result: data.result,
+    classCode: data.classCode,
+    dueDate: data.dueDate,
+    subject: data.subject,
+    studentId: data.studentId
+  }
+    updateDoc(colRef, dataRecord);
+  }
+  
+  // const dataRecord = {
+  //   quizId: data.quizId,
+  //   title: data.title,
+  //   result: data.result,
+  //   classCode: data.classCode,
+  //   dueDate: data.dueDate,
+  //   subject: data.subject,
+  //   studentId: data.studentId
+  // }
+  // const docInstance = await setDoc(colRef, {
+  //   quiz: arrayUnion(dataRecord)
+  // },{ merge: true });
+  const colRef2 = doc(db, "quiz", data.quizId)
+  await setDoc(colRef2,{result: data.result}, { merge: true });
+  // const docInstance = updateDoc(colRef, dataRecord);
+  return colRef2
+}
 
+export const saveExamRecord = async (data) => {
+  const colRef = doc(db, "studentRecord", data.studentId)
+  const docSnap = await getDoc(colRef);
 
-  return docInstance
+  if (docSnap.exists()) {
+    let dataRecord = {}
+  dataRecord[`exam.${data.examId}`] = {
+    examId: data.examId,
+    title: data.title,
+    result: data.result,
+    classCode: data.classCode,
+    dueDate: data.dueDate,
+    subject: data.subject,
+    studentId: data.studentId
+  }
+    updateDoc(colRef, dataRecord);;
+  } else {
+    setDoc(colRef, {laboratory:{}})
+    let dataRecord = {}
+  dataRecord[`exam.${data.examId}`] = {
+    examId: data.examId,
+    title: data.title,
+    result: data.result,
+    classCode: data.classCode,
+    dueDate: data.dueDate,
+    subject: data.subject,
+    studentId: data.studentId
+  }
+    updateDoc(colRef, dataRecord);
+  }
+  
+  // const dataRecord = {
+  //   quizId: data.quizId,
+  //   title: data.title,
+  //   result: data.result,
+  //   classCode: data.classCode,
+  //   dueDate: data.dueDate,
+  //   subject: data.subject,
+  //   studentId: data.studentId
+  // }
+  // const docInstance = await setDoc(colRef, {
+  //   quiz: arrayUnion(dataRecord)
+  // },{ merge: true });
+  const colRef2 = doc(db, "exam", data.examId)
+  await setDoc(colRef2,{result: data.result}, { merge: true });
+  // const docInstance = updateDoc(colRef, dataRecord);
+  return colRef2
 }
 
 /**
@@ -200,6 +314,17 @@ export const getQuizStudent = async (data) => {
   // return colRef
 
   const docRef = doc(db, "createclass", data.classCode, "students", data.studentId, "quiz", data.quizId);
+  const docSnap = await getDoc(docRef);
+  return docSnap.data()
+}
+
+export const getExamStudent = async (data) => {
+  // const colRef = doc(db, "createclass", data.classCode, "students", data.studentId, 'quiz', data.quizId)
+  // setDoc(colRef,data);
+
+  // return colRef
+
+  const docRef = doc(db, "createclass", data.classCode, "students", data.studentId, "exam", data.examId);
   const docSnap = await getDoc(docRef);
   return docSnap.data()
 }

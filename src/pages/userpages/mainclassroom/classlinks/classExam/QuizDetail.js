@@ -27,7 +27,7 @@ import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
 import { Timestamp } from 'firebase/firestore';
 
-import { getStudentByAssigned, getDocsByCollection, saveQuizStudent, createClassDoc } from '../../../../../utils/firebaseUtil';
+import { getStudentByAssigned, getDocsByCollection, saveExamStudent, createClassDoc } from '../../../../../utils/firebaseUtil';
 import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { useHistory } from 'react-router';
@@ -111,8 +111,8 @@ export default function QuizDetail() {
 
 
   const getStudentList = () => {
-    getDocsByCollection('quiz').then(data => {
-      data.filter(item => item.quizId === params.quizId).map(item => {
+    getDocsByCollection('exam').then(data => {
+      data.filter(item => item.examId === params.examId).map(item => {
         // setQuizQuestions({questions:item.questions})
         setQuizTitle(item.title)
         setDueDate(item.dueDate && new Date(item.dueDate.seconds * 1000))
@@ -121,18 +121,18 @@ export default function QuizDetail() {
         setQuizQuestions(item.questions)
         setStudentName(item.students)
         setStartDate(item.startDate && new Date(item.startDate.seconds * 1000))
-        if (item.startDate.seconds <= Timestamp.now().seconds) {
+        if(item.startDate.seconds <= Timestamp.now().seconds){
           setIsStart(true)
         }
-        if (item.dueDate.seconds <= Timestamp.now().seconds) {
+        if(item.dueDate.seconds <= Timestamp.now().seconds){
           setIsEnd(true)
         }
-        if (item.startDate.seconds <= Timestamp.now().seconds && item.dueDate.seconds > Timestamp.now().seconds) {
+        if(item.startDate.seconds <= Timestamp.now().seconds && item.dueDate.seconds > Timestamp.now().seconds){
           setIsStart(true)
-        } else {
-          if (dueDate.seconds <= Timestamp.now().seconds) {
+        }else {
+          if(dueDate.seconds <= Timestamp.now().seconds){
             setIsEnd(true)
-          } else {
+          }else {
             setIsEnd(false)
           }
         }
@@ -140,31 +140,23 @@ export default function QuizDetail() {
       getStudentByAssigned(params.id).then(item => {
         const students = item.students.filter(item => item.isJoin === true).map(item => {
           let studentArr = []
-          studentArr = { label: item.displayName, value: item.ownerId }
+          studentArr = {label:item.displayName, value:item.ownerId}
           return studentArr
         })
         setStudentsList(students)
-        getDocsByCollection('createclass').then(data => {
-          data.filter(item => item.classCode === params.id).map(item => {
-            setSubject(item.subject)
+          getDocsByCollection('createclass').then(data => {
+            data.filter(item => item.classCode === params.id).map(item => {
+              setSubject(item.subject)
+            })
+            
           })
-
-        })
-        setLoading(false)
+          setLoading(false)
       })
 
     })
-
-
-
-  }
-
-  const getQuiz = () => {
-    getDocsByCollection('quiz')
-      .then(item => {
-        // const data = item.filter(item => item.classCode === params.id)
-        setQuizData(item)
-      })
+    
+  
+    
   }
 
   const saveQuiz = () => {
@@ -182,12 +174,12 @@ export default function QuizDetail() {
       created: Timestamp.now(),
       dueDate: Timestamp.fromDate(new Date(dueDate)),
       subject: subject,
-      quizId: params.quizId,
+      examId: params.examId,
       instruction: instruction,
       startDate: Timestamp.fromDate(new Date(startDate))
 
     }
-    createClassDoc('quiz', params.quizId, data).then(() => {
+    createClassDoc('exam', params.quizId, data).then(() => {
       console.log('success')
     })
     studentName.map(student => {
@@ -201,12 +193,12 @@ export default function QuizDetail() {
         created: Timestamp.now(),
         dueDate: Timestamp.fromDate(new Date(dueDate)),
         subject: subject,
-        quizId: params.quizId,
+        examId: params.examId,
         studentId: student,
         instruction: instruction,
         startDate: Timestamp.fromDate(new Date(startDate))
       }
-      saveQuizStudent(studentData).then(() => {
+      saveExamStudent(studentData).then(() => {
         const timeout = setTimeout(() => {
           history.push(`/classroomdetail/${params.id}`)
         }, 2000)
@@ -252,9 +244,6 @@ export default function QuizDetail() {
   }
 
   const handleEditAnswerChange = (e, index) => {
-    console.log(e.target.value)
-    console.log(e.target.name)
-    console.log(index)
     const questionList = [...quizQuiestions];
     questionList.map(item => {
       item.answers[index] = e.target.value
@@ -325,7 +314,7 @@ export default function QuizDetail() {
                 style={style.btnStyle}
                 color="error"
                 fullWidth={false}
-                disabled={isStart || isEnd}
+                disabled = {isStart || isEnd}
                 onClick={(e) => onDeleteQuestion(e, index)}
               >
                 Delete
@@ -340,7 +329,7 @@ export default function QuizDetail() {
               sx={{ marginRight: 2, marginBottom: 2 }}
               name='question'
               value={item.question}
-              disabled={isStart || isEnd}
+              disabled = {isStart || isEnd}
               onChange={(e) => handleEditQuizChange(e, index)}
             />
           </Grid>
@@ -354,7 +343,7 @@ export default function QuizDetail() {
                   sx={{ marginRight: 2, marginBottom: 2 }}
                   name='answer'
                   value={item}
-                  disabled={isStart || isEnd}
+                  disabled = {isStart || isEnd}
                   onChange={(e) => handleEditAnswerChange(e, i)}
                 />
               </Grid>
@@ -369,7 +358,7 @@ export default function QuizDetail() {
                 value={item.correctAnswer}
                 name='correctAnswer'
                 onChange={(e) => handleEditQuizChange(e, index)}
-                input={<OutlinedInput name='correctAnswer' id="select-multiple-chip" label="Answer key" disabled={isStart || isEnd} />}
+                input={<OutlinedInput name='correctAnswer' id="select-multiple-chip" label="Answer key" disabled = {isStart || isEnd}/>}
               >
                 {item.answers && item.answers.map((name) => (
                   <MenuItem
@@ -400,7 +389,7 @@ export default function QuizDetail() {
               sx={{ marginRight: 2, marginBottom: 2 }}
               name='point'
               type='number'
-              disabled={isStart || isEnd}
+              disabled = {isStart || isEnd}
               value={item.point}
               onChange={(e) => handleEditQuizChange(e, index)}
             />
@@ -469,7 +458,6 @@ export default function QuizDetail() {
                   <MenuItem
                     key={name}
                     value={name}
-                  
                   // style={getStyles(name, personName, theme)}
                   >
                     {name}
@@ -516,7 +504,7 @@ export default function QuizDetail() {
 
   console.log(quizQuiestions)
   console.log(addQuestion)
-  console.log('duedate', Timestamp.fromDate(new Date(dueDate)))
+  console.log('duedate',Timestamp.fromDate(new Date(dueDate)))
   console.log('time', Timestamp.now())
   console.log('start', isStart)
   console.log('end', isEnd)
@@ -530,18 +518,18 @@ export default function QuizDetail() {
       {!loading &&
         <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
           <Grid container sx={style.gridcontainer} justifyContent='space-between'>
-
-            <Grid container>
+            
               <Grid container>
-                <TextField
-                  label='Quiz Title'
-                  variant="outlined"
-                  sx={{ marginRight: 2, marginBottom: 2 }}
-                  value={quizTitle}
-                  disabled={isStart || isEnd}
-                  onChange={(e) => setQuizTitle(e.target.value)}
-                />
-                {/* <FormControl sx={{ width: 500 }}>
+                <Grid container>
+                  <TextField 
+                    label='Exam Title' 
+                    variant="outlined" 
+                    sx={{marginRight: 2, marginBottom: 2}}
+                    value={quizTitle}
+                    disabled = {isStart || isEnd}
+                    onChange={(e) => setQuizTitle(e.target.value)}
+                  />
+                  {/* <FormControl sx={{ width: 500 }}>
                     <InputLabel id="select-student-label">Assign Student</InputLabel>
                     <Select
                       labelId="select-student-label"
@@ -562,13 +550,13 @@ export default function QuizDetail() {
                       ))}
                     </Select>
                   </FormControl> */}
-                <Grid container spacing={5}>
+                  <Grid container spacing={5}>
                   <Grid item>
                     <LocalizationProvider dateAdapter={DateAdapter}>
                       <DateTimePicker
                         label="Start Date"
                         value={startDate}
-                        disabled={isStart || isEnd}
+                        disabled = {isStart || isEnd}
                         onChange={(newValue) => onStartDate(newValue)}
                         renderInput={(params) => <TextField {...params} sx={{ marginBottom: 2 }} />}
                       />
@@ -579,33 +567,33 @@ export default function QuizDetail() {
                       <DateTimePicker
                         label="Due Date"
                         value={dueDate}
-                        disabled={isStart || isEnd}
+                        disabled = {isStart || isEnd}
                         onChange={(newValue) => setDate(newValue)}
                         renderInput={(params) => <TextField {...params} sx={{ marginBottom: 2 }} />}
                       />
                     </LocalizationProvider>
                   </Grid>
                 </Grid>
-                {/* <TextField
+                  {/* <TextField
                   variant="filled"
                   // disabled
                   value={new Date(dueDate.seconds * 1000).toLocaleDateString()}
                   
                   /> */}
-              </Grid>
-              <TextField
-                variant="filled"
-                multiline
-                placeholder="Please enter direction"
-                value={instruction}
-                onChange={(e) => setInstruction(e.target.value)}
-                // onChange={handleAnnoucement}
-                fullWidth
-                disabled={isStart || isEnd}
-                minRows={5}
-              />
-              <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
-                {/* <Grid item>
+                </Grid>
+                <TextField
+                  variant="filled"
+                  multiline
+                  placeholder="Please enter direction"
+                  value={instruction}
+                  onChange={(e) => setInstruction(e.target.value)}
+                  // onChange={handleAnnoucement}
+                  fullWidth
+                  disabled = {isStart || isEnd}
+                  minRows={5}
+                />
+                <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
+                  {/* <Grid item>
                     <IconButton sx={style.iconStyle}>
                       <AddToDriveIcon />
                     </IconButton>
@@ -619,7 +607,7 @@ export default function QuizDetail() {
                       <YouTubeIcon />
                     </IconButton>
                   </Grid> */}
-                {/* <Grid item sx={{ marginTop: 0.5 }}>
+                  {/* <Grid item sx={{ marginTop: 0.5 }}>
                     <Button 
                       style={style.btnStyle} 
                       // onClick={cancelAnnouncement}
@@ -635,18 +623,18 @@ export default function QuizDetail() {
                       Save
                     </Button>
                   </Grid> */}
-              </Box>
-            </Grid>
+                </Box>
+              </Grid>
           </Grid>
-          {quizQuiestions && quizBody()}
+          {quizQuiestions && quizBody() }
           <Grid container sx={style.addBtncontainer} justifyContent='space-between'>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Button
-                variant="contained"
-                style={style.btnStyle}
-                disabled={isStart || isEnd}
+            <Box sx={{display:'flex', alignItems:'center'}}>
+              <Button 
+                variant="contained" 
+                style={style.btnStyle} 
+                disabled = {isStart || isEnd}
                 onClick={quizAddQuestion}
-              >
+              > 
                 Add Question
               </Button>
             </Box>
@@ -659,21 +647,21 @@ export default function QuizDetail() {
               
             </Box>
           </Grid> */}
-
+          
           <Grid container sx={style.addBtncontainer} justifyContent='space-between'>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <>
-                <Grid container justifyContent="flex-end" sx={{ marginBottom: { xs: -30, md: -8 } }}>
-                  <Button variant="contained" style={{ width: 130, height: 45, marginLeft: 2 }} onClick={saveQuiz} disabled={isStart || isEnd}>Update Quiz</Button>
-                  <Button variant="contained" style={{ width: 130, height: 45, marginLeft: 10 }} onClick={() => history.goBack()}>Cancel</Button>
-                </Grid>
-              </>
+            <Box sx={{display:'flex', alignItems:'center'}}>
+                <>
+                  <Grid container justifyContent="flex-end" sx={{ marginBottom: { xs: -30, md: -8 } }}>
+                    <Button variant="contained" style={{ width: 130, height: 45, marginLeft: 2 }} onClick={saveQuiz} disabled = {isStart || isEnd}>Update Exam</Button>
+                    <Button variant="contained" style={{ width: 130, height: 45, marginLeft: 10 }} onClick={() => history.goBack()}>Cancel</Button>
+                  </Grid>
+                </>
             </Box>
           </Grid>
-
+        
         </Box>
       }
-
+      
     </Teacherdrawer>
   )
 }

@@ -57,6 +57,8 @@ import About from '../pages/userpages/mainclassroom/classlinks/about'
 import ClassStudentList from '../pages/userpages/mainclassroom/classlinks/studentList'
 import ClassGrade from '../pages/userpages/mainclassroom/classlinks/classGrade'
 import ClassSetting from '../pages/userpages/mainclassroom/classlinks/classsetting/ClassSetting';
+import ClassNewExam from '../pages/userpages/mainclassroom/classlinks/classExam/NewQuiz'
+import ExamDetail from '../pages/userpages/mainclassroom/classlinks/classExam/QuizDetail'
 
 //student components
 import StudentClassList from '../pages/userpages/mainclassroom/student/classList'
@@ -67,6 +69,7 @@ import StudentClassAnnouncement from '../pages/userpages/mainclassroom/student/c
 import StudentClassJoinMeet from '../pages/userpages/mainclassroom/student/classjoinmeet/ClassJoinMeet';
 import StudentList from '../pages/userpages/mainclassroom/student/studentList'
 import StudentClassSetting from '../pages/userpages/mainclassroom/student/classsetting/ClassSetting';
+import StudentExamDetail from '../pages/userpages/mainclassroom/student/classExam/QuizDetail'
 
 
 
@@ -221,6 +224,8 @@ export default function RouterComponent() {
                     <TeacherRoute component={QuizDetail} path="/quizdetail/:id/:quizId" exact />
                     <TeacherRoute component={ClassJoinMeet} path="/classjoinmeet/:id" exact />
                     <TeacherRoute component={ClassSetting} path="/classsetting/:id" exact /> 
+                    <TeacherRoute component={ClassNewExam} path="/exam/:id/:examId" exact />
+                    <TeacherRoute component={ExamDetail} path="/examdetail/:id/:examId" exact />
                    
                    
                     
@@ -236,6 +241,7 @@ export default function RouterComponent() {
                     <StudentRoute component={StudentClassJoinMeet} path="/studentclassjoinmeet/:id" exact />
                     <StudentRoute component={StudentList} path="/classstudentlist/:id" exact />
                     <StudentRoute component={StudentClassSetting} path="/studentsetting/:id" exact /> 
+                    <StudentRoute component={StudentExamDetail} path="/studentexamdetail/:id/:examId" exact />
                     
 
                     <Route component={NotFound} path='/'/>

@@ -49,26 +49,28 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 const style = {
   '.MuiOutlinedInput-input': {
     // border:'1px solid red',
-      "&:-webkit-autofill": {
-        WebkitBoxShadow: "0 0 0 0 black inset",
-      },
-      
+    "&:-webkit-autofill": {
+      WebkitBoxShadow: "0 0 0 0 black inset",
     },
-    'input:-internal-autofill-selected': {
-      // border: '1px solid green',
-      backgroundImage: 'none !important',
-      backgroundColor:' black !important'
-    }
-    // '.MuiInputAdornment-positionEnd': {
-    //   border: '1px solid red',
-    //   height: 20,
-    //   width: 20,
-    //   "&:-webkit-autofill": {
-    //     WebkitBoxShadow: "0 0 0 1000px black inset",
-    //   }
-    // },
-    
-  
+
+  },
+  'input:-internal-autofill-selected': {
+    // border: '1px solid green',
+    backgroundImage: 'none !important',
+    backgroundColor: ' black !important',
+  },
+  // '.MuiInputAdornment-positionEnd': {
+  //   border: '1px solid red',
+  //   height: 20,
+  //   width: 20,
+  //   "&:-webkit-autofill": {
+  //     WebkitBoxShadow: "0 0 0 1000px black inset",
+  //   }
+  // },
+  floatingLabelFocusStyle: {
+    color: 'black',
+    fontWeight: 'bold'
+  }
 }
 
 export default function Input(props) {
@@ -85,9 +87,9 @@ export default function Input(props) {
     onKeyDown
   } = props
   return (
-    <div style={{display:'flex',flexDirection:'column', width:'100%'}}>
-      <InputLabel shrink htmlFor="bootstrap-input" aria-describedby="component-error-text">
-          {label}
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+      <InputLabel shrink htmlFor="bootstrap-input" aria-describedby="component-error-text" sx={{fontSize: '20px', color:'black', fontWeight: 'bold'}}>
+        {label}
       </InputLabel>
       {/* <BootstrapInput 
         defaultValue="rendevouz" 
@@ -101,7 +103,7 @@ export default function Input(props) {
         endAdornment={endAdornment ? endAdornment : ''}
       /> */}
       <OutlinedInput
-        style={{borderRadius:24, width: '100%'}}
+        style={{ borderRadius: 24, width: '100%' }}
         sx={style}
         id={id}
         name={name}
@@ -111,6 +113,9 @@ export default function Input(props) {
         onKeyDown={onKeyDown}
         pattern={pattern}
         endAdornment={endAdornment ? endAdornment : ''}
+        inputProps={{
+          sx: style.floatingLabelFocusStyle
+        }}
       />
       <FormHelperText error={true} id="component-error-text">{errorMessage}</FormHelperText>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
-import { getUser, updateLabScore } from '../../../../../utils/firebaseUtil'
+import { getUser, updateLabScore,saveLabStudent } from '../../../../../utils/firebaseUtil'
 
 import { useHistory } from 'react-router';
 import { useSelector } from 'react-redux';
@@ -18,7 +18,9 @@ import {
   TableRow,
   TableBody,
   Collapse, InputAdornment,
-  TextField
+  TextField,
+  Snackbar,
+  Alert
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
@@ -84,7 +86,8 @@ const style = {
     fontWeight: 400
   },
   linkStyle: {
-    paddingLeft: 0
+    paddingLeft: 0,
+    fontWeight: "bold"
   },
   imgStyle: {
     height: 300,
@@ -95,7 +98,10 @@ const style = {
   },
   txtContainer: {
     width: 500
-  }
+  },
+  inputText: {
+    fontWeight: 'bold'
+  },
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -134,6 +140,8 @@ export default function StudentList() {
   const [quizList, setQuizList] = useState([])
   const [labList, setLabList] = useState([])
   const [edit, setEdit] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [examList, setExamList] = useState([])
 
 
   //Load classrooms
@@ -148,6 +156,7 @@ export default function StudentList() {
       })
       getStudentQuizData()
       getStudentLabData()
+      getStudentExamData()
     }
 
 
@@ -157,6 +166,13 @@ export default function StudentList() {
     const studentQuizCollection = collection(db, "studentRecord")
     onSnapshot(studentQuizCollection, (snapshot) => {
       setQuizList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+    })
+  }
+
+  const getStudentExamData = () => {
+    const studentQuizCollection = collection(db, "studentRecord")
+    onSnapshot(studentQuizCollection, (snapshot) => {
+      setExamList(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
     })
   }
 
@@ -174,11 +190,23 @@ export default function StudentList() {
     lab[index].laboratory[i].score = e.target.value;
     // setAddQuestion(questionList)
     setLabList(lab)
-    const timeout = setTimeout(() => {
-      updateLabScore(lab[index].laboratory[i], i)
-    }, 250)
+   
     // return () => clearTimeout(timeout)
 
+  }
+  const saveLabScore = (e, i, index) => {
+    const lab = [...labList];
+    if(e.key === 'Enter'){
+      const timeout = setTimeout(() => {
+        updateLabScore(lab[index].laboratory[i], i)
+        setOpen(true)
+      }, 250)
+    }
+    // const timeout = setTimeout(() => {
+    //   updateLabScore(lab[index].laboratory[i], i)
+    //   setOpen(true)
+    // }, 250)
+    
   }
 
   const getClassData = () => {
@@ -199,6 +227,90 @@ export default function StudentList() {
     )
     return unsubscribe;
   }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false)
+  };
+
+  const renderLab = (laboratory, index) => (
+    Object.keys(laboratory).map(key=> (
+      <TableRow>
+        <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>
+          {laboratory[key].title}
+        </TableCell>
+        <TableCell align="right">
+          <TextField
+            id="input-with-icon-textfield"
+            label="Score"
+            value={laboratory[key].score}
+            onChange={(e) => onChangeLabScore(e, key, index)}
+            onKeyDown={(e) => saveLabScore(e, key, index)}
+            // onMouseLeave={(e) => saveLabScore(e, key, index)}
+            disabled={!edit ? false : true}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <EditOutlinedIcon
+                    onClick={() => setEdit(!edit)}
+                  />
+                </InputAdornment>
+              ),
+              sx: style.inputText
+            }}
+            InputLabelProps={{
+              sx: style.inputText
+            }}
+            variant="standard"
+          />
+        </TableCell>
+        <TableCell align="right">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(`/viewlab/${params.id}/${laboratory[key].labId}/${laboratory[key].studentId}`)}
+            sx={{fontWeight: 'bold'}}
+          >
+            View
+          </Button>
+        </TableCell>
+      </TableRow>
+    ))
+  )
+
+  const renderQuiz = (quiz, index) => (
+   Object.keys(quiz).map(key => (
+      <TableRow>
+        <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>
+          {quiz[key].title}
+        </TableCell>
+        <TableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}> 
+          {new Date(quiz[key].dueDate.seconds * 1000).toLocaleDateString()}
+        </TableCell>
+        <TableCell align="right" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>
+          {quiz[key].result.correctPoints} / {quiz[key].result.totalPoints}
+        </TableCell>
+      </TableRow>
+    ))
+  )
+
+  const renderExam = (exam, index) => (
+    Object.keys(exam).map(key => (
+       <TableRow>
+         <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>
+           {exam[key].title}
+         </TableCell>
+         <TableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>
+           {new Date(exam[key].dueDate.seconds * 1000).toLocaleDateString()}
+         </TableCell>
+         <TableCell align="right" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>
+           {exam[key].result.correctPoints} / {exam[key].result.totalPoints}
+         </TableCell>
+       </TableRow>
+     ))
+   )
 
   /*
   const handleAccept = (classCode, userId, classData, studentData) => {
@@ -221,20 +333,20 @@ export default function StudentList() {
               <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Classroom name : {item.className}</Typography>
             </Grid>
             <Grid container xs={12} direction='column'>
-              <Typography variant="p" sx={{ marginTop: 1 }}>section: {item.section}</Typography>
-              <Typography variant="p" sx={{ marginTop: 1 }}>subject: {item.subject}</Typography>
-              <Typography variant="p" sx={{ marginTop: 1 }}>room: {item.room}</Typography>
+            <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>section: {item.section}</Typography>
+                <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>subject: {item.subject}</Typography>
+                <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>room: {item.room}</Typography>
             </Grid>
             {/* <Grid item xs={12}>
             <Typography variant="h6" sx={{ marginTop: 1 }}>{item.ownerEmail}</Typography>
           </Grid> */}
             <Grid item xs={12}>
-              <Typography variant="h6" sx={{ marginTop: 1 }}>Student List ({students && students.length !== 0 ? students.length : 0})</Typography>
+              <Typography variant="h6" sx={{ marginTop: 1, fontWeight: 'bold', color: 'black',marginBottom: 2, marginTop: 2 }}>Student List ({students && students.length !== 0 ? students.length : 0})</Typography>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
                   <TableHead>
                     <TableRow>
-                      <StyledTableCell>Name</StyledTableCell>
+                      <StyledTableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 18 }}>Name</StyledTableCell>
                       {/* <StyledTableCell align="left">Email</StyledTableCell> */}
                       {/* <StyledTableCell align="center">Action</StyledTableCell> */}
                     </TableRow>
@@ -243,7 +355,7 @@ export default function StudentList() {
                     {students && students.map((row) => (
                       <>
                         <StyledTableRow key={row.name}>
-                          <StyledTableCell component="th" scope="row">
+                          <StyledTableCell component="th" scope="row" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 18 }}>
                             {row.displayName}
                           </StyledTableCell>
                           {/* <StyledTableCell align="left">{row.email}</StyledTableCell> */}
@@ -273,19 +385,23 @@ export default function StudentList() {
                         <TableRow key={row.name}>
                           <Collapse in={true} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
-                              <Typography variant="h6" gutterBottom component="div">
+                              <Typography variant="h6" gutterBottom component="div" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 20 }}>
                                 Quiz
                               </Typography>
                               <Table size="small" aria-label="purchases">
                                 <TableHead>
                                   <TableRow>
-                                    <TableCell>Quiz Title</TableCell>
-                                    <TableCell>Due Date</TableCell>
-                                    <TableCell align="right">Score</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Quiz Title</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Due Date</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Score</TableCell>
                                   </TableRow>
                                 </TableHead>
-                                <TableBody>
-                                  {quizList && quizList.map(item => (
+                                <TableBody >
+                                  {quizList && quizList.map((item, index) => (
+                                    item.id === row.ownerId &&
+                                      renderQuiz(item.quiz ? item.quiz : [], index)
+                                  ))}
+                                  {/* {quizList && quizList.map(item => (
                                     item.quiz && item.quiz.filter(item => item.studentId === row.ownerId).map(data => (
                                       <TableRow>
                                         <TableCell component="th" scope="row">
@@ -299,6 +415,30 @@ export default function StudentList() {
                                         </TableCell>
                                       </TableRow>
                                     ))
+                                  ))} */}
+                                </TableBody>
+                              </Table>
+                            </Box>
+                          </Collapse>
+                        </TableRow>
+                        <TableRow key={row.name}>
+                          <Collapse in={true} timeout="auto" unmountOnExit>
+                            <Box sx={{ margin: 1 }}>
+                              <Typography variant="h6" gutterBottom component="div" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 20 }}>
+                                Exam
+                              </Typography>
+                              <Table size="small" aria-label="purchases">
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Exam Title</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Due Date</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Score</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {examList && examList.map((item, index) => (
+                                    item.id === row.ownerId &&
+                                      renderExam(item.exam ? item.exam : [], index)
                                   ))}
                                 </TableBody>
                               </Table>
@@ -308,54 +448,21 @@ export default function StudentList() {
                         <TableRow key={row.name}>
                           <Collapse in={true} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
-                              <Typography variant="h6" gutterBottom component="div">
+                              <Typography variant="h6" gutterBottom component="div" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 20 }}>
                                 Laboratory
                               </Typography>
                               <Table size="small" aria-label="purchases">
                                 <TableHead>
                                   <TableRow>
-                                    <TableCell>Lab Title</TableCell>
-                                    <TableCell align="right">Score</TableCell>
-                                    <TableCell align="right">View Lab</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Lab Title</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>Score</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', color: 'black',  fontSize: 16 }}>View Lab</TableCell>
                                   </TableRow>
                                 </TableHead>
                                 <TableBody>
                                   {labList && labList.map((item, index) => (
-                                    item.laboratory && item.laboratory.filter(item => item.studentId === row.ownerId).map((data, i) => (
-                                      <TableRow>
-                                        <TableCell component="th" scope="row">
-                                          {data.title}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                          <TextField
-                                            id="input-with-icon-textfield"
-                                            label="Score"
-                                            value={data.score}
-                                            onChange={(e) => onChangeLabScore(e, i, index)}
-                                            disabled={!edit ? false : true}
-                                            InputProps={{
-                                              endAdornment: (
-                                                <InputAdornment position="end">
-                                                  <EditOutlinedIcon
-                                                    onClick={() => setEdit(!edit)}
-                                                  />
-                                                </InputAdornment>
-                                              ),
-                                            }}
-                                            variant="standard"
-                                          />
-                                        </TableCell>
-                                        <TableCell align="right">
-                                          <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={() => history.push(`/viewlab/${params.id}/${data.labId}/${data.studentId}`)}
-                                          >
-                                            View
-                                          </Button>
-                                        </TableCell>
-                                      </TableRow>
-                                    ))
+                                    item.id === row.ownerId &&
+                                      renderLab(item.laboratory, index)
                                   ))}
                                 </TableBody>
                               </Table>
@@ -381,6 +488,18 @@ export default function StudentList() {
         <title>Class Grade</title>
         <link rel="Classroom Icon" href={logohelmetclass} />
       </Helmet>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={3000}
+        open={open}
+        onClose={handleClose}
+        message="I love snacks"
+        // key={vertical + horizontal}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Score Updated!
+        </Alert>
+      </Snackbar>
       {classroom ?
         <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
           {classroomBody()}

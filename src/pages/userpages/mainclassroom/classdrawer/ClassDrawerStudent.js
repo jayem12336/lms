@@ -209,7 +209,7 @@ export default function StudentDrawer(props) {
                         </>
                     }
                     <Grid container justifyContent="flex-start">
-                        <Typography variant="h6" noWrap component="div">
+                        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: "bold" }}>
                             {/* {classUser.classData.className} */}
                             {props.headTitle}
                             {/* test */}

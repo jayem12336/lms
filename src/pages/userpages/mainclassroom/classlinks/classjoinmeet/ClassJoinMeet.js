@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { onSnapshot, collection, query, where, getDoc, doc} from 'firebase/firestore';
+import { onSnapshot, collection, query, where, getDoc, doc } from 'firebase/firestore';
 import { db } from '../../../../../utils/firebase';
 import { getUser, acceptStudent, removeStudent, getDocsByCollection, saveMeeting } from '../../../../../utils/firebaseUtil'
 
@@ -35,6 +35,7 @@ const style = {
         width: 100,
         height: 35,
         color: "black",
+        fontWeight: "bold",
         backgroundColor: "#A5CF92",
         '&:hover': {
             backgroundColor: "#3e857f",
@@ -80,7 +81,7 @@ export default function ClassJoinMeet() {
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
-    
+
     const [meetingLink, setMeetingLink] = useState('')
     const [open, setOpen] = useState(false)
 
@@ -106,10 +107,10 @@ export default function ClassJoinMeet() {
         if (docSnap.exists()) {
             setMeetingLink(docSnap.data().meetingLink)
             console.log("Document data:", docSnap.data());
-          } else {
+        } else {
             // doc.data() will be undefined in this case
             console.log("No such document!");
-          }
+        }
     }
 
     const getClassData = () => {
@@ -136,10 +137,10 @@ export default function ClassJoinMeet() {
     }
 
     const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
-    setOpen(false)
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false)
     };
 
     return (
@@ -150,10 +151,10 @@ export default function ClassJoinMeet() {
                 open={open}
                 onClose={handleClose}
                 message="I love snacks"
-                // key={vertical + horizontal}
+            // key={vertical + horizontal}
             >
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                Successfully saved meeting
+                    Successfully saved meeting
                 </Alert>
             </Snackbar>
             <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 10 }}>
@@ -178,8 +179,8 @@ export default function ClassJoinMeet() {
                                 </FormControl>
                             </Grid>
                             <Grid container justifyContent="center">
-                                <Button 
-                                    variant="contained" 
+                                <Button
+                                    variant="contained"
                                     sx={style.btnStyle}
                                     onClick={onSaveMeeting}
                                 >Save</Button>
@@ -190,7 +191,7 @@ export default function ClassJoinMeet() {
                         <Grid container sx={style.imageContainer}>
                             <Box
                                 component="img"
-                                src={Image} 
+                                src={Image}
                                 alt="Gmeet Image"
                                 sx={style.imgStyle}
                             />

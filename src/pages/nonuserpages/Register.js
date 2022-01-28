@@ -130,6 +130,9 @@ const style = {
             md: 600,
         },
     },
+    label: {
+        fontSize: 200
+    }
 }
 
 
@@ -329,7 +332,7 @@ export default function Register() {
                         // ...
                     })
                     .catch((error) => {
-                        const errorMessage = error.message;
+                        const errorMessage = error.code;
                         setValues({ ...values, errors: errorMessage, isLoading: false, password: "", confirmPassword: '' })
                         setOpenError({ open: true });
                         setLoading(false);
@@ -619,7 +622,8 @@ export default function Register() {
                                                     name='isTeacher'
                                                 />
                                             }
-                                            label={values.isTeacher ? "Teacher" : "Student"} />
+                                            label={values.isTeacher ? "Teacher" : "Student"} 
+                                            />
                                         {/* <Button
                                             variant="contained"
                                             onClick={signup}
@@ -633,7 +637,7 @@ export default function Register() {
                                             variant="contained"
                                             color='primary'
                                             onClick={signup}
-                                            sx={{ width: 150, borderRadius: 10 }}
+                                            sx={{ width: 150, borderRadius: 10, fontSize: 16, fontWeight: 'bold' }}
                                         >
                                             Sign up
                                         </LoadingButton>

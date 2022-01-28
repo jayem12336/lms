@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { db } from '../../../../../utils/firebase';
 import { setDoc, doc } from '@firebase/firestore';
-import {createClassDoc} from '../../../../../utils/firebaseUtil'
+import { createClassDoc } from '../../../../../utils/firebaseUtil'
 
 
 import { useSelector } from "react-redux";
@@ -27,11 +27,17 @@ const style = {
     textfieldStyle: {
         border: 'none',
         marginTop: 2,
-        width: 300
+        width: 300,
     },
+    inputText: {
+        fontWeight: 'bold'
+    },
+    btnStyle: {
+        fontWeight: "bold"
+    }
 }
 
-export default function CreateClass({ isClassOpen, toggleClass,displayName }) {
+export default function CreateClass({ isClassOpen, toggleClass, displayName }) {
     const id = (uuidv4().slice(-8));
 
 
@@ -48,7 +54,7 @@ export default function CreateClass({ isClassOpen, toggleClass,displayName }) {
             alert("please fill up the following fields")
         }
         else {
-            
+
             // const docRef = doc(db, "createclass", id);
             const payload = {
                 className: className,
@@ -64,7 +70,7 @@ export default function CreateClass({ isClassOpen, toggleClass,displayName }) {
                 isArchived: false
             };
             // await setDoc(docRef, payload);
-            createClassDoc('createclass',id,payload)
+            createClassDoc('createclass', id, payload)
             toggleClass();
         }
     }
@@ -76,7 +82,7 @@ export default function CreateClass({ isClassOpen, toggleClass,displayName }) {
                 onClose={toggleClass}
                 aria-labelledby="responsive-dialog-title"
             >
-                <DialogTitle id="responsive-dialog-title">
+                <DialogTitle id="responsive-dialog-title" sx={{ fontWeight: 'bold' }}>
                     {"Create Class"}
                 </DialogTitle>
                 <DialogContent>
@@ -86,32 +92,44 @@ export default function CreateClass({ isClassOpen, toggleClass,displayName }) {
                             placeholder="Class Name"
                             sx={style.textfieldStyle}
                             onChange={(e) => setClassName(e.target.value)}
+                            InputProps={{
+                                sx: style.inputText
+                            }}
                         />
                         <TextField
                             variant="outlined"
                             placeholder="Section"
                             sx={style.textfieldStyle}
                             onChange={(e) => setSection(e.target.value)}
+                            InputProps={{
+                                sx: style.inputText
+                            }}
                         />
                         <TextField
                             variant="outlined"
                             placeholder="Subject Code"
                             sx={style.textfieldStyle}
                             onChange={(e) => setSubject(e.target.value)}
+                            InputProps={{
+                                sx: style.inputText
+                            }}
                         />
                         <TextField
                             variant="outlined"
                             placeholder="Room"
                             sx={style.textfieldStyle}
                             onChange={(e) => setRoom(e.target.value)}
+                            InputProps={{
+                                sx: style.inputText
+                            }}
                         />
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus onClick={toggleClass}>
+                    <Button autoFocus onClick={toggleClass} sx={style.btnStyle}>
                         Back
                     </Button>
-                    <Button onClick={createClass} autoFocus>
+                    <Button onClick={createClass} autoFocus sx={style.btnStyle}>
                         Create Class
                     </Button>
                 </DialogActions>

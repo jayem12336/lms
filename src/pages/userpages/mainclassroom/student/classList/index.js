@@ -48,6 +48,7 @@ const style = {
 		width: 'auto',
 		marginRight: 2,
 		marginBottom: 4,
+		fontWeight: "bold",
 		textTransform: 'none',
 		color: (theme) => theme.colors.textColor,
 		backgroundColor: (theme) => theme.palette.primary.main,
@@ -166,12 +167,12 @@ export default function ClassList() {
 									</Typography>
 								</Box>
 								<Box sx={{ marginTop: 5 }}>
-									<Typography variant="h6" sx={{ marginTop: 1 }}>{item.section}</Typography>
-									<Typography variant="h6" sx={{ marginTop: 1 }}>{item.subject}</Typography>
-									<Typography variant="h6" sx={{ marginTop: 1 }}>{item.room}</Typography>
+									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold" }}>{item.section}</Typography>
+									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold" }}>{item.subject}</Typography>
+									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold" }}>{item.room}</Typography>
 								</Box>
 								<Box component={Grid} container justifyContent="center" sx={{ marginTop: 5 }}>
-									<Button variant="contained" sx={{ backgroundColor: '#FFBD1F' }} onClick={() => history.push(`/studentclassroomdetail/${item.classCode}`)}> Go inside </Button>
+									<Button variant="contained" sx={{ backgroundColor: '#FFBD1F', fontWeight: "bold" }} onClick={() => history.push(`/studentclassroomdetail/${item.classCode}`)}> Go inside </Button>
 								</Box>
 							</Box>
 						)}

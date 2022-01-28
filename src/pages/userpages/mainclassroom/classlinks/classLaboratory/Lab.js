@@ -18,6 +18,10 @@ import {
   useMediaQuery
 } from '@mui/material';
 
+import DateAdapter from '@mui/lab/AdapterMoment';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DateTimePicker from '@mui/lab/DateTimePicker';
+
 import { Helmet } from 'react-helmet';
 import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
@@ -60,6 +64,7 @@ const style = {
     height: 40,
     borderRadius: 8,
     fontSize: 16,
+    fontWeight: "bold",
     textTransform: 'none',
     color: (theme) => theme.colors.textColor,
     backgroundColor: (theme) => theme.palette.primary.main,
@@ -96,6 +101,9 @@ const style = {
     display: 'flex',
     width: '100%'
   },
+  inputText: {
+    fontWeight: 'bold'
+  },
 }
 
 export default function Laboratory() {
@@ -115,6 +123,8 @@ export default function Laboratory() {
     title: '',
     instruction: ''
   })
+  const [dueDate, setDueDate] = useState('')
+  const [startDate, setStartDate] = useState('')
 
 
   const { user } = useSelector((state) => state);
@@ -209,6 +219,14 @@ export default function Laboratory() {
     })
   }
 
+  const setDate = (e) => {
+    setDueDate(e)
+  }
+
+  const onStartDate = (e) => {
+    setStartDate(e)
+  }
+
   const saveLab = () => {
     const data = {
       html: html,
@@ -217,6 +235,8 @@ export default function Laboratory() {
       ownerId: user.currentUser.uid,
       classCode: params.id,
       created: Timestamp.now(),
+      startDate: Timestamp.fromDate(new Date(startDate)),
+      dueDate: Timestamp.fromDate(new Date(dueDate)),
       title: labTitle,
       students: studentName,
       instruction: instruction,
@@ -239,7 +259,7 @@ export default function Laboratory() {
         title: 'please input instruction'
       })
     } else {
-      createClassDoc('laboratory', id, data).then(() => {
+      createClassDoc('laboratory', params.labId, data).then(() => {
         setOpen({ open: true });
         studentName.map(student => {
           const studentData = {
@@ -249,6 +269,8 @@ export default function Laboratory() {
             ownerId: user.currentUser.uid,
             classCode: params.id,
             created: Timestamp.now(),
+            startDate: Timestamp.fromDate(new Date(startDate)),
+            dueDate: Timestamp.fromDate(new Date(dueDate)),
             title: labTitle,
             studentId: student,
             instruction: instruction,
@@ -348,7 +370,7 @@ export default function Laboratory() {
         <>
           <Grid xs={12} justifyContent='space-between' container>
             <Grid container justifyContent="center">
-              <Typography variant="h4" sx={{ marginBottom: 2 }}>Laboratory</Typography>
+              <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: "bold" }}>Laboratory</Typography>
             </Grid>
             {matchMD ? <>
               <Grid container justifyContent="flex-end" sx={{ marginBottom: { xs: -30, md: -8 } }}>
@@ -357,18 +379,21 @@ export default function Laboratory() {
               </Grid>
             </> : ""
             }
-            <Typography sx={{ marginTop: { xs: -2, md: 0 } }}>Title</Typography>
+            <Typography sx={{ marginTop: { xs: -2, md: 0, fontWeight: "bold" } }}>Title</Typography>
             <Grid xs={12} justifyContent='flex-start' container>
               <TextField
-                label={labTitle === '' ? 'Title' : labTitle}
                 variant="outlined"
                 sx={{ marginBottom: 2 }}
                 value={labTitle}
                 onChange={handleTitle}
                 error={error.title ? true : false}
                 helperText={error.title}
+                InputProps={{
+                  sx: style.inputText
+                }}
               />
               {/* <Button 
+              label={labTitle === '' ? 'Title' : labTitle}
                 variant="contained" 
                 color="primary" 
                 sx={{ marginTop: 2, marginBottom: 2 }}
@@ -376,6 +401,35 @@ export default function Laboratory() {
               >
                 {isNew ? 'Save' : 'Update'}
               </Button> */}
+            </Grid>
+
+            <Grid container spacing={5}>
+              <Grid item>
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                  <DateTimePicker
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(newValue) => onStartDate(newValue)}
+                    renderInput={(params) => <TextField {...params} sx={{ marginBottom: 2 }} />}
+                    InputProps={{
+                      sx: style.inputText
+                    }}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item>
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                  <DateTimePicker
+                    label="Due Date"
+                    value={dueDate}
+                    onChange={(newValue) => setDate(newValue)}
+                    renderInput={(params) => <TextField {...params} sx={{ marginBottom: 2 }} />}
+                    InputProps={{
+                      sx: style.inputText
+                    }}
+                  />
+                </LocalizationProvider>
+              </Grid>
             </Grid>
 
             <FormControl fullWidth sx={{ marginBottom: 2 }}>
@@ -386,6 +440,7 @@ export default function Laboratory() {
                 value={studentName}
                 onChange={handleChange}
                 input={<OutlinedInput id="select-multiple-chip" label="Assign Student" />}
+                sx={{ fontWeight: 'bold', color: 'black' }}
               // renderValue={(selected, item) => (
               //   console.log(selected),
               //   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -401,7 +456,8 @@ export default function Laboratory() {
                     key={name.value}
                     value={name.value}
                     name={name.value}
-                  // style={getStyles(name, personName, theme)}
+                    // style={getStyles(name, personName, theme)}
+                    sx={{ fontWeight: 'bold', color: 'black' }}
                   >
                     {name.label}
                   </MenuItem>
@@ -412,7 +468,7 @@ export default function Laboratory() {
               <Stack direction="row" spacing={1} xs={{ width: 500 }}>
                 {studentName && studentName.map(item => (
                   studentsList.filter(data => data.value === item).map(name => (
-                    <Chip label={name.label} />
+                    <Chip label={name.label} sx={{ fontWeight: 'bold', color: 'black' }}/>
                   ))
                 ))}
               </Stack>
@@ -428,6 +484,9 @@ export default function Laboratory() {
                   minRows={5}
                   error={error.instruction ? true : false}
                   helperText={error.instruction}
+                  InputProps={{
+                    sx: style.inputText
+                  }}
                 />
                 <Box sx={{ marginTop: 2 }} container component={Grid} justifyContent="space-between">
                   <Grid item>

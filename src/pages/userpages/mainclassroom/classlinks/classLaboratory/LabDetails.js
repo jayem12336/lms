@@ -17,6 +17,9 @@ import {
   Typography
 } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
+import DateAdapter from '@mui/lab/AdapterMoment';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DateTimePicker from '@mui/lab/DateTimePicker';
 
 import { getDocsByCollection, updateDocsByCollection, saveLabStudent, getStudentByAssigned } from '../../../../../utils/firebaseUtil'
 import { Timestamp } from 'firebase/firestore';
@@ -105,6 +108,8 @@ export default function Laboratory() {
   const [instruction, setInstruction] = useState('')
   const [labId, setLabId] = useState('')
   const [title, setTitle] = useState('')
+  const [dueDate, setDueDate] = useState('')
+  const [startDate, setStartDate] = useState('')
 
 
   const { user } = useSelector((state) => state);
@@ -188,12 +193,22 @@ export default function Laboratory() {
           setStudentName(item.students)
           setInstruction(item.instruction)
           setTitle(item.title)
+          setStartDate(item.startDate && new Date(item.startDate.seconds * 1000))
+          setDueDate(item.dueDate && new Date(item.dueDate.seconds * 1000))
         })
       } else {
         setIsNew(true)
       }
 
     })
+  }
+
+  const setDate = (e) => {
+    setDueDate(e)
+  }
+
+  const onStartDate = (e) => {
+    setStartDate(e)
   }
 
   const saveLab = () => {
@@ -204,10 +219,12 @@ export default function Laboratory() {
       ownerId: user.currentUser.uid,
       classCode: params.id,
       created: Timestamp.now(),
+      startDate: Timestamp.fromDate(new Date(startDate)),
+      dueDate: Timestamp.fromDate(new Date(dueDate)),
       title: labTitle,
       students: studentName,
       instruction: instruction,
-      labId: labId
+      labId: params.labId
     }
     // if(isNew){
     // createClassDoc('laboratory',id, data).then(() => {
@@ -247,10 +264,12 @@ export default function Laboratory() {
           ownerId: user.currentUser.uid,
           classCode: params.id,
           created: Timestamp.now(),
+          startDate: Timestamp.fromDate(new Date(startDate)),
+          dueDate: Timestamp.fromDate(new Date(dueDate)),
           title: labTitle,
           studentId: student,
           instruction: instruction,
-          labId: labId
+          labId: params.labId
         }
         saveLabStudent(studentData)
         const timeout = setTimeout(() => {
@@ -328,6 +347,29 @@ export default function Laboratory() {
               >
                 {isNew ? 'Save' : 'Update'}
               </Button> */}
+            </Grid>
+
+            <Grid container spacing={5}>
+              <Grid item>
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                  <DateTimePicker
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(newValue) => onStartDate(newValue)}
+                    renderInput={(params) => <TextField {...params} sx={{ marginBottom: 2 }} />}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item>
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                  <DateTimePicker
+                    label="Due Date"
+                    value={dueDate}
+                    onChange={(newValue) => setDate(newValue)}
+                    renderInput={(params) => <TextField {...params} sx={{ marginBottom: 2 }} />}
+                  />
+                </LocalizationProvider>
+              </Grid>
             </Grid>
 
             <FormControl sx={{ width: 500, marginBottom: 2 }}>

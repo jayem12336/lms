@@ -143,8 +143,8 @@ export default function ClassJoinMeet() {
                                         label="Password"
                                     />
                                 </FormControl> */}
-                                <Typography>Meeting Link :</Typography>
-                                <Link href={meetingLink} target="_blank" underline="none">
+                                <Typography sx={{ fontWeight: "bold" }}>Meeting Link :</Typography>
+                                <Link href={meetingLink} target="_blank" underline="none" sx={{ fontWeight: "bold" }}>
                                     {meetingLink}
                                 </Link>
                             </Grid>

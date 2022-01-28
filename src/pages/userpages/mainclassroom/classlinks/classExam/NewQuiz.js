@@ -27,7 +27,7 @@ import { useTheme } from '@mui/material/styles';
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
 import { Timestamp } from 'firebase/firestore';
 
-import { getStudentByAssigned, getDocsByCollection, saveQuizStudent, createClassDoc } from '../../../../../utils/firebaseUtil';
+import { getStudentByAssigned, getDocsByCollection, saveExamStudent, createClassDoc } from '../../../../../utils/firebaseUtil';
 import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { useHistory } from 'react-router';
@@ -149,14 +149,6 @@ export default function ClassQuiz() {
     })
   }
 
-  const getQuiz = () => {
-    getDocsByCollection('quiz')
-      .then(item => {
-        // const data = item.filter(item => item.classCode === params.id)
-        setQuizData(item)
-      })
-  }
-
   const quizAddQuestion = () => {
     setError('')
     setLoading(true)
@@ -243,9 +235,6 @@ export default function ClassQuiz() {
   }
 
   const handleEditQuizChange = (e, index) => {
-    console.log(e.target.value)
-    console.log(e.target.name)
-    console.log(index)
     const questionList = [...quizQuiestions];
     questionList[index][e.target.name] = e.target.value;
     // setAddQuestion(questionList)
@@ -279,7 +268,7 @@ export default function ClassQuiz() {
       created: Timestamp.now(),
       dueDate: Timestamp.fromDate(new Date(dueDate)),
       subject: subject,
-      quizId: params.quizId,
+      examId: params.examId,
       instruction: instruction,
       startDate: Timestamp.fromDate(new Date(startDate))
     }
@@ -301,7 +290,7 @@ export default function ClassQuiz() {
       setError('please input details')
       setLoading(false)
     } else {
-      createClassDoc('quiz', params.quizId, data).then(() => {
+      createClassDoc('exam', params.examId, data).then(() => {
         studentName.map(student => {
           const studentData = {
             ownerId: user.currentUser.uid,
@@ -313,13 +302,13 @@ export default function ClassQuiz() {
             created: Timestamp.now(),
             dueDate: Timestamp.fromDate(new Date(dueDate)),
             subject: subject,
-            quizId: params.quizId,
+            examId: params.examId,
             studentId: student,
             instruction: instruction,
             isDone: false,
             startDate: Timestamp.fromDate(new Date(startDate))
           }
-          saveQuizStudent(studentData)
+          saveExamStudent(studentData)
         })
         setLoading(false)
         setOpen(true)
@@ -398,6 +387,9 @@ export default function ClassQuiz() {
               value={item.question}
               // disabled
               onChange={(e) => handleEditQuizChange(e, index)}
+              InputProps={{
+                sx: style.inputText
+              }}
             />
           </Grid>
           <Grid xs={12} container direction='column'>
@@ -412,6 +404,9 @@ export default function ClassQuiz() {
                   value={item}
                   // disabled
                   onChange={(e) => handleEditAnswerChange(e, i)}
+                  InputProps={{
+                    sx: style.inputText
+                  }}
                 />
               </Grid>
             ))
@@ -426,11 +421,13 @@ export default function ClassQuiz() {
                 name='correctAnswer'
                 onChange={(e) => handleEditQuizChange(e, index)}
                 input={<OutlinedInput name='correctAnswer' id="select-multiple-chip" label="Answer key" />}
+                sx={{ fontWeight: 'bold', color: 'black' }}
               >
                 {item.answers.map((name) => (
                   <MenuItem
                     key={name}
                     value={name}
+                    sx={{ fontWeight: 'bold', color: 'black' }}
                   // style={getStyles(name, personName, theme)}
                   >
                     {name}
@@ -459,6 +456,9 @@ export default function ClassQuiz() {
               // disabled
               value={item.point}
               onChange={(e) => handleEditQuizChange(e, index)}
+              InputProps={{
+                sx: style.inputText
+              }}
             />
           </Grid>
 
@@ -532,8 +532,8 @@ export default function ClassQuiz() {
                   <MenuItem
                     key={name}
                     value={name}
-                    // style={getStyles(name, personName, theme)}
                     sx={{ fontWeight: 'bold', color: 'black' }}
+                  // style={getStyles(name, personName, theme)}
                   >
                     {name}
                   </MenuItem>
@@ -583,7 +583,7 @@ export default function ClassQuiz() {
   )
 
   return (
-    <Teacherdrawer headTitle='Create Quiz' classCode={params.id} loading={loading}>
+    <Teacherdrawer headTitle='Create Exam' classCode={params.id} loading={loading}>
 
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -594,7 +594,7 @@ export default function ClassQuiz() {
       // key={vertical + horizontal}
       >
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          Successfully Created Quiz
+          Successfully Created Exam
         </Alert>
       </Snackbar>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5, paddingBottom: 10 }}>
@@ -602,13 +602,13 @@ export default function ClassQuiz() {
         <Grid container sx={style.gridcontainer} justifyContent='space-between'>
           <Grid container>
             <Grid container justifyContent="center" sx={{ marginBottom: 5 }}>
-              <Typography variant="h4" >Create Quiz</Typography>
+              <Typography variant="h4" >Create Exam</Typography>
             </Grid>
             <Grid container>
               <TextField
                 placeholder="Title"
                 fullWidth
-                label='Quiz Title'
+                label='Exam Title'
                 variant="outlined"
                 sx={{ marginBottom: 2 }}
                 value={quizTitle}
@@ -762,8 +762,8 @@ export default function ClassQuiz() {
             {matchMD ?
               <>
                 <Grid container justifyContent="flex-end" sx={{ marginBottom: { xs: -30, md: -8 } }}>
-                  <Button variant="contained" style={{ width: 130, height: 40, marginLeft: 2 , fontWeight: 'bold'}} onClick={saveQuiz}>Create Quiz</Button>
-                  <Button variant="contained" style={{ width: 130, height: 40, marginLeft: 10, fontWeight: 'bold' }} onClick={() => history.goBack()}>Cancel</Button>
+                  <Button variant="contained" style={{ width: 130, height: 45, marginLeft: 2 , fontWeight: 'bold'}} onClick={saveQuiz}>Create Exam</Button>
+                  <Button variant="contained" style={{ width: 130, height: 45, marginLeft: 10, fontWeight: 'bold' }} onClick={() => history.goBack()}>Cancel</Button>
                 </Grid>
               </> : ""
             }

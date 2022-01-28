@@ -31,6 +31,7 @@ const style = {
         textTransform: 'none',
         marginLeft: 1,
         color: '#000000',
+        fontWeight: 'bold',
         // color: (theme) => theme.colors.navButton,
         '&:hover': {
             color: "#fff",
@@ -65,15 +66,15 @@ const style = {
         width: 'auto',
         textDecoration: 'none',
         color: "#fff",
-        fontWeight: 500,
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '6px 8px',
+        fontWeight: '490',
+        lineHeight: '1.75',
         '&:hover': {
             background: '#4877c2',
             color: (theme) => theme.colors.navButton,
         },
-        display: 'inline-flex',
-        alignItems: 'center',
-        padding: '6px 8px',
-        lineHeight: '1.75'
     },
     linkContainer: {
         justifyContent: 'end',

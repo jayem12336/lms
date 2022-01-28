@@ -53,6 +53,7 @@ const style = {
         fontSize: 20,
         width: 150,
         marginRight: 2,
+        fontWeight: 'bold',
         marginBottom: 4,
         textTransform: 'none',
         color: (theme) => theme.colors.textColor,
@@ -208,12 +209,12 @@ export default function ClassList() {
                                     </Typography>
                                 </Box>
                                 <Box sx={{ marginTop: 5 }}>
-                                    <Typography variant="h6" sx={{ marginTop: 1 }}>{item.section}</Typography>
-                                    <Typography variant="h6" sx={{ marginTop: 1 }}>{item.subject}</Typography>
-                                    <Typography variant="h6" sx={{ marginTop: 1 }}>{item.room}</Typography>
+                                    <Typography variant="h6" sx={{ marginTop: 1, fontWeight: 'bold' }}>{item.section}</Typography>
+                                    <Typography variant="h6" sx={{ marginTop: 1, fontWeight: 'bold' }}>{item.subject}</Typography>
+                                    <Typography variant="h6" sx={{ marginTop: 1, fontWeight: 'bold' }}>{item.room}</Typography>
                                 </Box>
                                 <Box component={Grid} container justifyContent="center" sx={{ marginTop: 5 }}>
-                                    <Button variant="contained" sx={{ backgroundColor: '#FFBD1F' }} onClick={() => history.push(`/classroomdetail/${item.classCode}`)}> Go inside </Button>
+                                    <Button variant="contained" sx={{ backgroundColor: '#FFBD1F', fontWeight: 'bold' }} onClick={() => history.push(`/classroomdetail/${item.classCode}`)}> Go inside </Button>
                                 </Box>
                             </Box>
                         )}
@@ -241,7 +242,7 @@ export default function ClassList() {
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                             onClick={handleOpenClass}
-                        > Create</Button>
+                        > Create Class</Button>
                         {/* {isTeacher ?
                             <Button variant="outlined"
                                 sx={style.btnStyle}
