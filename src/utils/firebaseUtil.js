@@ -28,7 +28,7 @@ export const createUser = async (email, password, data) => {
         ownerId: user.uid
       }
     );
-    return user
+    return user.uid
     // ...
   })
   .catch((err) => {
@@ -473,6 +473,14 @@ export const getAnnouncement = async (collectionName, sort) => {
 
 }
 
+export const getAnnouncementId = async (collectionName, sort) => {
+  const data = collection(db, collectionName)
+  const q = query(data,orderBy(sort, 'desc'))
+  const querySnapshot = await getDocs(q);
+    return querySnapshot
+
+}
+
 /**
  * @param {*} folderName 
  * @param {*} fileName 
@@ -559,4 +567,8 @@ export const saveMeeting = async (classCode, link) => {
   const docRef = doc(db, 'meeting', classCode);
   setDoc(docRef, { meetingLink: link }, { merge: true });
   return docRef
+}
+
+export const deleteAnnouncement = async (id) => {
+  await deleteDoc(doc(db, "announcement", id));
 }

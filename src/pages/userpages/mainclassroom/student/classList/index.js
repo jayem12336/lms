@@ -119,12 +119,12 @@ export default function ClassList() {
 	useEffect(() => {
 		if (Object.keys(user.currentUser).length !== 0) {
 			getClassData()
-			getUser().then(data => {
-				data.map(item => {
-					setIsTeacher(item.isTeacher)
-				})
-				setStudent(data)
-			})
+			//getUser().then(data => {
+			//	data.map(item => {
+			//		setIsTeacher(item.isTeacher)
+			//	})
+			//	setStudent(data)
+			//})
 		}
 	}, [user]);
 

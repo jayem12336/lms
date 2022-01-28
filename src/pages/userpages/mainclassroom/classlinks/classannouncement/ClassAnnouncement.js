@@ -7,16 +7,19 @@ import {
   Avatar,
   TextField,
   Button,
-  IconButton
+  IconButton,
+  Snackbar,
+  Alert
 } from '@mui/material';
 
 import Teacherdrawer from '../../classdrawer/ClassDrawerTeacher';
 import { Timestamp } from 'firebase/firestore';
 
-import { getAnnouncement, getDocsByCollection, getUser, createDoc } from '../../../../../utils/firebaseUtil';
+import { getAnnouncement, getAnnouncementId, deleteAnnouncement, getDocsByCollection, getUser, createDoc } from '../../../../../utils/firebaseUtil';
 import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Banner from '../../../../../assets/img/jpg/banner.jpg'
+import ConfirmDelete from './ConfirmDelete'
 
 import { Helmet } from 'react-helmet';
 import logohelmetclass from '../../../../../assets/img/png/monitor.png';
@@ -82,6 +85,8 @@ export default function ClassAnnouncement() {
   const [className, setClassName] = useState('')
   const [ownerName, setOwnerName] = useState('')
   const [announcementContent, setAnnoucncementContent] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
+  const [openDeleteSnack, setOpenDeleteSnack] = useState(false)
 
   const params = useParams()
   const { user } = useSelector((state) => state);
@@ -115,8 +120,24 @@ export default function ClassAnnouncement() {
   const getDataAnnouncement = () => {
     getAnnouncement('announcement', 'created')
       .then(item => {
+        console.log(item)
         const data = item.filter(item => item.classCode === params.id)
-        setAnnouncementData(data)
+        // setAnnouncementData(data)
+
+      })
+    getAnnouncementId('announcement', 'created')
+      .then(item => {
+        const announceData = item.docs.map((doc) => {
+          let newData = { ...doc.data(), id: doc.id }
+          // newData.filter(item => item.classCode === params.id)
+          // setAnnouncementData(newData)
+          return newData
+        })
+        console.log(announceData)
+        setAnnouncementData(announceData)
+        // const data = item.filter(item => item.classCode === params.id)
+        // setAnnouncementData(data)
+
       })
   }
 
@@ -144,29 +165,48 @@ export default function ClassAnnouncement() {
     setAnnoucncementContent('')
   }
 
+  const onDelete = (id) => {
+    // setIsOpen(true)
+    deleteAnnouncement(id).then(() => {
+      setOpenDeleteSnack(true)
+    })
+    getDataAnnouncement()
+  }
+
+  const handleCloseConfirm = () => {
+    setIsOpen(false)
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenDeleteSnack(false)
+  };
+
   const announcementBody = () => {
-    return announcementData && announcementData.map(item =>
+    return announcementData && announcementData.filter(item => item.classCode === params.id).map(item =>
       <Grid container sx={style.gridcontainer} justifyContent='space-between'>
         <Grid xs={12} item sx={{ display: 'flex' }}>
           <Avatar />
           <Grid container sx={{ paddingLeft: 1 }}>
             <Grid container>
-              <Typography sx={{fontWeight: 'bold', color:'black'}}>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
+              <Typography sx={{ fontWeight: 'bold', color: 'black' }}>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
             </Grid>
             <Grid container>
-              <Typography sx={{fontWeight: 'bold', color:'black'}}>{item.ownerName}</Typography>
+              <Typography sx={{ fontWeight: 'bold', color: 'black' }}>{item.ownerName}</Typography>
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} sx={{ marginTop: 1 }}>
-          <Typography sx={{ marginTop: 2, fontWeight: 'bold', color:'black' }}>{item.body}</Typography>
+          <Typography sx={{ marginTop: 2, fontWeight: 'bold', color: 'black' }}>{item.body}</Typography>
         </Grid>
         <Grid xs={12} justifyContent='flex-end' container>
           <Button
             variant="contained"
             color="error"
             sx={{ marginTop: 2, fontWeight: 'bold' }}
-            onClick={() => null}
+            onClick={() => onDelete(item.id)}
           >
             Delete
           </Button>
@@ -181,6 +221,18 @@ export default function ClassAnnouncement() {
         <title>Announcement</title>
         <link rel="Classroom Icon" href={logohelmetclass} />
       </Helmet>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={3000}
+        open={openDeleteSnack}
+        onClose={handleClose}
+        message="I love snacks"
+      // key={vertical + horizontal}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Successfully Deleted Class
+        </Alert>
+      </Snackbar>
       <Box component={Grid} container justifyContent="center" sx={{ paddingTop: 5 }}>
         <Box component={Grid} container justifyContent="center" sx={style.announcementBannerContainer}>
         </Box>
@@ -246,6 +298,11 @@ export default function ClassAnnouncement() {
           {announcementData && announcementBody()}
         </Grid>
       </Box>
+      <ConfirmDelete
+        isOpen={isOpen}
+        handleCloseConfirm={handleCloseConfirm}
+        confirmDelete={onDelete}
+      />
     </Teacherdrawer>
   )
 }

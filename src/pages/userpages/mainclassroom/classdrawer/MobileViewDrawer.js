@@ -100,8 +100,8 @@ export default function MobileViewDrawer() {
     
     const handleLogOut = () => {
         if (user) {
-            dispatch(logoutInitiate());
-            history.push('/');
+            dispatch(logoutInitiate(user ,history));
+            
         }
     }
 

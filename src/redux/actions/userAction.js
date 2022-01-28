@@ -111,13 +111,13 @@ const logoutSuccess = (user) => ({
     // payload: user
 });
 
-export const logoutInitiate = (user) => async (dispatch) => {
+export const logoutInitiate = (user, history) => async (dispatch) => {
+    sessionStorage.clear();
     try {
         const auth = getAuth();
         auth.signOut().then(() => {
-            sessionStorage.clear();
-            dispatch(logoutSuccess(user));
             
+            dispatch(logoutSuccess(user, history));          
         }).catch((error) => {
             // An error happened.
         });
@@ -125,6 +125,5 @@ export const logoutInitiate = (user) => async (dispatch) => {
         console.error(err)
     }
 }
-
 
 
