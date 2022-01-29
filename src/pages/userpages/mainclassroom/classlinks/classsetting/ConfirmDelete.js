@@ -55,19 +55,19 @@ export default function ConfirmDelete({ isOpen, handleCloseConfirm, confirmDelet
                 onClose={handleCloseConfirm}
                 aria-labelledby="responsive-dialog-title"
             >
-                <DialogTitle id="responsive-dialog-title">
+                <DialogTitle id="responsive-dialog-title" sx={{fontWeight: 'bold'}}>
                     Confirm Delete
                 </DialogTitle>
                 <DialogContent>
                     <Box component={Grid} container justifyContent="center" sx={style.formContainer}>
-                      <Typography>Are you sure you want to delete this class? There is no turning back!!!</Typography>
+                      <Typography sx={{fontWeight: 'bold'}}>Are you sure you want to delete this class? There is no turning back!!!</Typography>
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus onClick={handleCloseConfirm}>
+                    <Button autoFocus onClick={handleCloseConfirm} sx={{fontWeight: 'bold'}}>
                         No I Changed My Mind
                     </Button>
-                    <Button color='error' onClick={confirmDelete} autoFocus>
+                    <Button color='error' onClick={confirmDelete} autoFocus sx={{fontWeight: 'bold'}}>
                         Yes Delete This Class!!!
                     </Button>
                 </DialogActions>

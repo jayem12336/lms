@@ -52,7 +52,8 @@ const style = {
         borderRadius: 100,
         textTransform: 'none',
         marginTop: 3,
-        backgroundColor: '#FFBD1F'
+        backgroundColor: '#FFBD1F',
+        fontWeight: 'bold'
     },
     textStyle: {
         fontSize: 20,
@@ -144,7 +145,7 @@ export default function NewForgot() {
                                     onClick={forgotBtn}
                                     sx={style.btnStyle}
                                 >
-                                    Send Email
+                                    Recover
                                 </Button>
                             </Grid>
                         </Grid>

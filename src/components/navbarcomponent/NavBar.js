@@ -69,7 +69,7 @@ const style = {
         display: 'inline-flex',
         alignItems: 'center',
         padding: '6px 8px',
-        fontWeight: '490',
+        fontWeight: '500',
         lineHeight: '1.75',
         '&:hover': {
             background: '#4877c2',

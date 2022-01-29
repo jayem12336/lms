@@ -16,12 +16,13 @@ const style = {
     },
     textStyle: {
         fontSize: 25,
-        fontWeight: 500,
+        fontWeight: 'bold',
         color: (theme) => theme.palette.primary.main
     },
     descriptStyle: {
         fontSize: 18,
-        fontWeight: 200
+        fontWeight: 200,
+        color: 'black'
     },
 
     section1: {

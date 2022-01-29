@@ -183,13 +183,13 @@ export default function TeacherDrawer(props) {
         }
     } */
 
-    console.log(props)
+    console.log("this is the one:" + props.classCode)
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <AppBar position="fixed" open={matchMD ? false : open}>
                 <Toolbar>
-                    {matchMD ? <MobileViewTeachersDrawer props={props} /> :
+                    {matchMD ? <MobileViewTeachersDrawer props={props.classCode} /> :
                         <>
                             <IconButton
                                 color="inherit"

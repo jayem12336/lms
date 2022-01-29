@@ -96,6 +96,8 @@ export default function ClassSetting() {
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
+    
+    const [title, setTitle] = useState('')
 
     const [openDeleteSnack, setOpenDeleteSnack] = useState(false)
     const [openArchiveSnack, setOpenArchiveSnack] = useState(false)
@@ -127,6 +129,7 @@ export default function ClassSetting() {
             );
             snapshot.docs.map(doc => {
                 setClassCode(doc.data().classCode)
+                setTitle(doc.data().className)
             })
             // setLoading(false);
         }
@@ -181,7 +184,7 @@ export default function ClassSetting() {
     }
 
     return (
-        <TeacherDrawer classCode={classCode}>
+        <TeacherDrawer classCode={classCode} headTitle={title}>
             <Helmet>
                 <title>Settings</title>
                 <link rel="Classroom Icon" href={logohelmetclass} />

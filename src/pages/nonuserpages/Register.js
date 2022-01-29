@@ -585,7 +585,7 @@ export default function Register() {
                                                         onMouseDown={handleMouseDownPassword}
                                                         edge="end"
                                                     >
-                                                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                        {values.showPassword ? <Visibility /> : <VisibilityOff /> }
                                                     </IconButton>
                                                 </InputAdornment>
                                             }
@@ -601,18 +601,18 @@ export default function Register() {
                                             value={values.confirmPassword}
                                             name='confirmPassword'
                                             errorMessage={error.confirmPassword}
-                                            endAdornment={
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label="toggle password visibility"
-                                                        onClick={handleClickShowPassword}
-                                                        onMouseDown={handleMouseDownPassword}
-                                                        edge="end"
-                                                    >
-                                                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            }
+                                            // endAdornment={
+                                            //     <InputAdornment position="end">
+                                            //         <IconButton
+                                            //             aria-label="toggle password visibility"
+                                            //             onClick={handleClickShowPassword}
+                                            //             onMouseDown={handleMouseDownPassword}
+                                            //             edge="end"
+                                            //         >
+                                            //             {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                            //         </IconButton>
+                                            //     </InputAdornment>
+                                            // }
                                         />
                                     </Grid>
                                     <Grid
@@ -645,7 +645,7 @@ export default function Register() {
                                             variant="contained"
                                             color='primary'
                                             onClick={signup}
-                                            sx={{ width: 150, borderRadius: 10 }}
+                                            sx={{ width: 150, borderRadius: 10, fontWeight: 'bold' }}
                                         >
                                             Sign up
                                         </LoadingButton>

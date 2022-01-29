@@ -102,7 +102,8 @@ const style = {
         borderRadius: 100,
         textTransform: 'none',
         marginTop: 1,
-        backgroundColor: '#FFBD1F'
+        backgroundColor: '#FFBD1F',
+        fontWeight: 'bold'
     },
     btnGoogle: {
         height: 50,
@@ -119,7 +120,8 @@ const style = {
     },
     titleClass: {
         fontSize: 20,
-        paddingTop: 5
+        paddingTop: 5,
+        fontWeight: 'bold'
     },
     textStyle: {
         fontSize: 20,
@@ -257,10 +259,6 @@ export default function Login() {
         }
     };
 
-
-
-
-
     /* const handleNew = async (user) => {
         const docRef = doc(db, "users", user.uid);
         const payload = { displayName: user.displayName, email: user.email, uid: user.uid, photoURL: user.photoURL };
@@ -381,7 +379,7 @@ export default function Login() {
                                                 onMouseDown={handleMouseDownPassword}
                                                 edge="end"
                                             >
-                                                {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                {values.showPassword ? <Visibility /> : <VisibilityOff /> }
                                             </IconButton>
                                         </InputAdornment>
                                     }
@@ -401,7 +399,7 @@ export default function Login() {
                                     Don't have an account.
                                     <Button
                                         variant="text"
-                                        sx={{ fontSize: 20, marginTop: -.5 }}
+                                        sx={{ fontSize: 20, marginTop: -.5 ,fontWeight: 'bold'}}
                                         onClick={() => history.push('/register')}
                                     >Sign up
                                     </Button>

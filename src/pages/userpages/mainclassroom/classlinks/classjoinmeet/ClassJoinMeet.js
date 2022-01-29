@@ -67,7 +67,10 @@ const style = {
             sm: 0,
             md: 5
         },
-    }
+    },
+    inputText: {
+        fontWeight: 'bold'
+    },
 }
 
 export default function ClassJoinMeet() {
@@ -81,6 +84,8 @@ export default function ClassJoinMeet() {
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
+
+    const [title, setTitle] = useState('')
 
     const [meetingLink, setMeetingLink] = useState('')
     const [open, setOpen] = useState(false)
@@ -122,6 +127,7 @@ export default function ClassJoinMeet() {
             );
             snapshot.docs.map(doc => {
                 setClassCode(doc.data().classCode)
+                setTitle(doc.data().className)
             })
             // setLoading(false);
         }
@@ -144,7 +150,7 @@ export default function ClassJoinMeet() {
     };
 
     return (
-        <TeacherDrawer classCode={classCode}>
+        <TeacherDrawer classCode={classCode} headTitle={title}>
             <Snackbar
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 autoHideDuration={3000}
@@ -163,7 +169,7 @@ export default function ClassJoinMeet() {
                         <Grid container justifyContent="center" sx={style.gmeetContainer}>
                             <Grid Container>
                                 <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                                    <InputLabel htmlFor="outlined-adornment-password">meet.google.com</InputLabel>
+                                    <Typography sx={{ fontWeight: 'bold' }}>Enter link meet here</Typography>
                                     <OutlinedInput
                                         value={meetingLink}
                                         type='url'
@@ -174,7 +180,7 @@ export default function ClassJoinMeet() {
                                                 <DriveFileRenameOutlineIcon />
                                             </InputAdornment>
                                         }
-                                        label="Password"
+                                        sx={{fontWeight: 'bold'}}
                                     />
                                 </FormControl>
                             </Grid>

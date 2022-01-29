@@ -94,7 +94,7 @@ export default function JoinClass({ isJoinClassOpen, toggleJoinClass, userId, st
                 onClose={toggleJoinClass}
                 aria-labelledby="responsive-dialog-title"
             >
-                <DialogTitle id="responsive-dialog-title" >
+                <DialogTitle id="responsive-dialog-title" sx={{fontWeight: 'bold'}}>
                     {"Join Class"}
                 </DialogTitle>
                 <DialogContent>

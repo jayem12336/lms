@@ -192,7 +192,7 @@ export default function StudentDrawer(props) {
             <CssBaseline />
             <AppBar position="fixed" open={matchMD ? false : open}>
                 <Toolbar>
-                    {matchMD ? <MobileViewTeachersDrawer props={props}/> :
+                    {matchMD ? <MobileViewTeachersDrawer props={props.classCode}/> :
                         <>
                             <IconButton
                                 color="inherit"

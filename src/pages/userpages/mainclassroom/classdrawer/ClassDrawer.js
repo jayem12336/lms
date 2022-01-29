@@ -122,7 +122,7 @@ const style = {
     },
     textStyle: {
         fontSize: 18,
-        fontWeight: 650,
+        fontWeight: 'bold',
     },
     iconStyle: {
         fontSize: 30,

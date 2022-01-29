@@ -79,7 +79,7 @@ const style = {
     },
 };
 
-export default function MobileViewTeachersDrawer(props) {
+export default function MobileViewTeachersDrawer({props}) {
 
     const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -90,6 +90,8 @@ export default function MobileViewTeachersDrawer(props) {
             history.push('/');
         }
     }*/
+
+    console.log("this is" + props)
 
     return (
         <Box >
@@ -103,7 +105,7 @@ export default function MobileViewTeachersDrawer(props) {
                         <ListItem
                             button
                             component={ReactLink}
-                            to={`/classannouncement/${props.classCode}`}
+                            to={`/classannouncement/${props}`}
                         >
                             <ListItemIcon>
                                 <ListAltIcon sx={style.icons} />
@@ -117,7 +119,7 @@ export default function MobileViewTeachersDrawer(props) {
                         <ListItem
                             button
                             component={ReactLink}
-                            to={`/classroomdetail/${props.classCode}`}
+                            to={`/classroomdetail/${props}`}
                         >
                             <ListItemIcon>
                                 <LibraryBooksIcon sx={style.icons} />
@@ -131,7 +133,7 @@ export default function MobileViewTeachersDrawer(props) {
                         <ListItem
                             button
                             component={ReactLink}
-                            to={`/studentgrade/${props.classCode}`}
+                            to={`/studentgrade/${props}`}
                         >
                             <ListItemIcon>
                                 <GradingIcon sx={style.icons} />
@@ -145,7 +147,7 @@ export default function MobileViewTeachersDrawer(props) {
                         <ListItem
                             button
                             component={ReactLink}
-                            to={`/classjoinmeet/${props.classCode}`}
+                            to={`/classjoinmeet/${props}`}
                         >
                             <ListItemIcon>
                                 <PhotoCameraFrontIcon sx={style.icons} />
@@ -159,7 +161,7 @@ export default function MobileViewTeachersDrawer(props) {
                         <ListItem
                             button
                             component={ReactLink}
-                            to={`/studentlist/${props.classCode}`}
+                            to={`/studentlist/${props}`}
                         >
                             <ListItemIcon>
                                 <PeopleAltIcon sx={style.icons} />
@@ -173,7 +175,7 @@ export default function MobileViewTeachersDrawer(props) {
                         <ListItem
                             button
                             component={ReactLink}
-                            to={`/settings`}
+                            to={`/classsetting/${props}`}
                         >
                             <ListItemIcon>
                                 <SettingsIcon sx={style.icons} />

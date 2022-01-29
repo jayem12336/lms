@@ -133,7 +133,7 @@ const style = {
     },
     title: {
         fontSize: 40,
-        fontWeight: 500
+        fontWeight: 'bold'
     },
     titleContainer: {
         paddingTop: {
@@ -155,7 +155,8 @@ const style = {
     },
     text: {
         marginTop: 0.5,
-        fontSize: 20
+        fontSize: 20,
+        color: 'black'
     },
     textContainer: {
         marginTop: 2,

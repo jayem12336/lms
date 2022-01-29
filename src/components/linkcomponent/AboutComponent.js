@@ -7,7 +7,7 @@ import {
     useTheme,
     useMediaQuery
 } from '@mui/material';
-import aboutImage from '../../assets/img/jpg/about.jpg'
+import aboutImage from '../../assets/img/png/gmeet_image.png'
 
 const style = {
     //helper
@@ -46,7 +46,7 @@ const style = {
         height: {
             xs: 200,
             sm: 300,
-            md: 500,
+            md: 600,
         },
         width: {
             xs: 300,
@@ -61,7 +61,7 @@ const style = {
     },
     title: {
         fontSize: 40,
-        fontWeight: 500
+        fontWeight: 'bold'
     },
     titleContainer: {
         flexDirection: 'column',
@@ -73,7 +73,7 @@ const style = {
     },
     textContainer: {
         marginTop: 2,
-        flexDirection: 'column',
+        maxWidth: 500
     },
     button: {
         height: 50,
