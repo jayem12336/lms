@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 
@@ -15,12 +14,10 @@ import Classdrawer from '../../classdrawer/ClassDrawer';
 import { Helmet } from 'react-helmet';
 import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
-
 const style = {
     gridcontainer: {
         display: "flex",
         padding: 2,
-        borderBottom: 3,
         borderColor: (theme) => theme.palette.primary.main
     },
     gridcontainerClass: {
@@ -92,7 +89,7 @@ export default function CalendarComponent() {
     const localizer = momentLocalizer(moment)
 
     return (
-        <Classdrawer headTitle='Classroom'>
+        <Classdrawer headTitle='Calendar'>
             <Helmet>
                 <title>Calendar</title>
                 <link rel="Calendar Icon" href={logohelmetclass} />
@@ -103,7 +100,7 @@ export default function CalendarComponent() {
                         localizer={localizer}
                         startAccessor="start"
                         endAccessor="end"
-                        style={{ height: 1000, width: "100%" }}
+                        style={{ height: 1000, width: "100%", fontWeight: 'bold' }}
                     />
                 </Grid>
             </Box>

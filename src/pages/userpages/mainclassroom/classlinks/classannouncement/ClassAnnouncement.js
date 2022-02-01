@@ -87,6 +87,7 @@ export default function ClassAnnouncement() {
   const [announcementContent, setAnnoucncementContent] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [openDeleteSnack, setOpenDeleteSnack] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState(false)
 
   const params = useParams()
   const { user } = useSelector((state) => state);
@@ -98,6 +99,7 @@ export default function ClassAnnouncement() {
         item.map(data => {
           setUserId(data.ownerId)
           setOwnerName(data.displayName)
+          setPhotoUrl(data.photoUrl)
         })
 
       })
@@ -151,7 +153,8 @@ export default function ClassAnnouncement() {
       classCode: params.id,
       created: Timestamp.now(),
       ownerId: user.currentUser.uid,
-      ownerName: ownerName
+      ownerName: ownerName,
+      photoUrl: photoUrl
     }
     createDoc('announcement', data).then(() => {
       setAnnoucncementContent('')
@@ -188,7 +191,7 @@ export default function ClassAnnouncement() {
     return announcementData && announcementData.filter(item => item.classCode === params.id).map(item =>
       <Grid container sx={style.gridcontainer} justifyContent='space-between'>
         <Grid xs={12} item sx={{ display: 'flex' }}>
-          <Avatar />
+          <Avatar src={item.photoUrl} />
           <Grid container sx={{ paddingLeft: 1 }}>
             <Grid container>
               <Typography sx={{ fontWeight: 'bold', color: 'black' }}>{new Date(item.created.seconds * 1000).toLocaleDateString()} {new Date(item.created.seconds * 1000).toLocaleTimeString()}</Typography>
@@ -287,8 +290,8 @@ export default function ClassAnnouncement() {
             <Grid container sx={style.main}
               onClick={() => setShowInput(true)}
             >
-              <Avatar />
-              <Typography style={{ paddingLeft: 20, fontWeight: 'bold', color:'black' }}>Announce Something To Class</Typography>
+              <Avatar src={photoUrl} />
+              <Typography style={{ paddingLeft: 20, fontWeight: 'bold', color: 'black' }}>Announce Something To Class</Typography>
             </Grid>
           )}
         </Grid>

@@ -327,7 +327,7 @@ export default function ClassList() {
                     <CircularProgress />
                 </Box>
                 :
-                classroom ?
+                classroom.length > 0 ?
                     <Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
                         {classroomBody()}
                     </Box>

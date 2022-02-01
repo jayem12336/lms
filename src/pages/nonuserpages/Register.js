@@ -27,7 +27,7 @@ import Input from '../../components/Input';
 
 import NavBar from '../../components/navbarcomponent/NavBar'
 import NewFooter from '../../components/linkcomponent/NewFooter';
-import { loginInitiate, loginSuccess, registerInitiate} from '../../redux/actions/userAction';
+import { loginInitiate, loginSuccess} from '../../redux/actions/userAction';
 
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
@@ -35,7 +35,6 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Helmet } from 'react-helmet';
 import logohelmet from '../../assets/img/png/logoforhelmet.png';
 
-import Stack from '@mui/material/Stack';
 // import MuiAlert from '@mui/material/Alert';
 
 import Snackbar from '@mui/material/Snackbar';
@@ -143,12 +142,6 @@ export default function Register() {
 
     const [open, setOpen] = React.useState(false);
     const [openError, setOpenError] = useState(false)
-
-    const handleClick = () => {
-        setOpen(true);
-    };
-
-
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -641,10 +634,9 @@ export default function Register() {
                                         </Button> */}
                                         <LoadingButton
                                             loading={loading}
-                                            loadingIndicator="Loading..."
                                             variant="contained"
                                             color='primary'
-                                            onClick={signup}
+                                            onClick={(e) => signup(e)}
                                             sx={{ width: 150, borderRadius: 10, fontWeight: 'bold' }}
                                         >
                                             Sign up

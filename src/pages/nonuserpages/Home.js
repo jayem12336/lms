@@ -18,6 +18,11 @@ export default function Home() {
             <Helmet>
                 <title>Rendezvous</title>
                 <link rel="Rendezous Icon" href={logohelmet} />
+                <meta
+                    name="description"
+                    content='A Learning Management System for Education'
+                />
+
             </Helmet>
             <NavBar />
             <HomeComponent />

@@ -169,7 +169,7 @@ export default function ClassJoinMeet() {
                         <Grid container justifyContent="center" sx={style.gmeetContainer}>
                             <Grid Container>
                                 <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                                    <Typography sx={{ fontWeight: 'bold' }}>Enter link meet here</Typography>
+                                    <Typography sx={{ fontWeight: 'bold', marginBottom: 1 }}>Enter link meet here</Typography>
                                     <OutlinedInput
                                         value={meetingLink}
                                         type='url'

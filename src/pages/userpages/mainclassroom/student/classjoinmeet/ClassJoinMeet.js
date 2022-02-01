@@ -70,6 +70,8 @@ export default function ClassJoinMeet() {
 
     const [classCode, setClassCode] = useState('')
 
+    const [title, setTitle] = useState('')
+
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
@@ -104,24 +106,25 @@ export default function ClassJoinMeet() {
         }
     }
 
-    const getClassData = () => {
-        const classCollection = collection(db, "createclass")
-        const qTeacher = query(classCollection, where('ownerId', "==", user.currentUser.uid), where('classCode', "==", params.id));
-        const unsubscribe = onSnapshot(qTeacher, (snapshot) => {
-            setClassroom(
-                snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
-            );
-            snapshot.docs.map(doc => {
-                setClassCode(doc.data().classCode)
-            })
-            // setLoading(false);
-        }
-        )
-        return unsubscribe;
+   const getClassData = () => {
+    const classCollection = collection(db, "createclass")
+    const q = query(classCollection, where('classCode', "==", params.id));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setClassroom(
+        snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+      );
+      snapshot.docs.map(doc => {
+        setClassCode(doc.data().classCode)
+        setTitle(doc.data().className)
+      })
+      // setLoading(false);
     }
+    )
+    return unsubscribe;
+  }
 
     return (
-        <StudentDrawer classCode={params.id}>
+        <StudentDrawer headTitle={title} classCode={params.id}>
             <Helmet>
                 <title>Meeting</title>
                 <link rel="Classroom Icon" href={logohelmetclass} />

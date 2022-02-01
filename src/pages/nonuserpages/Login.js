@@ -12,8 +12,6 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-
-import Stack from '@mui/material/Stack';
 // import MuiAlert from '@mui/material/Alert';
 
 import Snackbar from '@mui/material/Snackbar';
@@ -158,11 +156,7 @@ export default function Login() {
 
     const [openSuccess, setOpenSuccess] = React.useState(false);
     const [openError, setOpenError] = React.useState(false);
-
-    const handleClick = () => {
-        setOpenSuccess(true);
-    };
-
+    
     const handleCloseSuccess = (event, reason) => {
         if (reason === 'clickaway') {
             return;

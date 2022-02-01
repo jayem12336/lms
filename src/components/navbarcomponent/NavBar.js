@@ -61,10 +61,10 @@ const style = {
         marginTop: 0.5,
     },
     btnLinks: {
+        textDecoration: 'none',
         marginLeft: 15,
         fontSize: '22px',
         width: 'auto',
-        textDecoration: 'none',
         color: "#fff",
         display: 'inline-flex',
         alignItems: 'center',
@@ -82,7 +82,7 @@ const style = {
             xs: '1',
             sm: '1',
             md: '0'
-        },
+        }
     },
     toolbarStyle: {
         padding: {
@@ -143,16 +143,17 @@ export default function NavBar() {
                                 style={style.logoStyle}
                             />
                         </Link>
-                        <Box component="span" style={style.linkContainer} />
+                        <Box component="span" />
                         {!matchMD ? <SideDrawer /> :
                             <>
                                 <Box component="span" sx={{ flexGrow: 1 }} align="right" >
-                                    <Grid container justifyContent="center" style={style.linkContainer}>
+                                    <Grid container justifyContent="center" sx={style.linkContainer}>
                                         <ScrollLink
                                             className="navy"
                                             smooth={true}
                                             duration={500}
                                             to="Home"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             {/* <Button sx={style.btnLinks} >
                                                 Home
@@ -164,6 +165,7 @@ export default function NavBar() {
                                             smooth={true}
                                             duration={500}
                                             to="Guide"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             {/* <Button sx={style.btnLinks} > */}
                                             <HashLink style={style.btnLinks} to="/#Guide">Guide</HashLink>
@@ -175,6 +177,7 @@ export default function NavBar() {
                                             smooth={true}
                                             duration={500}
                                             to="About"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             {/* <Button sx={style.btnLinks} >
                                                 About
@@ -186,6 +189,7 @@ export default function NavBar() {
                                             smooth={true}
                                             duration={500}
                                             to="Contact"
+                                            style={{ textDecoration: 'none' }}
                                         >
                                             {/* <Button sx={style.btnLinks} >
                                                 Contact

@@ -48,8 +48,8 @@ const style = {
 		width: 'auto',
 		marginRight: 2,
 		marginBottom: 4,
-		fontWeight: "bold",
 		textTransform: 'none',
+		fontWeight: 'bold',
 		color: (theme) => theme.colors.textColor,
 		backgroundColor: (theme) => theme.palette.primary.main,
 		'&:hover': {
@@ -119,12 +119,12 @@ export default function ClassList() {
 	useEffect(() => {
 		if (Object.keys(user.currentUser).length !== 0) {
 			getClassData()
-			//getUser().then(data => {
-			//	data.map(item => {
-			//		setIsTeacher(item.isTeacher)
-			//	})
-			//	setStudent(data)
-			//})
+			getUser().then(data => {
+				data.map(item => {
+					setIsTeacher(item.isTeacher)
+				})
+				setStudent(data)
+			})
 		}
 	}, [user]);
 
@@ -167,12 +167,12 @@ export default function ClassList() {
 									</Typography>
 								</Box>
 								<Box sx={{ marginTop: 5 }}>
-									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold" }}>{item.section}</Typography>
-									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold" }}>{item.subject}</Typography>
-									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold" }}>{item.room}</Typography>
+									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: 'bold', color: 'black' }}>{item.section}</Typography>
+									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: 'bold', color: 'black' }}>{item.subject}</Typography>
+									<Typography variant="h6" sx={{ marginTop: 1, fontWeight: 'bold', color: 'black' }}>{item.room}</Typography>
 								</Box>
 								<Box component={Grid} container justifyContent="center" sx={{ marginTop: 5 }}>
-									<Button variant="contained" sx={{ backgroundColor: '#FFBD1F', fontWeight: "bold" }} onClick={() => history.push(`/studentclassroomdetail/${item.classCode}`)}> Go inside </Button>
+									<Button variant="contained" sx={{ backgroundColor: '#4BAEA6', fontWeight: 'bold', }} onClick={() => history.push(`/studentclassroomdetail/${item.classCode}`)}> Go inside </Button>
 								</Box>
 							</Box>
 						)}
@@ -208,24 +208,26 @@ export default function ClassList() {
 					</Grid>
 				</Grid>
 			</Box>
-			{classroom ?
+			{classroom.length > 0 ?
 				<Box component={Grid} container justifyContent="" alignItems="" sx={{ paddingTop: 5, flexDirection: "column" }}>
 					{classroomBody()}
 				</Box>
 				:
-				<Box component={Grid} container justifyContent="center" alignItems="center" sx={{ paddingTop: 5, flexDirection: "column" }}>
-					<Box component={Grid} container justifyContent="center" sx={style.imgContainer}>
-						<Box component="img" src={bgImage} alt="Animated Computer" sx={style.imgStyle} />
+				<>
+					<Box component={Grid} container justifyContent="center" alignItems="center" sx={{ paddingTop: 5, flexDirection: "column" }}>
+						<Box component={Grid} container justifyContent="center" sx={style.imgContainer}>
+							<Box component="img" src={bgImage} alt="Animated Computer" sx={style.imgStyle} />
+						</Box>
+						<Box component={Grid} container justifyContent="center" sx={style.txtContainer}>
+							<Typography>
+								This is where you'll see classrooms.
+							</Typography>
+							<Typography>
+								You can join class, see activities and check available quiz
+							</Typography>
+						</Box>
 					</Box>
-					<Box component={Grid} container justifyContent="center" sx={style.txtContainer}>
-						<Typography>
-							This is where you'll see classrooms.
-						</Typography>
-						<Typography>
-							You can join class, see activities and check available quiz
-						</Typography>
-					</Box>
-				</Box>
+				</>
 			}
 			<JoinClass
 				isJoinClassOpen={joinClassOpen}

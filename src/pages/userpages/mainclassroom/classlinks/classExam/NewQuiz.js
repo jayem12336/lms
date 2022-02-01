@@ -4,15 +4,12 @@ import {
   Typography,
   Box,
   Grid,
-  Avatar,
   TextField,
   Button,
-  IconButton,
   FormControl,
   InputLabel,
   Select,
   OutlinedInput,
-  Chip,
   MenuItem,
   useMediaQuery,
   Snackbar,
@@ -32,11 +29,6 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { useHistory } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import YouTubeIcon from '@mui/icons-material/YouTube';
 
 const style = {
   gridcontainer: {
@@ -273,7 +265,6 @@ export default function ClassQuiz() {
       startDate: Timestamp.fromDate(new Date(startDate))
     }
     if (
-
       quizTitle === '' ||
       dueDate === '' ||
       instruction === ''

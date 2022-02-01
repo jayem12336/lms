@@ -96,7 +96,7 @@ export default function ClassSetting() {
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
-    
+
     const [title, setTitle] = useState('')
 
     const [openDeleteSnack, setOpenDeleteSnack] = useState(false)
@@ -226,8 +226,12 @@ export default function ClassSetting() {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container justifyContent="flex-start" sx={{
-                            marginTop: 4
+                        <Grid container justifyContent="center" sx={{
+                            marginTop: 4,
+                            marginLeft: {
+                                xs: -3,
+                                md: -15
+                            },
                         }}>
                             <Button variant="contained" color="error"
                                 sx={{

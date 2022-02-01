@@ -81,7 +81,8 @@ const style = {
   },
   linkStyle: {
     paddingLeft: 0,
-    fontWeight: "bold"
+    fontWeight: 'bold',
+    color: 'black'
   },
   imgStyle: {
     height: 300,
@@ -176,6 +177,7 @@ export default function StudentList() {
 
   const handleAccept = (classCode, userId, classData, studentData) => {
     acceptStudent('createclass', classCode, classData, studentData)
+    // console.log(studentData)
   }
 
   const handleRemove = (classCode, userId, studentData) => {
@@ -193,15 +195,15 @@ export default function StudentList() {
               <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Classroom name : {item.className}</Typography>
             </Grid>
             <Grid container xs={12} direction='column'>
-              <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>section: {item.section}</Typography>
-              <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>subject: {item.subject}</Typography>
-              <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>room: {item.room}</Typography>
+              <Typography sx={{ marginTop: 1, fontWeight: "bold", color: 'black' }}>section: {item.section}</Typography>
+              <Typography sx={{ marginTop: 1, fontWeight: "bold", color: 'black' }}>subject: {item.subject}</Typography>
+              <Typography sx={{ marginTop: 1, fontWeight: "bold", color: 'black' }}>room: {item.room}</Typography>
             </Grid>
             {/* <Grid item xs={12}>
             <Typography variant="h6" sx={{ marginTop: 1 }}>{item.ownerEmail}</Typography>
           </Grid> */}
             <Grid item xs={12}>
-              <Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold" }}>Student List ({item.students && item.students.length !== 0 ? item.students.length : 0})</Typography>
+              <Typography variant="h6" sx={{ marginTop: 1, fontWeight: "bold", color: 'black' }}>Student List ({item.students && item.students.length !== 0 ? item.students.length : 0})</Typography>
               {/* <Box component={Grid} container justifyContent="flex-end" sx={{ marginBottom: 2 }}>
                 <Button variant="contained" sx={style.btnStyle}><PersonAddAltIcon sx={style.iconStyle} />Request</Button>
                 <Button variant="contained" sx={style.btnStyle} onClick={handleAddUserOpen}><PersonAddAltIcon sx={style.iconStyle} />User</Button>
@@ -210,28 +212,28 @@ export default function StudentList() {
                 <Table sx={{ minWidth: 700 }} aria-label="customized table">
                   <TableHead>
                     <TableRow>
-                      <StyledTableCell>Student name A-Z</StyledTableCell>
+                      <StyledTableCell sx={{ fontWeight: "bold", fontSize: 15 }}>Student name A-Z</StyledTableCell>
                       {/* <StyledTableCell align="left">Email</StyledTableCell> */}
                       {/* <StyledTableCell align="left">Phone number</StyledTableCell> */}
-                      <StyledTableCell align="left">Type</StyledTableCell>
-                      <StyledTableCell align="center">Action</StyledTableCell>
+                      <StyledTableCell sx={{ fontWeight: "bold", fontSize: 15 }} align="left">Type</StyledTableCell>
+                      <StyledTableCell sx={{ fontWeight: "bold", fontSize: 15 }} align="center">Action</StyledTableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {item.students && item.students.map((row) => (
                       <StyledTableRow key={row.name}>
-                        <StyledTableCell component="th" scope="row" sx={{ fontWeight: "bold" }}>
+                        <StyledTableCell component="th" scope="row" sx={{ fontWeight: "bold", fontSize: 15, color: 'black' }}>
                           {row.displayName}
                         </StyledTableCell>
                         {/* <StyledTableCell align="left">{row.email}</StyledTableCell> */}
                         {/* <StyledTableCell align="left">{row.phone}</StyledTableCell> */}
-                        <StyledTableCell align="left" sx={{ fontWeight: "bold" }}>{row.isTeacher ? "Teacher" : "Student"}</StyledTableCell>
+                        <StyledTableCell align="left" sx={{ fontWeight: "bold", fontSize: 15, color: 'black' }}>{row.isTeacher ? "Teacher" : "Student"}</StyledTableCell>
                         <StyledTableCell align="center">
                           {!row.isJoin ?
                             <Button
                               variant="contained"
                               color="primary"
-                              sx={{ marginTop: 2, marginRight: 2, fontWeight: "bold" }}
+                              sx={{ marginRight: 2, fontWeight: "bold", fontSize: 15 }}
                               onClick={() => handleAccept(item.classCode, user.currentUser.uid, item, row)}
                             >
                               Accept
@@ -240,14 +242,12 @@ export default function StudentList() {
                             <Button
                               variant="contained"
                               color="error"
-                              sx={{ marginTop: 2, marginRight: 2, fontWeight: "bold" }}
-                              onClick={() => handleRemove(item.classCode, user.currentUser.uid, row)}
+                              sx={{ marginRight: 2, fontWeight: "bold", fontSize: 15 }}
+                              onClick={() => handleRemove(item.classCode, user.currentUser.uid, row)}  
                             >
                               Remove
                             </Button>
                           }
-
-
                         </StyledTableCell>
                       </StyledTableRow>
                     ))}

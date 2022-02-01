@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { LinearProgress } from '@mui/material';
 import { useSelector } from "react-redux";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import MobileViewTeachersDrawer from './MobileViewTeachersDrawer';
+import MobileViewStudentDrawer from './MobileViewStudentDrawer';
 
 
 //React Router Dom
@@ -192,7 +192,7 @@ export default function StudentDrawer(props) {
             <CssBaseline />
             <AppBar position="fixed" open={matchMD ? false : open}>
                 <Toolbar>
-                    {matchMD ? <MobileViewTeachersDrawer props={props.classCode}/> :
+                    {matchMD ? <MobileViewStudentDrawer props={props.classCode}/> :
                         <>
                             <IconButton
                                 color="inherit"

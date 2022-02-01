@@ -90,6 +90,8 @@ export default function ClassSetting() {
 
     const [classCode, setClassCode] = useState('')
 
+    const [title, setTitle] = useState('')
+
     const [classroom, setClassroom] = useState([]);
 
     const [isTeacher, setIsTeacher] = useState(false)
@@ -116,13 +118,14 @@ export default function ClassSetting() {
 
     const getClassData = () => {
         const classCollection = collection(db, "createclass")
-        const qTeacher = query(classCollection, where('ownerId', "==", user.currentUser.uid), where('classCode', "==", params.id));
-        const unsubscribe = onSnapshot(qTeacher, (snapshot) => {
+        const q = query(classCollection, where('classCode', "==", params.id));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
             setClassroom(
                 snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }))
             );
             snapshot.docs.map(doc => {
                 setClassCode(doc.data().classCode)
+                setTitle(doc.data().className)
             })
             // setLoading(false);
         }
@@ -152,7 +155,7 @@ export default function ClassSetting() {
     };
 
     return (
-        <StudentDrawer classCode={params.id}>
+        <StudentDrawer classCode={params.id} headTitle={title}>
             <Snackbar
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 autoHideDuration={3000}
@@ -178,7 +181,7 @@ export default function ClassSetting() {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container sx={{
+                        <Grid container justifyContent="center" sx={{
                             marginTop: 4
                         }}>
                             <Button variant="contained" color="error"
@@ -187,8 +190,13 @@ export default function ClassSetting() {
                                         xs: 120,
                                         md: 180
                                     },
+                                    marginLeft: {
+                                        xs: 0,
+                                        md: -25
+                                    },
                                     fontWeight: "bold",
                                     fontSize: 12,
+
                                 }}
                                 onClick={() => setIsOpen(true)}
                             >UNENROLL CLASSROOM</Button>

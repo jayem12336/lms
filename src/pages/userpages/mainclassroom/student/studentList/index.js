@@ -191,7 +191,7 @@ export default function StudentList() {
               <Typography variant="h5" sx={style.linkStyle} onClick={() => null}>Classroom name : {item.className}</Typography>
             </Grid>
             <Grid container xs={12} direction='column'>
-              <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>section: {item.section}</Typography>
+              <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold", color: 'black' }}>section: {item.section}</Typography>
               <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>subject: {item.subject}</Typography>
               <Typography variant="p" sx={{ marginTop: 1, fontWeight: "bold" }}>room: {item.room}</Typography>
             </Grid>

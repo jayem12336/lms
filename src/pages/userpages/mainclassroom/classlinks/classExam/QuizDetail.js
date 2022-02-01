@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  Typography,
   Box,
   Grid,
-  Avatar,
   TextField,
   Button,
-  IconButton,
   FormControl,
   InputLabel,
   Select,
   OutlinedInput,
-  Chip,
   MenuItem,
 } from '@mui/material';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 
-
-import DatePicker from '@mui/lab/DatePicker';
 import { Helmet } from 'react-helmet';
 import logohelmetclass from '../../../../../assets/img/png/monitor.png';
 
@@ -32,14 +26,6 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { useHistory } from 'react-router';
 import { v4 as uuidv4 } from 'uuid';
-
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import YouTubeIcon from '@mui/icons-material/YouTube';
-
-import Quiz from 'react-quiz-component';
-
 
 const style = {
   gridcontainer: {
@@ -71,17 +57,17 @@ const style = {
 }
 
 export default function QuizDetail() {
-  const setQuizResult = (obj) => {
-    console.log(obj);
-    //
-  }
+  // const setQuizResult = (obj) => {
+  //   console.log(obj);
+  //   //
+  // }
 
-  const [quizData, setQuizData] = useState([])
-  const [userId, setUserId] = useState('');
+  // const [quizData, setQuizData] = useState([])
+  // const [userId, setUserId] = useState('');
   // const [quizQuiestions, setQuizQuestions] = useState([])
   const [studentsList, setStudentsList] = useState([])
   const [studentName, setStudentName] = useState([])
-  const [students, setStudents] = useState([])
+  // const [students, setStudents] = useState([])
   const [duration, setDuration] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [startDate, setStartDate] = useState('')
@@ -100,7 +86,7 @@ export default function QuizDetail() {
   const params = useParams()
   const { user } = useSelector((state) => state);
   const history = useHistory();
-  const id = (uuidv4().slice(-8));
+  // const id = (uuidv4().slice(-8));
 
 
   useEffect(() => {

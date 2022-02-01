@@ -1,11 +1,8 @@
 import React from 'react'
 import {
     Box,
-    Button,
     Typography,
     Grid,
-    useTheme,
-    useMediaQuery
 } from '@mui/material';
 import aboutImage from '../../assets/img/png/gmeet_image.png'
 
@@ -101,9 +98,6 @@ const style = {
 }
 
 export default function AboutComponent() {
-
-    const theme = useTheme();
-    const matchMD = useMediaQuery(theme.breakpoints.up('md'));
 
     return (
         <Box>
